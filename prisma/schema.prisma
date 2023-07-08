@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id               Int      @id() @default(autoincrement())
+  type             String   @db.Char(40)
+  price            Int
+  discription      String   @db.VarChar(3000)
+  name             String   @db.Char(255)
+  count            Int      @default(1)
+  ageGroup         String   @map("age_group") @db.Char(100)
+  views            Int      @default(0)
+  gender           String   @db.Char(40)
+  isPreviouslyUsed Boolean  @default(false) @map("is_previously_used")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("article")
+}
