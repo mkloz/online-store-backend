@@ -11,7 +11,7 @@ export class Paginator {
     pag: IPag<TData>,
     opt: PaginationOptionsDto,
   ): Paginated<TData> {
-    const pageCount = pag.count / opt.limit + 1;
+    const pageCount = (pag.count / opt.limit + 1) | 0;
 
     return {
       items: pag.data,

@@ -29,7 +29,8 @@ class PaginationLinks {
   last: string;
 }
 
-export class Paginated<TData> {
+export class Paginated<TData extends object> {
+  @ApiProperty()
   items: TData[];
   @ApiProperty()
   meta: PaginationMeta;

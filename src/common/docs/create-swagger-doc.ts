@@ -8,7 +8,6 @@ export function createSwapiDocument(app: NestExpressApplication) {
     .setTitle('Online Store API')
     .setDescription('API for online store')
     .setVersion('1.0')
-    .addBearerAuth()
     .build();
 
   return SwaggerModule.createDocument(app, cfg, {

@@ -1,4 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Prisma } from '@prisma/client';
+import { ID } from 'src/common/common.interface';
+import { File } from 'src/file/file.entity';
 
 export class Article {
   @ApiProperty({ example: 1 })
@@ -9,7 +12,7 @@ export class Article {
   price: number;
   @ApiProperty({ example: 'You must to buy it' })
   discription: string;
-  @ApiProperty({ example: 'Cool Bike' })
+  @ApiProperty({ example: 'Cool Bike', uniqueItems: true })
   name: string;
   @ApiProperty({ example: 9 })
   count: number;
@@ -25,4 +28,6 @@ export class Article {
   createdAt: Date;
   @ApiProperty({ type: Date })
   updatedAt: Date;
+  @ApiProperty()
+  images?: File[];
 }

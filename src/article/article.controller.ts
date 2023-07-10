@@ -24,6 +24,9 @@ import {
   ApiArticleGetOne,
   ApiArticleUpdate,
 } from './docs';
+import { RelationsExistsPipe } from './pipes/relations-exists.pipe';
+import { ArticleNotExistPipe } from './pipes/article-not-exist.pipe';
+import { ArticleExistPipe } from './pipes/article-exist.pipe';
 
 @ApiArticle()
 @Controller('articles')
@@ -33,7 +36,10 @@ export class ArticleController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiArticleCreate()
-  create(@Body() createArticleDto: CreateArticleDto): Promise<Article> {
+  create(
+    @Body(ArticleNotExistPipe, RelationsExistsPipe)
+    createArticleDto: CreateArticleDto,
+  ): Promise<Article> {
     return this.articleService.create(createArticleDto);
   }
 
@@ -51,13 +57,17 @@ export class ArticleController {
 
   @Patch(':id')
   @ApiArticleUpdate()
-  update(@Param() { id }: IDDto, @Body() updateArticleDto: UpdateArticleDto) {
+  update(
+    @Param() { id }: IDDto,
+    @Body(ArticleExistPipe, RelationsExistsPipe)
+    updateArticleDto: UpdateArticleDto,
+  ) {
     return this.articleService.update(id, updateArticleDto);
   }
 
   @Delete(':id')
   @ApiArticleDelete()
-  remove(@Param('id') id: string) {
-    return this.articleService.remove(+id);
+  remove(@Param(ArticleExistPipe) { id }: IDDto) {
+    return this.articleService.remove(id);
   }
 }

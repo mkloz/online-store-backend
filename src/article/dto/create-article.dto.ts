@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
   IsInt,
   IsOptional,
@@ -46,4 +47,10 @@ export class CreateArticleDto {
   @IsOptional()
   @ApiProperty({ example: false })
   isPreviouslyUsed?: boolean;
+
+  @IsInt({ each: true })
+  @IsOptional()
+  @ApiProperty({ example: [1, 2, 3] })
+  @IsArray()
+  images?: number[] = [];
 }

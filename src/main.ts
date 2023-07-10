@@ -30,11 +30,9 @@ async function bootstrap() {
   const port = cs.get<number>(EnvVar.PORT);
 
   if (isDevelopment(cs.get<string>(EnvVar.ENV))) {
-    SwaggerModule.setup(
-      '/api/docs',
-      app.useGlobalFilters(new GlobalExceptionFilter(cs)),
-      createSwapiDocument(app),
-    );
+    SwaggerModule.setup('/api/docs', app, createSwapiDocument(app));
+  } else {
+    app.useGlobalFilters(new GlobalExceptionFilter(cs));
   }
 
   await app.listen(port, () => {

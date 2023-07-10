@@ -16,15 +16,27 @@ export class ArticleService {
     private readonly cs: ConfigService,
   ) {}
 
-  create(createArticleDto: CreateArticleDto): Promise<Article> {
-    return this.prisma.article.create({ data: createArticleDto });
+  async create({
+    images,
+    ...createArticleDto
+  }: CreateArticleDto): Promise<Article> {
+    return this.prisma.article.create({
+      data: {
+        ...createArticleDto,
+        images: {
+          connect: images.map((id) => ({ id })),
+        },
+      },
+      include: { images: true },
+    });
   }
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Article>> {
     const pag: IPag<Article> = {
       data: await this.prisma.article.findMany({
         take: opt.limit,
-        skip: opt.limit * opt.page,
+        skip: opt.limit * (opt.page - 1),
+        include: { images: true },
       }),
       count: await this.prisma.article.count(),
       route: `${
@@ -38,13 +50,23 @@ export class ArticleService {
   findOne(id: number): Promise<Article> {
     return this.prisma.article.findUnique({
       where: { id },
+      include: { images: true },
     });
   }
 
-  update(id: number, updateArticleDto: UpdateArticleDto): Promise<Article> {
-    return this.prisma.article.update({
+  async update(
+    id: number,
+    { images, ...updateArticleDto }: UpdateArticleDto,
+  ): Promise<Article> {
+    return await this.prisma.article.update({
       where: { id },
-      data: updateArticleDto,
+      data: {
+        ...updateArticleDto,
+        images: {
+          connect: images.map((id) => ({ id })),
+        },
+      },
+      include: { images: true },
     });
   }
 
