@@ -34,7 +34,7 @@ export class SaleService {
         include: { article: true },
       }),
       count: await this.prisma.sale.count(),
-      route: `${this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl}/api/sale`,
+      route: `${this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl}/api/sales`,
     };
 
     return Paginator.paginate(pag, opt);

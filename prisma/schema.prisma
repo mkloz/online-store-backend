@@ -25,6 +25,7 @@ model Article {
   updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
   images           File[]
   sale             Sale?
+  reviews          Review[]
 
   @@map("article")
 }
@@ -36,8 +37,7 @@ model File {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   articleId Int?     @map("article_id")
-
-  article Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("file")
 }
@@ -50,9 +50,20 @@ model Sale {
   activeTill DateTime @map("active_till")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
-
-  articleId Int?     @unique @map("article_id")
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  articleId  Int?     @unique @map("article_id")
+  article    Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("sale")
+}
+
+model Review {
+  id        Int      @id() @default(autoincrement())
+  text      String   @db.VarChar(3000)
+  stars     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  articleId Int?     @map("article_id")
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("review")
 }

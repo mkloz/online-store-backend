@@ -19,6 +19,7 @@ export class ArticleService {
   async create({
     images,
     sale,
+    reviews,
     ...createArticleDto
   }: CreateArticleDto): Promise<Article> {
     return this.prisma.article.create({
@@ -28,8 +29,11 @@ export class ArticleService {
           connect: images.map((id) => ({ id })),
         },
         sale: sale ? { connect: { id: sale } } : undefined,
+        reviews: {
+          connect: reviews.map((id) => ({ id })),
+        },
       },
-      include: { images: true, sale: true },
+      include: { images: true, sale: true, reviews: true },
     });
   }
 
@@ -38,12 +42,12 @@ export class ArticleService {
       data: await this.prisma.article.findMany({
         take: opt.limit,
         skip: opt.limit * (opt.page - 1),
-        include: { images: true, sale: true },
+        include: { images: true, sale: true, reviews: true },
       }),
       count: await this.prisma.article.count(),
       route: `${
         this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl
-      }/api/article`,
+      }/api/articles`,
     };
 
     return Paginator.paginate(pag, opt);
@@ -52,13 +56,13 @@ export class ArticleService {
   findOne(id: number): Promise<Article> {
     return this.prisma.article.findUnique({
       where: { id },
-      include: { images: true, sale: true },
+      include: { images: true, sale: true, reviews: true },
     });
   }
 
   async update(
     id: number,
-    { images, sale, ...updateArticleDto }: UpdateArticleDto,
+    { images, sale, reviews, ...updateArticleDto }: UpdateArticleDto,
   ): Promise<Article> {
     return await this.prisma.article.update({
       where: { id },
@@ -68,15 +72,18 @@ export class ArticleService {
           connect: images.map((id) => ({ id })),
         },
         sale: sale ? { connect: { id: sale } } : undefined,
+        reviews: {
+          connect: reviews.map((id) => ({ id })),
+        },
       },
-      include: { images: true, sale: true },
+      include: { images: true, sale: true, reviews: true },
     });
   }
 
   remove(id: number) {
     return this.prisma.article.delete({
       where: { id },
-      include: { images: true, sale: true },
+      include: { images: true, sale: true, reviews: true },
     });
   }
 }

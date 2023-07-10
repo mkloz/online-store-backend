@@ -58,8 +58,8 @@ export class ArticleController {
   @Patch(':id')
   @ApiArticleUpdate()
   update(
-    @Param() { id }: IDDto,
-    @Body(ArticleExistPipe, RelationsExistsPipe)
+    @Param(ArticleExistPipe) { id }: IDDto,
+    @Body(RelationsExistsPipe)
     updateArticleDto: UpdateArticleDto,
   ) {
     return this.articleService.update(id, updateArticleDto);

@@ -24,9 +24,10 @@ import {
 } from './docs';
 import { IDDto } from 'src/common/dto/id.dto';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
+import { SaleExistPipe } from './pipes/sale-exist.pipe';
 
 @ApiSale()
-@Controller('sale')
+@Controller('sales')
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 
@@ -45,19 +46,22 @@ export class SaleController {
 
   @Get(':id')
   @ApiSaleGetOne()
-  findOne(@Param() { id }: IDDto) {
+  findOne(@Param(SaleExistPipe) { id }: IDDto) {
     return this.saleService.findOne(+id);
   }
 
   @Patch(':id')
   @ApiSaleUpdate()
-  update(@Param() { id }: IDDto, @Body() updateSaleDto: UpdateSaleDto) {
+  update(
+    @Param(SaleExistPipe) { id }: IDDto,
+    @Body(RelationsExistsPipe) updateSaleDto: UpdateSaleDto,
+  ) {
     return this.saleService.update(id, updateSaleDto);
   }
 
   @Delete(':id')
   @ApiSaleDelete()
-  remove(@Param('id') id: string) {
-    return this.saleService.remove(+id);
+  remove(@Param(SaleExistPipe) { id }: IDDto) {
+    return this.saleService.remove(id);
   }
 }

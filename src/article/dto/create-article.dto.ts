@@ -45,17 +45,19 @@ export class CreateArticleDto {
 
   @IsBoolean()
   @IsOptional()
-  @ApiProperty({ example: false })
+  @ApiPropertyOptional({ example: false })
   isPreviouslyUsed?: boolean;
 
   @IsInt({ each: true })
   @IsOptional()
-  @ApiProperty({ example: [1, 2, 3] })
+  @ApiPropertyOptional({ example: [1, 2, 3] })
   @IsArray()
   images?: number[] = [];
 
   @IsInt()
   @IsOptional()
-  @ApiProperty({ example: 1 })
+  @ApiPropertyOptional({ example: 1 })
   sale?: number;
+  @ApiPropertyOptional({ example: [1, 2, 3] })
+  reviews?: number[] = [];
 }

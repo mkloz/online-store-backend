@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { File } from 'src/file/file.entity';
+import { Review } from 'src/review/entities/review.entity';
 import { Sale } from 'src/sale/entities/sale.entity';
 
 export class Article {
@@ -31,4 +32,6 @@ export class Article {
   images?: File[];
   @ApiPropertyOptional({ type: () => Sale })
   sale?: Sale;
+  @ApiPropertyOptional()
+  reviews?: Review[];
 }

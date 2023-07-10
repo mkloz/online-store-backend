@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  PipeTransform,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { CreateArticleDto } from '../dto/create-article.dto';
 import { PrismaService } from 'src/db/prisma.service';
 
@@ -25,6 +20,13 @@ export class RelationsExistsPipe
         where: { id: value.sale },
       });
       if (!sale) throw new BadRequestException('Sale does not exist');
+    }
+    if (value.reviews) {
+      const reviews = await this.prisma.review.findMany({
+        where: { id: { in: value.reviews } },
+      });
+      if (value.reviews.some((el) => !reviews.map((el) => el.id).includes(el)))
+        throw new BadRequestException('Review does not exist');
     }
     return value;
   }
