@@ -20,7 +20,7 @@ export class FilesValidator extends FileValidator {
     return isValiableSize && isValiableType;
   }
 
-  public buildErrorMessage(file: IFile): string {
+  public buildErrorMessage(): string {
     return 'Invalid file';
   }
 }

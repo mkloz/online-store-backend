@@ -53,4 +53,9 @@ export class CreateArticleDto {
   @ApiProperty({ example: [1, 2, 3] })
   @IsArray()
   images?: number[] = [];
+
+  @IsInt()
+  @IsOptional()
+  @ApiProperty({ example: 1 })
+  sale?: number;
 }

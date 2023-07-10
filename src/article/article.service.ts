@@ -18,6 +18,7 @@ export class ArticleService {
 
   async create({
     images,
+    sale,
     ...createArticleDto
   }: CreateArticleDto): Promise<Article> {
     return this.prisma.article.create({
@@ -26,8 +27,9 @@ export class ArticleService {
         images: {
           connect: images.map((id) => ({ id })),
         },
+        sale: sale ? { connect: { id: sale } } : undefined,
       },
-      include: { images: true },
+      include: { images: true, sale: true },
     });
   }
 
@@ -36,7 +38,7 @@ export class ArticleService {
       data: await this.prisma.article.findMany({
         take: opt.limit,
         skip: opt.limit * (opt.page - 1),
-        include: { images: true },
+        include: { images: true, sale: true },
       }),
       count: await this.prisma.article.count(),
       route: `${
@@ -50,13 +52,13 @@ export class ArticleService {
   findOne(id: number): Promise<Article> {
     return this.prisma.article.findUnique({
       where: { id },
-      include: { images: true },
+      include: { images: true, sale: true },
     });
   }
 
   async update(
     id: number,
-    { images, ...updateArticleDto }: UpdateArticleDto,
+    { images, sale, ...updateArticleDto }: UpdateArticleDto,
   ): Promise<Article> {
     return await this.prisma.article.update({
       where: { id },
@@ -65,12 +67,16 @@ export class ArticleService {
         images: {
           connect: images.map((id) => ({ id })),
         },
+        sale: sale ? { connect: { id: sale } } : undefined,
       },
-      include: { images: true },
+      include: { images: true, sale: true },
     });
   }
 
   remove(id: number) {
-    return this.prisma.article.delete({ where: { id } });
+    return this.prisma.article.delete({
+      where: { id },
+      include: { images: true, sale: true },
+    });
   }
 }

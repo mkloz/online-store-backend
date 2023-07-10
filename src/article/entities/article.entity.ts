@@ -1,7 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
-import { ID } from 'src/common/common.interface';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { File } from 'src/file/file.entity';
+import { Sale } from 'src/sale/entities/sale.entity';
 
 export class Article {
   @ApiProperty({ example: 1 })
@@ -30,4 +29,6 @@ export class Article {
   updatedAt: Date;
   @ApiProperty()
   images?: File[];
+  @ApiPropertyOptional({ type: () => Sale })
+  sale?: Sale;
 }

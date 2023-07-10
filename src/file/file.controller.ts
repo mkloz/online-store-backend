@@ -9,7 +9,6 @@ import {
   Get,
   UploadedFiles,
   ParseFilePipe,
-  Logger,
 } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -25,7 +24,6 @@ import { IFile } from './file.interface';
 import { ApiRemoveFile } from './docs/api-remove-file.decorator';
 import { ApiGetFile } from './docs/api-get-file.decorator';
 import { ID } from 'src/common/common.interface';
-import { json } from 'stream/consumers';
 
 export const FILES_FIELD = 'files';
 export const FIVE_MEGABYTES = 5000000;

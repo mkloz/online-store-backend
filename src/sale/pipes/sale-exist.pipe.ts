@@ -6,10 +6,10 @@ import { PrismaService } from 'src/db/prisma.service';
 export class ArticleExistPipe implements PipeTransform<ID, Promise<ID>> {
   constructor(private readonly pisma: PrismaService) {}
   async transform(value: ID) {
-    const fromDB = await this.pisma.article.findUnique({
+    const fromDB = await this.pisma.sale.findUnique({
       where: { id: value.id },
     });
-    if (!fromDB) throw new NotFoundException('Article does not exist');
+    if (!fromDB) throw new NotFoundException('Sale does not exist');
     return value;
   }
 }

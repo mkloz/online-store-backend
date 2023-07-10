@@ -1,5 +1,4 @@
 import {
-  ArgumentMetadata,
   BadRequestException,
   Injectable,
   Logger,
@@ -13,18 +12,20 @@ export class RelationsExistsPipe
   implements PipeTransform<CreateArticleDto, Promise<CreateArticleDto>>
 {
   constructor(private readonly prisma: PrismaService) {}
-  async transform(value: CreateArticleDto, metadata: ArgumentMetadata) {
-    if (!value.images.length) {
-      return value;
+  async transform(value: CreateArticleDto) {
+    if (value.images.length) {
+      const files = await this.prisma.file.findMany({
+        where: { id: { in: value.images } },
+      });
+      if (value.images.some((el) => !files.map((el) => el.id).includes(el)))
+        throw new BadRequestException('File does not exist');
     }
-    const files = await this.prisma.file.findMany({
-      where: { id: { in: value.images } },
-    });
-    Logger.log(files);
-    Logger.log(value.images);
-    if (value.images.some((el) => !files.map((el) => el.id).includes(el)))
-      throw new BadRequestException('File does not exist');
-
+    if (value.sale) {
+      const sale = await this.prisma.sale.findUnique({
+        where: { id: value.sale },
+      });
+      if (!sale) throw new BadRequestException('Sale does not exist');
+    }
     return value;
   }
 }

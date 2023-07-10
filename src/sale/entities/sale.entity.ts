@@ -1,24 +1,31 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Article } from 'src/article/entities/article.entity';
 
-export class File {
+export class Sale {
   @ApiProperty({ example: 1 })
   id: number;
 
-  @ApiProperty({ example: 'c2c572fc-2075-4f58-afc8-575cbbfe6223' })
-  name: string;
+  @ApiProperty()
+  reason: string;
 
-  @ApiProperty({
-    example: 'https://host:port/c2c572fc-2075-4f58-afc8-575cbbfe6223',
-  })
-  url: string;
+  @ApiProperty()
+  oldPrise: number;
 
-  @ApiPropertyOptional({ type: Article })
+  @ApiProperty()
+  newPrise: number;
+
+  @ApiProperty()
+  activeTill: Date;
+
+  @ApiPropertyOptional({ type: () => Article })
   article?: Article;
+
   @ApiPropertyOptional()
   articleId: number;
+
   @ApiProperty()
   createdAt: Date;
+
   @ApiProperty()
   updatedAt: Date;
 }
