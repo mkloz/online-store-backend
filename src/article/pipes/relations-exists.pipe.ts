@@ -46,10 +46,12 @@ export class RelationsExistsPipe
     }
   }
   async transform(value: CreateArticleDto) {
-    this.checkImagesExistance(value.images);
-    this.checkSaleExistance(value.sale);
-    this.checkReviewsExistance(value.reviews);
-    this.checkCategoriesExistance(value.categories);
+    await Promise.all([
+      this.checkImagesExistance(value.images),
+      this.checkSaleExistance(value.sale),
+      this.checkReviewsExistance(value.reviews),
+      this.checkCategoriesExistance(value.categories),
+    ]);
 
     return value;
   }
