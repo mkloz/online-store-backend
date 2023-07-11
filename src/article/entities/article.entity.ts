@@ -1,9 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Category } from 'src/category/entities/category.entity';
 import { File } from 'src/file/file.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { Sale } from 'src/sale/entities/sale.entity';
+import { Article as IArticle } from '@prisma/client';
 
-export class Article {
+export class Article implements IArticle {
   @ApiProperty({ example: 1 })
   id: number;
   @ApiProperty({ example: 'bike' })
@@ -34,4 +36,6 @@ export class Article {
   sale?: Sale;
   @ApiPropertyOptional()
   reviews?: Review[];
+  @ApiPropertyOptional()
+  categories?: Category[];
 }

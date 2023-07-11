@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Article } from 'src/article/entities/article.entity';
+import { File as IFile } from '@prisma/client';
 
-export class File {
+export class File implements IFile {
   @ApiProperty({ example: 1 })
   id: number;
 

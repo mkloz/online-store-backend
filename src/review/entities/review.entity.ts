@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Article } from 'src/article/entities/article.entity';
+import { Review as IReview } from '@prisma/client';
 
-export class Review {
+export class Review implements IReview {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -14,7 +15,7 @@ export class Review {
   @ApiProperty()
   updatedAt: Date;
   @ApiPropertyOptional()
-  articleId?: number;
+  articleId: number;
   @ApiPropertyOptional({ type: () => Article })
   article?: Article;
 }

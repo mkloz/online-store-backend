@@ -11,21 +11,22 @@ datasource db {
 }
 
 model Article {
-  id               Int      @id() @default(autoincrement())
-  type             String   @db.Char(40)
+  id               Int        @id() @default(autoincrement())
+  type             String     @db.Char(40)
   price            Int
-  discription      String   @db.VarChar(3000)
-  name             String   @unique() @db.Char(255)
-  count            Int      @default(1)
-  ageGroup         String   @map("age_group") @db.Char(100)
-  views            Int      @default(0)
-  gender           String   @db.Char(40)
-  isPreviouslyUsed Boolean  @default(false) @map("is_previously_used")
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+  discription      String     @db.VarChar(3000)
+  name             String     @unique() @db.Char(255)
+  count            Int        @default(1)
+  ageGroup         String     @map("age_group") @db.Char(100)
+  views            Int        @default(0)
+  gender           String     @db.Char(40)
+  isPreviouslyUsed Boolean    @default(false) @map("is_previously_used")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @default(now()) @updatedAt @map("updated_at")
   images           File[]
   sale             Sale?
   reviews          Review[]
+  categories       Category[] @relation(name: "_article_category")
 
   @@map("article")
 }
@@ -66,4 +67,12 @@ model Review {
   article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("review")
+}
+
+model Category {
+  id       Int       @id() @default(autoincrement())
+  name     String    @db.Char(255)
+  articles Article[] @relation(name: "_article_category")
+
+  @@map("category")
 }

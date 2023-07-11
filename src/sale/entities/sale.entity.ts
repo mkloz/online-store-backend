@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Article } from 'src/article/entities/article.entity';
-
-export class Sale {
+import { Sale as ISale } from '@prisma/client';
+export class Sale implements ISale {
   @ApiProperty({ example: 1 })
   id: number;
 

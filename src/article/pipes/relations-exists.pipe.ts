@@ -7,27 +7,50 @@ export class RelationsExistsPipe
   implements PipeTransform<CreateArticleDto, Promise<CreateArticleDto>>
 {
   constructor(private readonly prisma: PrismaService) {}
-  async transform(value: CreateArticleDto) {
-    if (value.images.length) {
+
+  async checkImagesExistance(images: number[]) {
+    if (images.length) {
       const files = await this.prisma.file.findMany({
-        where: { id: { in: value.images } },
+        where: { id: { in: images } },
       });
-      if (value.images.some((el) => !files.map((el) => el.id).includes(el)))
+      if (images.some((el) => !files.map((el) => el.id).includes(el)))
         throw new BadRequestException('File does not exist');
     }
-    if (value.sale) {
+  }
+  async checkSaleExistance(value: number) {
+    if (value) {
       const sale = await this.prisma.sale.findUnique({
-        where: { id: value.sale },
+        where: { id: value },
       });
       if (!sale) throw new BadRequestException('Sale does not exist');
     }
-    if (value.reviews) {
+  }
+  async checkReviewsExistance(reviewsArr: number[]) {
+    if (reviewsArr.length) {
       const reviews = await this.prisma.review.findMany({
-        where: { id: { in: value.reviews } },
+        where: { id: { in: reviewsArr } },
       });
-      if (value.reviews.some((el) => !reviews.map((el) => el.id).includes(el)))
+      if (reviewsArr.some((el) => !reviews.map((el) => el.id).includes(el)))
         throw new BadRequestException('Review does not exist');
     }
+  }
+  async checkCategoriesExistance(categoriesArr: number[]) {
+    if (categoriesArr.length) {
+      const categories = await this.prisma.category.findMany({
+        where: { id: { in: categoriesArr } },
+      });
+      if (
+        categoriesArr.some((el) => !categories.map((el) => el.id).includes(el))
+      )
+        throw new BadRequestException('Category does not exist');
+    }
+  }
+  async transform(value: CreateArticleDto) {
+    this.checkImagesExistance(value.images);
+    this.checkSaleExistance(value.sale);
+    this.checkReviewsExistance(value.reviews);
+    this.checkCategoriesExistance(value.categories);
+
     return value;
   }
 }

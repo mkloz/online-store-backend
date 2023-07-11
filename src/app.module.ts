@@ -5,14 +5,16 @@ import { getEnvVar } from './common/config/config';
 import { FileModule } from './file/file.module';
 import { SaleModule } from './sale/sale.module';
 import { ReviewModule } from './review/review.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
-    ArticleModule,
     FileModule,
-    ConfigModule.forRoot({ isGlobal: true, load: [getEnvVar] }),
+    ArticleModule,
     SaleModule,
     ReviewModule,
+    CategoryModule,
+    ConfigModule.forRoot({ isGlobal: true, load: [getEnvVar] }),
   ],
 })
 export class AppModule {}
