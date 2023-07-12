@@ -8,6 +8,15 @@ export function createSwapiDocument(app: NestExpressApplication) {
     .setTitle('Online Store API')
     .setDescription('API for online store')
     .setVersion('1.0')
+    .setLicense('LICENSE', 'https://github.com/Kloz-Mykhail/online-store')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    })
     .build();
 
   return SwaggerModule.createDocument(app, cfg, {

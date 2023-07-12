@@ -9,6 +9,7 @@ import {
   Query,
   HttpStatus,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -27,13 +28,19 @@ import {
 import { RelationsExistsPipe } from './pipes/relations-exists.pipe';
 import { ArticleNotExistPipe } from './pipes/article-not-exist.pipe';
 import { ArticleExistPipe } from './pipes/article-exist.pipe';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from '@prisma/client';
+import { ApiArticleIncrement } from './docs/api-article-increment.decorator';
+import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiArticle()
 @Controller('articles')
+@UseGuards(RoleAuthGuard)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.CREATED)
   @ApiArticleCreate()
   create(
@@ -41,6 +48,12 @@ export class ArticleController {
     createArticleDto: CreateArticleDto,
   ): Promise<Article> {
     return this.articleService.create(createArticleDto);
+  }
+
+  @Post('/increment')
+  @ApiArticleIncrement()
+  incrementViews(@Query(ArticleExistPipe) { id }: IDDto) {
+    return this.articleService.incrementViews(id);
   }
 
   @Get()
@@ -57,6 +70,7 @@ export class ArticleController {
 
   @Patch(':id')
   @ApiArticleUpdate()
+  @Roles(Role.ADMIN)
   update(
     @Param(ArticleExistPipe) { id }: IDDto,
     @Body(RelationsExistsPipe)
@@ -67,6 +81,7 @@ export class ArticleController {
 
   @Delete(':id')
   @ApiArticleDelete()
+  @Roles(Role.ADMIN)
   remove(@Param(ArticleExistPipe) { id }: IDDto) {
     return this.articleService.remove(id);
   }

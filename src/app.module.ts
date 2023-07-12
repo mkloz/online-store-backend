@@ -6,10 +6,12 @@ import { FileModule } from './file/file.module';
 import { SaleModule } from './sale/sale.module';
 import { ReviewModule } from './review/review.module';
 import { CategoryModule } from './category/category.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     FileModule,
+    AuthModule,
     ArticleModule,
     SaleModule,
     ReviewModule,

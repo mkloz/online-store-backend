@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -25,13 +26,19 @@ import { ReviewExistPipe } from './pipes/review-exist.pipe';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { Review } from './entities/review.entity';
 import { Paginated } from 'src/common/pagination/paginated.dto';
+import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
+import { Role } from '@prisma/client';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { MeAuthGuard } from 'src/auth/guards/me-auth.guard';
 
 @ApiReview()
+@UseGuards(RoleAuthGuard)
 @Controller('reviews')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post()
+  @Roles(Role.USER, Role.ADMIN)
   @ApiReviewCreate()
   create(
     @Body(RelationsExistsPipe) createReviewDto: CreateReviewDto,
@@ -52,6 +59,7 @@ export class ReviewController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   @ApiReviewUpdate()
   update(
     @Param(ReviewExistPipe) { id }: IDDto,
@@ -61,6 +69,8 @@ export class ReviewController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(MeAuthGuard)
   @ApiReviewDelete()
   remove(@Param(ReviewExistPipe) { id }: IDDto): Promise<Review> {
     return this.reviewService.remove(id);

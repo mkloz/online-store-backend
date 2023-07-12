@@ -5,6 +5,8 @@ import { File } from '../file.entity';
 
 export const ApiGetFile = () =>
   applyDecorators(
-    ApiOperation({ summary: 'Get data of file' }),
+    ApiOperation({
+      summary: 'Get data about file from db. [open for everyone]',
+    }),
     ApiResponseData(File),
   );

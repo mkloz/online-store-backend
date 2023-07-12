@@ -6,5 +6,7 @@ import { Review } from '../entities/review.entity';
 export const ApiReviewGetMany = () =>
   applyDecorators(
     ApiPaginatedResponse(Review),
-    ApiOperation({ summary: 'Get paginated list of review from db' }),
+    ApiOperation({
+      summary: 'Get paginated list of review from db. [open for everyone]',
+    }),
   );

@@ -6,5 +6,7 @@ import { Sale } from '../entities/sale.entity';
 export const ApiSaleGetMany = () =>
   applyDecorators(
     ApiPaginatedResponse(Sale),
-    ApiOperation({ summary: 'Get paginated list of sales from db' }),
+    ApiOperation({
+      summary: 'Get paginated list of sales from db. [open for everyone]',
+    }),
   );

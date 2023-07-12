@@ -6,5 +6,7 @@ import { ApiOperation } from '@nestjs/swagger';
 export const ApiArticleGetMany = () =>
   applyDecorators(
     ApiPaginatedResponse(Article),
-    ApiOperation({ summary: 'Get paginated list of article from db' }),
+    ApiOperation({
+      summary: 'Get paginated list of article from db. [open for everyone]',
+    }),
   );

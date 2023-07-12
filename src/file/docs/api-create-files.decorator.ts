@@ -1,12 +1,20 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { ApiResponseDataArray } from 'src/common/docs/data-response-array.decorator';
 import { File } from '../file.entity';
 
 export const ApiCreateFiles = () =>
   applyDecorators(
     ApiConsumes('multipart/form-data'),
-    ApiOperation({ summary: 'Upload file' }),
+    ApiBearerAuth(),
+    ApiOperation({
+      summary: 'Upload file to AWS and save info in db. [open for: ADMIN]',
+    }),
     ApiResponseDataArray(File, HttpStatus.CREATED),
     ApiBody({
       schema: {

@@ -16,6 +16,12 @@ export class ArticleService {
     private readonly cs: ConfigService,
   ) {}
 
+  async incrementViews(id: number): Promise<Article> {
+    const { views } = await this.prisma.article.findUnique({ where: { id } });
+
+    return this.update(id, { views: views + 1 });
+  }
+
   async create({
     images,
     sale,

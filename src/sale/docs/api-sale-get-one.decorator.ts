@@ -6,5 +6,7 @@ import { Sale } from '../entities/sale.entity';
 export const ApiSaleGetOne = () =>
   applyDecorators(
     ApiResponseData(Sale, HttpStatus.OK),
-    ApiOperation({ summary: 'Get one sale from db by id' }),
+    ApiOperation({
+      summary: 'Get one sale from db by id. [open for everyone]',
+    }),
   );

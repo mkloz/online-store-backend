@@ -6,5 +6,7 @@ import { ApiOperation } from '@nestjs/swagger';
 export const ApiArticleGetOne = () =>
   applyDecorators(
     ApiResponseData(Article, HttpStatus.OK),
-    ApiOperation({ summary: 'Get one article from db by id' }),
+    ApiOperation({
+      summary: 'Get one article from db by id. [open for everyone]',
+    }),
   );
