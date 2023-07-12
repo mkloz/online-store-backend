@@ -35,12 +35,12 @@ import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiArticle()
 @Controller('articles')
-@UseGuards(RoleAuthGuard)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post()
   @Roles(Role.ADMIN)
+  @UseGuards(RoleAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiArticleCreate()
   create(
@@ -69,6 +69,7 @@ export class ArticleController {
   }
 
   @Patch(':id')
+  @UseGuards(RoleAuthGuard)
   @ApiArticleUpdate()
   @Roles(Role.ADMIN)
   update(
@@ -81,6 +82,7 @@ export class ArticleController {
 
   @Delete(':id')
   @ApiArticleDelete()
+  @UseGuards(RoleAuthGuard)
   @Roles(Role.ADMIN)
   remove(@Param(ArticleExistPipe) { id }: IDDto) {
     return this.articleService.remove(id);

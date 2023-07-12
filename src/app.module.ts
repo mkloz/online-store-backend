@@ -7,6 +7,7 @@ import { SaleModule } from './sale/sale.module';
 import { ReviewModule } from './review/review.module';
 import { CategoryModule } from './category/category.module';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
     SaleModule,
     ReviewModule,
     CategoryModule,
+    UserModule,
     ConfigModule.forRoot({ isGlobal: true, load: [getEnvVar] }),
   ],
 })

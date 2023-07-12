@@ -29,7 +29,6 @@ export const FILES_FIELD = 'files';
 export const FIVE_MEGABYTES = 5000000;
 
 @ApiFile()
-@UseGuards(RoleAuthGuard)
 @Controller('files')
 export class FileController {
   public static TYPE_OF_FILES = [
@@ -50,6 +49,7 @@ export class FileController {
 
   @Post()
   @Roles(Role.ADMIN)
+  @UseGuards(RoleAuthGuard)
   @ApiCreateFiles()
   @UseInterceptors(
     FilesInterceptor(FILES_FIELD, FileController.MAX_COUNT_FILES),
@@ -78,6 +78,7 @@ export class FileController {
 
   @Delete(':id')
   @ApiRemoveFile()
+  @UseGuards(RoleAuthGuard)
   @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.OK)
   public remove(@Param() { id }: IDDto): Promise<ID> {

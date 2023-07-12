@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { Review } from 'src/review/entities/review.entity';
 
 export class User {
   @ApiProperty({ example: 1 })
@@ -14,7 +15,7 @@ export class User {
   @ApiProperty({ example: 'email@gmail.com' })
   email: string;
 
-  @ApiProperty({ example: 'SecretPasword12#' })
+  @ApiPropertyOptional({ example: 'SecretPasword12#' })
   password?: string;
 
   @ApiProperty({
@@ -22,4 +23,7 @@ export class User {
     example: 'user',
   })
   role: Role;
+
+  @ApiProperty({ type: Review })
+  reviews?: Review[];
 }

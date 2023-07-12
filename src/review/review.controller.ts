@@ -26,13 +26,12 @@ import { ReviewExistPipe } from './pipes/review-exist.pipe';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { Review } from './entities/review.entity';
 import { Paginated } from 'src/common/pagination/paginated.dto';
-import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
 import { Role } from '@prisma/client';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { MeAuthGuard } from 'src/auth/guards/me-auth.guard';
+import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
+import { OwnerOrRoleAuthGuard } from './pipes/owner-or-role-auth.guard';
 
 @ApiReview()
-@UseGuards(RoleAuthGuard)
 @Controller('reviews')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
@@ -40,6 +39,7 @@ export class ReviewController {
   @Post()
   @Roles(Role.USER, Role.ADMIN)
   @ApiReviewCreate()
+  @UseGuards(RoleAuthGuard)
   create(
     @Body(RelationsExistsPipe) createReviewDto: CreateReviewDto,
   ): Promise<Review> {
@@ -60,6 +60,7 @@ export class ReviewController {
 
   @Patch(':id')
   @Roles(Role.ADMIN)
+  @UseGuards(OwnerOrRoleAuthGuard)
   @ApiReviewUpdate()
   update(
     @Param(ReviewExistPipe) { id }: IDDto,
@@ -70,7 +71,7 @@ export class ReviewController {
 
   @Delete(':id')
   @Roles(Role.ADMIN)
-  @UseGuards(MeAuthGuard)
+  @UseGuards(OwnerOrRoleAuthGuard)
   @ApiReviewDelete()
   remove(@Param(ReviewExistPipe) { id }: IDDto): Promise<Review> {
     return this.reviewService.remove(id);

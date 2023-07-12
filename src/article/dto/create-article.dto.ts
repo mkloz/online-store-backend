@@ -59,9 +59,15 @@ export class CreateArticleDto {
   @ApiPropertyOptional({ example: 1 })
   sale?: number;
 
+  @IsInt({ each: true })
+  @IsOptional()
   @ApiPropertyOptional({ example: [1, 2, 3] })
+  @IsArray()
   reviews?: number[] = [];
 
+  @IsInt({ each: true })
+  @IsOptional()
   @ApiPropertyOptional({ example: [1, 2, 3] })
+  @IsArray()
   categories?: number[] = [];
 }

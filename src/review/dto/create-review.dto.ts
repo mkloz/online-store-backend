@@ -22,4 +22,8 @@ export class CreateReviewDto {
   @IsOptional()
   @ApiPropertyOptional()
   article?: number;
+  @IsInt()
+  @IsOptional()
+  @ApiPropertyOptional()
+  author?: number;
 }

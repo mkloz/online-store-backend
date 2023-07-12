@@ -31,13 +31,13 @@ import { Role } from '@prisma/client';
 import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiSale()
-@UseGuards(RoleAuthGuard)
 @Controller('sales')
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(RoleAuthGuard)
   @ApiSaleCreate()
   @Roles(Role.ADMIN)
   create(@Body(RelationsExistsPipe) createSaleDto: CreateSaleDto) {
@@ -58,6 +58,7 @@ export class SaleController {
 
   @Patch(':id')
   @ApiSaleUpdate()
+  @UseGuards(RoleAuthGuard)
   @Roles(Role.ADMIN)
   update(
     @Param(SaleExistPipe) { id }: IDDto,
@@ -68,6 +69,7 @@ export class SaleController {
 
   @Delete(':id')
   @ApiSaleDelete()
+  @UseGuards(RoleAuthGuard)
   @Roles(Role.ADMIN)
   remove(@Param(SaleExistPipe) { id }: IDDto) {
     return this.saleService.remove(id);

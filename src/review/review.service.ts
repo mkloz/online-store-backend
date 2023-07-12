@@ -16,13 +16,18 @@ export class ReviewService {
     private readonly cs: ConfigService,
   ) {}
 
-  create({ article, ...createReviewDto }: CreateReviewDto): Promise<Review> {
+  create({
+    article,
+    author,
+    ...createReviewDto
+  }: CreateReviewDto): Promise<Review> {
     return this.prisma.review.create({
       data: {
         ...createReviewDto,
         article: article ? { connect: { id: article } } : undefined,
+        author: author ? { connect: { id: author } } : undefined,
       },
-      include: { article: true },
+      include: { article: true, author: true },
     });
   }
 
@@ -31,7 +36,7 @@ export class ReviewService {
       data: await this.prisma.review.findMany({
         take: opt.limit,
         skip: opt.limit * (opt.page - 1),
-        include: { article: true },
+        include: { article: true, author: true },
       }),
       count: await this.prisma.review.count(),
       route: `${
@@ -45,21 +50,22 @@ export class ReviewService {
   findOne(id: number): Promise<Review> {
     return this.prisma.review.findUnique({
       where: { id },
-      include: { article: true },
+      include: { article: true, author: true },
     });
   }
 
   update(
     id: number,
-    { article, ...updateReviewDto }: UpdateReviewDto,
+    { article, author, ...updateReviewDto }: UpdateReviewDto,
   ): Promise<Review> {
     return this.prisma.review.update({
       where: { id },
       data: {
         ...updateReviewDto,
         article: article ? { connect: { id: article } } : undefined,
+        author: author ? { connect: { id: author } } : undefined,
       },
-      include: { article: true },
+      include: { article: true, author: true },
     });
   }
 

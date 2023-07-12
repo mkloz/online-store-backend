@@ -14,6 +14,12 @@ export class RelationsExistsPipe
       });
       if (!article) throw new BadRequestException('Article does not exist');
     }
+    if (value.author) {
+      const author = await this.prisma.user.findUnique({
+        where: { id: value.author },
+      });
+      if (!author) throw new BadRequestException('Author does not exist');
+    }
 
     return value;
   }

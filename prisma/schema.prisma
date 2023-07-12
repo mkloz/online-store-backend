@@ -65,6 +65,8 @@ model Review {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   articleId Int?     @map("article_id")
   article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId  Int?     @map("author_id")
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("review")
 }
@@ -83,10 +85,11 @@ enum Role {
 }
 
 model User {
-  id        Int     @id() @default(autoincrement())
-  firstName String  @map("first_name") @db.Char(255)
-  lastName  String  @map("last_name") @db.Char(255)
-  password  String? @db.Char(255)
-  email     String  @unique() @db.Char(255)
-  role      Role    @default(USER)
+  id        Int      @id() @default(autoincrement())
+  firstName String   @map("first_name") @db.Char(255)
+  lastName  String   @map("last_name") @db.Char(255)
+  password  String?  @db.Char(255)
+  email     String   @unique() @db.Char(255)
+  role      Role     @default(USER)
+  reviews   Review[]
 }

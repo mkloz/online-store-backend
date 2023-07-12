@@ -1,15 +1,7 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  ClassSerializerInterceptor,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
-import { UserNotExistPipe } from './user/user-not-exist.pipe';
+import { UserNotExistPipe } from '../user/pipes/user-not-exist.pipe';
 import { TokensDto } from './dto/tokens.dto';
 import { AuthService } from './auth.service';
 import { RefreshDto } from './dto/refresh.dto';
@@ -21,7 +13,6 @@ import { ApiRefresh } from './docs/api-refresh.decorator';
 @ApiTags('Authorization')
 @Controller('auth')
 @ApiExtraModels(TokensDto)
-@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authServise: AuthService) {}
 

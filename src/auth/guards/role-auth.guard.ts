@@ -1,8 +1,4 @@
-import {
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -41,6 +37,6 @@ export class RoleAuthGuard extends AuthGuard {
       return true;
     }
 
-    throw new ForbiddenException('Access olny for special roles');
+    return false;
   }
 }
