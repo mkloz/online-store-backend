@@ -1,9 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Article } from 'src/article/entities/article.entity';
+import {
+  Article,
+  ArticleDiscription,
+} from 'src/article/entities/article.entity';
 import { Review as IReview } from '@prisma/client';
-import { User } from 'src/user/user.entity';
+import { User, UserDiscription } from 'src/user/user.entity';
+import { Exclude } from 'class-transformer';
 
-export class Review implements IReview {
+export class ReviewDiscription {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -11,16 +15,25 @@ export class Review implements IReview {
   text: string;
   @ApiProperty({ example: 5 })
   stars: number;
-  @ApiProperty()
-  createdAt: Date;
-  @ApiProperty()
-  updatedAt: Date;
-  @ApiPropertyOptional()
-  articleId: number;
-  @ApiPropertyOptional({ type: () => Article })
+}
+
+export class Review extends ReviewDiscription implements IReview {
+  @ApiPropertyOptional({ type: () => ArticleDiscription })
   article?: Article;
-  @ApiPropertyOptional()
-  authorId: number;
-  @ApiPropertyOptional({ type: () => User })
+  @ApiPropertyOptional({ type: () => UserDiscription })
   author?: User;
+
+  @Exclude()
+  articleId: number;
+  @Exclude()
+  authorId: number;
+  @Exclude()
+  createdAt: Date;
+  @Exclude()
+  updatedAt: Date;
+
+  constructor(partial: Partial<Review>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

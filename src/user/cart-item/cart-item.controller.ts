@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -7,6 +8,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { User as UserPayload } from '../user.decorator';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
@@ -30,6 +32,7 @@ import { ApiUser } from '../docs';
 
 @ApiUser()
 @Controller('user/me/cart')
+@UseInterceptors(ClassSerializerInterceptor)
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 

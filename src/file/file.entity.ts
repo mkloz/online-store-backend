@@ -1,8 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Article } from 'src/article/entities/article.entity';
+import {
+  Article,
+  ArticleDiscription,
+} from 'src/article/entities/article.entity';
 import { File as IFile } from '@prisma/client';
+import { Exclude } from 'class-transformer';
 
-export class File implements IFile {
+export class FileDiscription {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -13,13 +17,21 @@ export class File implements IFile {
     example: 'https://host:port/c2c572fc-2075-4f58-afc8-575cbbfe6223',
   })
   url: string;
+}
 
-  @ApiPropertyOptional({ type: Article })
+export class File extends FileDiscription implements IFile {
+  @ApiPropertyOptional({ type: () => ArticleDiscription })
   article?: Article;
-  @ApiPropertyOptional()
+
+  @Exclude()
   articleId: number;
-  @ApiProperty()
+  @Exclude()
   createdAt: Date;
-  @ApiProperty()
+  @Exclude()
   updatedAt: Date;
+
+  constructor(partial: Partial<File>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

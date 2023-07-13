@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { File } from './file.entity';
 import { FileS3Service } from './aws/file-s3.service';
-import { ID } from 'src/common/common.interface';
 import { PrismaService } from 'src/db/prisma.service';
 @Injectable()
 export class FileService {
@@ -14,9 +13,11 @@ export class FileService {
     return Promise.all(
       files.map(async (file) => {
         const data = await this.s3Service.addFile(file);
-        return await this.prisma.file.create({
-          data,
-        });
+        return new File(
+          await this.prisma.file.create({
+            data,
+          }),
+        );
       }),
     );
   }
@@ -28,17 +29,16 @@ export class FileService {
       throw new NotFoundException('File not found');
     }
 
-    return value;
+    return new File(value);
   }
 
-  public async remove(id: number): Promise<ID> {
+  public async remove(id: number): Promise<File> {
     const ent = await this.prisma.file.findUnique({ where: { id } });
     if (!ent) {
       throw new NotFoundException();
     }
     await this.s3Service.removeFile(ent.name);
-    await this.prisma.file.delete({ where: { id } });
 
-    return { id };
+    return new File(await this.prisma.file.delete({ where: { id } }));
   }
 }

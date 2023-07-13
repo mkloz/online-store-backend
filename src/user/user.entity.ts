@@ -1,8 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
-import { Review } from 'src/review/entities/review.entity';
-
-export class User {
+import { Exclude } from 'class-transformer';
+import { Review, ReviewDiscription } from 'src/review/entities/review.entity';
+import { User as IUser } from '@prisma/client';
+export class UserDiscription {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -15,15 +16,21 @@ export class User {
   @ApiProperty({ example: 'email@gmail.com' })
   email: string;
 
-  @ApiPropertyOptional({ example: 'SecretPasword12#' })
-  password?: string;
-
   @ApiProperty({
     enum: Role,
     example: 'user',
   })
   role: Role;
-
-  @ApiProperty({ type: Review })
+}
+export class User extends UserDiscription implements Omit<IUser, 'password'> {
+  @ApiPropertyOptional({ type: () => [ReviewDiscription] })
   reviews?: Review[];
+
+  @Exclude()
+  password?: string;
+
+  constructor(partial: Partial<User>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

@@ -29,31 +29,40 @@ export class ArticleService {
     categories,
     ...createArticleDto
   }: CreateArticleDto): Promise<Article> {
-    return this.prisma.article.create({
-      data: {
-        ...createArticleDto,
-        images: {
-          connect: images.map((id) => ({ id })),
+    return new Article(
+      await this.prisma.article.create({
+        data: {
+          ...createArticleDto,
+          images: {
+            connect: images.map((id) => ({ id })),
+          },
+          sale: sale ? { connect: { id: sale } } : undefined,
+          reviews: {
+            connect: reviews.map((id) => ({ id })),
+          },
+          categories: {
+            connect: categories.map((id) => ({ id })),
+          },
         },
-        sale: sale ? { connect: { id: sale } } : undefined,
-        reviews: {
-          connect: reviews.map((id) => ({ id })),
-        },
-        categories: {
-          connect: categories.map((id) => ({ id })),
-        },
-      },
-      include: { images: true, sale: true, reviews: true, categories: true },
-    });
+        include: { images: true, sale: true, reviews: true, categories: true },
+      }),
+    );
   }
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Article>> {
     const pag: IPag<Article> = {
-      data: await this.prisma.article.findMany({
-        take: opt.limit,
-        skip: opt.limit * (opt.page - 1),
-        include: { images: true, sale: true, reviews: true, categories: true },
-      }),
+      data: (
+        await this.prisma.article.findMany({
+          take: opt.limit,
+          skip: opt.limit * (opt.page - 1),
+          include: {
+            images: true,
+            sale: true,
+            reviews: true,
+            categories: true,
+          },
+        })
+      ).map((el) => new Article(el)),
       count: await this.prisma.article.count(),
       route: `${
         this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl
@@ -63,11 +72,13 @@ export class ArticleService {
     return Paginator.paginate(pag, opt);
   }
 
-  findOne(id: number): Promise<Article> {
-    return this.prisma.article.findUnique({
-      where: { id },
-      include: { images: true, sale: true, reviews: true, categories: true },
-    });
+  async findOne(id: number): Promise<Article> {
+    return new Article(
+      await this.prisma.article.findUnique({
+        where: { id },
+        include: { images: true, sale: true, reviews: true, categories: true },
+      }),
+    );
   }
 
   async update(
@@ -80,29 +91,33 @@ export class ArticleService {
       ...updateArticleDto
     }: UpdateArticleDto,
   ): Promise<Article> {
-    return await this.prisma.article.update({
-      where: { id },
-      data: {
-        ...updateArticleDto,
-        images: {
-          connect: images.map((id) => ({ id })),
+    return new Article(
+      await this.prisma.article.update({
+        where: { id },
+        data: {
+          ...updateArticleDto,
+          images: {
+            connect: images.map((id) => ({ id })),
+          },
+          sale: sale ? { connect: { id: sale } } : undefined,
+          reviews: {
+            connect: reviews.map((id) => ({ id })),
+          },
+          categories: {
+            connect: categories.map((id) => ({ id })),
+          },
         },
-        sale: sale ? { connect: { id: sale } } : undefined,
-        reviews: {
-          connect: reviews.map((id) => ({ id })),
-        },
-        categories: {
-          connect: categories.map((id) => ({ id })),
-        },
-      },
-      include: { images: true, sale: true, reviews: true, categories: true },
-    });
+        include: { images: true, sale: true, reviews: true, categories: true },
+      }),
+    );
   }
 
-  remove(id: number) {
-    return this.prisma.article.delete({
-      where: { id },
-      include: { images: true, sale: true, reviews: true, categories: true },
-    });
+  async remove(id: number) {
+    return new Article(
+      await this.prisma.article.delete({
+        where: { id },
+        include: { images: true, sale: true, reviews: true, categories: true },
+      }),
+    );
   }
 }

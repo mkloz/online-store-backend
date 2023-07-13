@@ -10,6 +10,8 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -35,6 +37,7 @@ import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiArticle()
 @Controller('articles')
+@UseInterceptors(ClassSerializerInterceptor)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 

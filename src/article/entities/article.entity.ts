@@ -1,11 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Category } from 'src/category/entities/category.entity';
-import { File } from 'src/file/file.entity';
-import { Review } from 'src/review/entities/review.entity';
-import { Sale } from 'src/sale/entities/sale.entity';
+import {
+  Category,
+  CategoryDiscription,
+} from 'src/category/entities/category.entity';
+import { File, FileDiscription } from 'src/file/file.entity';
+import { Review, ReviewDiscription } from 'src/review/entities/review.entity';
+import { Sale, SaleDiscription } from 'src/sale/entities/sale.entity';
 import { Article as IArticle } from '@prisma/client';
+import { Exclude } from 'class-transformer';
 
-export class Article implements IArticle {
+export class ArticleDiscription {
   @ApiProperty({ example: 1 })
   id: number;
   @ApiProperty({ example: 'bike' })
@@ -26,16 +30,25 @@ export class Article implements IArticle {
   gender: string;
   @ApiProperty({ example: false })
   isPreviouslyUsed: boolean;
-  @ApiProperty({ type: Date })
-  createdAt: Date;
-  @ApiProperty({ type: Date })
-  updatedAt: Date;
-  @ApiProperty()
+}
+
+export class Article extends ArticleDiscription implements IArticle {
+  @ApiPropertyOptional({ type: () => [FileDiscription] })
   images?: File[];
-  @ApiPropertyOptional({ type: () => Sale })
+  @ApiPropertyOptional({ type: () => SaleDiscription })
   sale?: Sale;
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [ReviewDiscription] })
   reviews?: Review[];
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: () => [CategoryDiscription] })
   categories?: Category[];
+
+  @Exclude()
+  createdAt: Date;
+  @Exclude()
+  updatedAt: Date;
+
+  constructor(partial: Partial<Article>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

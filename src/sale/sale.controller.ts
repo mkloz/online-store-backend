@@ -10,6 +10,8 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { SaleService } from './sale.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
@@ -32,6 +34,7 @@ import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiSale()
 @Controller('sales')
+@UseInterceptors(ClassSerializerInterceptor)
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 
@@ -53,7 +56,7 @@ export class SaleController {
   @Get(':id')
   @ApiSaleGetOne()
   findOne(@Param(SaleExistPipe) { id }: IDDto) {
-    return this.saleService.findOne(+id);
+    return this.saleService.findOne(id);
   }
 
   @Patch(':id')

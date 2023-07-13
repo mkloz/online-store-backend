@@ -36,15 +36,21 @@ export class CartItemService {
         })
       : this.remove(cartItem.id);
   }
-  create({ id }: JwtPayload, dto: CreateCartItemDto): Promise<CartItem> {
-    return this.prisma.cartItem.create({
-      data: {
-        ...dto,
-        user: { connect: { id } },
-        article: { connect: { id: dto.article } },
-      },
-      include: { user: true, article: true },
-    });
+
+  public async create(
+    { id }: JwtPayload,
+    dto: CreateCartItemDto,
+  ): Promise<CartItem> {
+    return new CartItem(
+      await this.prisma.cartItem.create({
+        data: {
+          ...dto,
+          user: { connect: { id } },
+          article: { connect: { id: dto.article } },
+        },
+        include: { user: true, article: true },
+      }),
+    );
   }
 
   async add(user: JwtPayload, dto: CreateCartItemDto) {
@@ -70,12 +76,14 @@ export class CartItemService {
     opt: PaginationOptionsDto,
   ): Promise<Paginated<CartItem>> {
     const pag: IPag<CartItem> = {
-      data: await this.prisma.cartItem.findMany({
-        where: { user: { id: user.id } },
-        take: opt.limit,
-        skip: opt.limit * (opt.page - 1),
-        include: { article: true },
-      }),
+      data: (
+        await this.prisma.cartItem.findMany({
+          where: { user: { id: user.id } },
+          take: opt.limit,
+          skip: opt.limit * (opt.page - 1),
+          include: { article: true },
+        })
+      ).map((el) => new CartItem(el)),
       count: await this.prisma.category.count(),
       route: `${
         this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl
@@ -85,22 +93,26 @@ export class CartItemService {
     return Paginator.paginate(pag, opt);
   }
 
-  findOne(id: number): Promise<CartItem> {
-    return this.prisma.cartItem.findUnique({
-      where: { id },
-      include: { user: true, article: true },
-    });
+  public async findOne(id: number): Promise<CartItem> {
+    return new CartItem(
+      await this.prisma.cartItem.findUnique({
+        where: { id },
+        include: { user: true, article: true },
+      }),
+    );
   }
 
-  update(id: number, { article, ...dto }: UpdateCartItemDto) {
-    return this.prisma.cartItem.update({
-      where: { id },
-      data: { ...dto, article: { connect: { id: article } } },
-      include: { user: true, article: true },
-    });
+  public async update(id: number, { article, ...dto }: UpdateCartItemDto) {
+    return new CartItem(
+      await this.prisma.cartItem.update({
+        where: { id },
+        data: { ...dto, article: { connect: { id: article } } },
+        include: { user: true, article: true },
+      }),
+    );
   }
 
-  remove(id: number): Promise<CartItem> {
-    return this.prisma.cartItem.delete({ where: { id } });
+  public async remove(id: number): Promise<CartItem> {
+    return new CartItem(await this.prisma.cartItem.delete({ where: { id } }));
   }
 }

@@ -1,7 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Article } from 'src/article/entities/article.entity';
+import {
+  Article,
+  ArticleDiscription,
+} from 'src/article/entities/article.entity';
 import { Sale as ISale } from '@prisma/client';
-export class Sale implements ISale {
+import { Exclude } from 'class-transformer';
+
+export class SaleDiscription {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -16,16 +21,21 @@ export class Sale implements ISale {
 
   @ApiProperty()
   activeTill: Date;
+}
 
-  @ApiPropertyOptional({ type: () => Article })
+export class Sale extends SaleDiscription implements ISale {
+  @ApiPropertyOptional({ type: () => ArticleDiscription })
   article?: Article;
 
-  @ApiPropertyOptional()
+  @Exclude()
   articleId: number;
-
-  @ApiProperty()
+  @Exclude()
   createdAt: Date;
-
-  @ApiProperty()
+  @Exclude()
   updatedAt: Date;
+
+  constructor(partial: Partial<Sale>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

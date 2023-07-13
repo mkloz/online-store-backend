@@ -16,23 +16,27 @@ export class SaleService {
     private readonly cs: ConfigService,
   ) {}
 
-  create({ article, ...createSaleDto }: CreateSaleDto) {
-    return this.prisma.sale.create({
-      data: {
-        ...createSaleDto,
-        article: article ? { connect: { id: article } } : undefined,
-      },
-      include: { article: true },
-    });
+  public async create({ article, ...createSaleDto }: CreateSaleDto) {
+    return new Sale(
+      await this.prisma.sale.create({
+        data: {
+          ...createSaleDto,
+          article: article ? { connect: { id: article } } : undefined,
+        },
+        include: { article: true },
+      }),
+    );
   }
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Sale>> {
     const pag: IPag<Sale> = {
-      data: await this.prisma.sale.findMany({
-        take: opt.limit,
-        skip: opt.limit * (opt.page - 1),
-        include: { article: true },
-      }),
+      data: (
+        await this.prisma.sale.findMany({
+          take: opt.limit,
+          skip: opt.limit * (opt.page - 1),
+          include: { article: true },
+        })
+      ).map((el) => new Sale(el)),
       count: await this.prisma.sale.count(),
       route: `${this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl}/api/sales`,
     };
@@ -40,28 +44,32 @@ export class SaleService {
     return Paginator.paginate(pag, opt);
   }
 
-  findOne(id: number): Promise<Sale> {
-    return this.prisma.sale.findUnique({
-      where: { id },
-      include: { article: true },
-    });
+  public async findOne(id: number): Promise<Sale> {
+    return new Sale(
+      await this.prisma.sale.findUnique({
+        where: { id },
+        include: { article: true },
+      }),
+    );
   }
 
-  update(
+  public async update(
     id: number,
     { article, ...updateSaleDto }: UpdateSaleDto,
   ): Promise<Sale> {
-    return this.prisma.sale.update({
-      where: { id },
-      data: {
-        ...updateSaleDto,
-        article: article ? { connect: { id: article } } : undefined,
-      },
-      include: { article: true },
-    });
+    return new Sale(
+      await this.prisma.sale.update({
+        where: { id },
+        data: {
+          ...updateSaleDto,
+          article: article ? { connect: { id: article } } : undefined,
+        },
+        include: { article: true },
+      }),
+    );
   }
 
-  remove(id: number) {
-    return this.prisma.sale.delete({ where: { id } });
+  public async remove(id: number): Promise<Sale> {
+    return new Sale(await this.prisma.sale.delete({ where: { id } }));
   }
 }

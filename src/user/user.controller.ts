@@ -1,11 +1,13 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
   Param,
   Patch,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User as UserPayload } from './user.decorator';
@@ -30,6 +32,7 @@ import { RelationsExistsPipe } from './pipes/relations-exists.pipe';
 
 @ApiUser()
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

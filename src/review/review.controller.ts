@@ -8,6 +8,8 @@ import {
   Delete,
   Query,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -33,6 +35,7 @@ import { OwnerOrRoleAuthGuard } from './pipes/owner-or-role-auth.guard';
 
 @ApiReview()
 @Controller('reviews')
+@UseInterceptors(ClassSerializerInterceptor)
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
@@ -40,7 +43,7 @@ export class ReviewController {
   @Roles(Role.USER, Role.ADMIN)
   @ApiReviewCreate()
   @UseGuards(RoleAuthGuard)
-  create(
+  public create(
     @Body(RelationsExistsPipe) createReviewDto: CreateReviewDto,
   ): Promise<Review> {
     return this.reviewService.create(createReviewDto);
@@ -48,13 +51,15 @@ export class ReviewController {
 
   @Get()
   @ApiReviewGetMany()
-  findAll(@Query() pag: PaginationOptionsDto): Promise<Paginated<Review>> {
+  public findAll(
+    @Query() pag: PaginationOptionsDto,
+  ): Promise<Paginated<Review>> {
     return this.reviewService.findAll(pag);
   }
 
   @Get(':id')
   @ApiReviewGetOne()
-  findOne(@Param(ReviewExistPipe) { id }: IDDto): Promise<Review> {
+  public findOne(@Param(ReviewExistPipe) { id }: IDDto): Promise<Review> {
     return this.reviewService.findOne(id);
   }
 
@@ -62,7 +67,7 @@ export class ReviewController {
   @Roles(Role.ADMIN)
   @UseGuards(OwnerOrRoleAuthGuard)
   @ApiReviewUpdate()
-  update(
+  public update(
     @Param(ReviewExistPipe) { id }: IDDto,
     @Body(RelationsExistsPipe) updateReviewDto: UpdateReviewDto,
   ): Promise<Review> {
@@ -73,7 +78,7 @@ export class ReviewController {
   @Roles(Role.ADMIN)
   @UseGuards(OwnerOrRoleAuthGuard)
   @ApiReviewDelete()
-  remove(@Param(ReviewExistPipe) { id }: IDDto): Promise<Review> {
+  public remove(@Param(ReviewExistPipe) { id }: IDDto): Promise<Review> {
     return this.reviewService.remove(id);
   }
 }

@@ -16,51 +16,69 @@ export class UserService {
     return bcrypt.hash(password, SALT_ROUNDS);
   }
 
-  async add({ password, reviews, ...dto }: CreateUserDto): Promise<User> {
-    return await this.prisma.user.create({
-      data: {
-        password: password
-          ? await UserService.hashPassword(password)
-          : undefined,
-        role: Role.USER,
-        ...dto,
-        reviews: {
-          connect: reviews.map((id) => ({ id })),
+  public async add({
+    password,
+    reviews,
+    ...dto
+  }: CreateUserDto): Promise<User> {
+    return new User(
+      await this.prisma.user.create({
+        data: {
+          password: password
+            ? await UserService.hashPassword(password)
+            : undefined,
+          role: Role.USER,
+          ...dto,
+          reviews: {
+            connect: reviews.map((id) => ({ id })),
+          },
         },
-      },
-      include: { reviews: true },
-    });
+        include: { reviews: true },
+      }),
+    );
   }
 
-  getByEmail(email: string): Promise<User> {
-    return this.prisma.user.findUnique({
-      where: { email },
-      include: { reviews: true },
-    });
+  public async getByEmail(email: string): Promise<User> {
+    return new User(
+      await this.prisma.user.findUnique({
+        where: { email },
+        include: { reviews: true },
+      }),
+    );
   }
 
-  getById(id: number): Promise<User> {
-    return this.prisma.user.findUnique({
-      where: { id },
-      include: { reviews: true },
-    });
+  public async getById(id: number): Promise<User> {
+    return new User(
+      await this.prisma.user.findUnique({
+        where: { id },
+        include: { reviews: true },
+      }),
+    );
   }
-  updateById(id: number, { reviews, ...dto }: UpdateUserDto): Promise<User> {
-    return this.prisma.user.update({
-      where: { id },
-      include: { reviews: true },
-      data: {
-        ...dto,
-        reviews: {
-          connect: reviews.map((id) => ({ id })),
+
+  public async updateById(
+    id: number,
+    { reviews, ...dto }: UpdateUserDto,
+  ): Promise<User> {
+    return new User(
+      await this.prisma.user.update({
+        where: { id },
+        include: { reviews: true },
+        data: {
+          ...dto,
+          reviews: {
+            connect: reviews.map((id) => ({ id })),
+          },
         },
-      },
-    });
+      }),
+    );
   }
-  deleteById(id: number) {
-    return this.prisma.user.delete({
-      where: { id },
-      include: { reviews: true },
-    });
+  public async deleteById(id: number): Promise<User> {
+    return new User(
+      await this.prisma.user.delete({
+        where: { id },
+        include: { reviews: true },
+      }),
+    );
   }
 }
