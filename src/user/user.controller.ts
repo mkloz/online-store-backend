@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User as UserPayload } from './user.decorator';
@@ -37,10 +36,7 @@ export class UserController {
   @Get('me')
   @UseGuards(AuthGuard)
   @ApiUserMe()
-  getMe(
-    @UserPayload(new ValidationPipe({ validateCustomDecorators: true }))
-    user: JwtPayload,
-  ): Promise<User> {
+  getMe(@UserPayload() user: JwtPayload): Promise<User> {
     return this.userService.getById(user.id);
   }
 
@@ -56,8 +52,7 @@ export class UserController {
   @UseGuards(AuthGuard)
   @ApiUserMeUpdate()
   updateMe(
-    @UserPayload(new ValidationPipe({ validateCustomDecorators: true }))
-    user: JwtPayload,
+    @UserPayload() user: JwtPayload,
     @Body(RelationsExistsPipe) dto: UpdateUserDto,
   ): Promise<User> {
     return this.userService.updateById(user.id, dto);
@@ -76,10 +71,7 @@ export class UserController {
   @Delete('me')
   @UseGuards(AuthGuard)
   @ApiUserMeDelete()
-  deleteMe(
-    @UserPayload(new ValidationPipe({ validateCustomDecorators: true }))
-    user: JwtPayload,
-  ): Promise<User> {
+  deleteMe(@UserPayload() user: JwtPayload): Promise<User> {
     return this.userService.deleteById(user.id);
   }
 

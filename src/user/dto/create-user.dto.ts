@@ -30,8 +30,8 @@ export class CreateUserDto {
   password?: string;
 
   @IsInt({ each: true })
+  @IsArray()
   @IsOptional()
   @ApiPropertyOptional({ example: [1, 2, 3] })
-  @IsArray()
   reviews?: number[] = [];
 }

@@ -1,5 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Length, Matches } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsEmail,
+  IsInt,
+  IsOptional,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
 
 export class RegisterDto {
   @IsString()
@@ -31,4 +39,10 @@ export class RegisterDto {
   })
   @ApiProperty({ example: 'Strong@93Kc2!' })
   password: string;
+
+  @IsInt({ each: true })
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({ example: [1, 2, 3] })
+  reviews?: number[] = [];
 }

@@ -24,7 +24,9 @@ async function bootstrap() {
   app
     .use(morgan(getMorganCfg()))
     .setGlobalPrefix('api', { exclude: ['/'] })
-    .useGlobalPipes(new ValidationPipe({ transform: true }))
+    .useGlobalPipes(
+      new ValidationPipe({ transform: true, validateCustomDecorators: true }),
+    )
     .useGlobalInterceptors(new GlobalResponseInterceptor());
 
   const port = cs.get<number>(EnvVar.PORT);
