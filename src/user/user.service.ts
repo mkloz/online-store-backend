@@ -28,10 +28,11 @@ export class UserService {
     provider: Provider,
   ) {
     if (provider == Provider.EMAIL) {
-      return this.prisma.user.update({
+      await this.prisma.user.update({
         where: { id },
         data: { password: await UserService.hashPassword(password) },
       });
+      return { ok: true };
     }
     throw new UnprocessableEntityException('Incorect provider');
   }
@@ -41,101 +42,96 @@ export class UserService {
     reviews,
     ...dto
   }: CreateUserDto): Promise<User> {
-    return new User(
-      await this.prisma.user.create({
-        data: {
-          password: password
-            ? await UserService.hashPassword(password)
-            : undefined,
-          role: Role.USER,
-          ...dto,
-          reviews: reviews
-            ? {
-                connect: reviews.map((id) => ({ id })),
-              }
-            : undefined,
-        },
-        include: { reviews: true },
-      }),
-    );
+    const user = await this.prisma.user.create({
+      data: {
+        password: password
+          ? await UserService.hashPassword(password)
+          : undefined,
+        role: Role.USER,
+        ...dto,
+        reviews: reviews
+          ? {
+              connect: reviews.map((id) => ({ id })),
+            }
+          : undefined,
+      },
+      include: { reviews: true },
+    });
+    return user ? new User(user) : null;
   }
 
   public async getByEmail(email: string, provider: Provider): Promise<User> {
-    return new User(
-      await this.prisma.user.findFirst({
-        where: { email, provider },
-        include: { reviews: true },
-      }),
-    );
+    const user = await this.prisma.user.findFirst({
+      where: { email, provider },
+      include: { reviews: true },
+    });
+    return user ? new User(user) : null;
   }
   public async getByEmailVerified(
     email: string,
     provider: Provider,
   ): Promise<User> {
-    return new User(
-      await this.prisma.user.findFirst({
-        where: { email, isEmailConfirmed: true, provider },
-        include: { reviews: true },
-      }),
-    );
+    const user = await this.prisma.user.findFirst({
+      where: { email, isEmailConfirmed: true, provider },
+      include: { reviews: true },
+    });
+    return user ? new User(user) : null;
   }
   public async getByEmailUnverified(
     email: string,
     provider: Provider,
   ): Promise<User> {
-    return new User(
-      await this.prisma.user.findFirst({
-        where: { email, isEmailConfirmed: false, provider },
-        include: { reviews: true },
-      }),
-    );
+    const user = await this.prisma.user.findFirst({
+      where: { email, isEmailConfirmed: false, provider },
+      include: { reviews: true },
+    });
+
+    return user ? new User(user) : user;
   }
   public async getById(id: number): Promise<User> {
-    return new User(
-      await this.prisma.user.findFirst({
-        where: { id, isEmailConfirmed: true },
-        include: { reviews: true },
-      }),
-    );
+    const user = await this.prisma.user.findFirst({
+      where: { id, isEmailConfirmed: true },
+      include: { reviews: true },
+    });
+
+    return user ? new User(user) : null;
   }
 
   public async getByIdAndProvider(
     id: number,
     provider: Provider,
   ): Promise<User> {
-    return new User(
-      await this.prisma.user.findFirst({
-        where: { id, isEmailConfirmed: true, provider },
-        include: { reviews: true },
-      }),
-    );
+    const user = await this.prisma.user.findFirst({
+      where: { id, isEmailConfirmed: true, provider },
+      include: { reviews: true },
+    });
+
+    return user ? new User(user) : null;
   }
 
   public async updateById(
     id: number,
     { reviews, ...dto }: UpdateUserDto,
   ): Promise<User> {
-    return new User(
-      await this.prisma.user.update({
-        where: { id },
-        include: { reviews: true },
-        data: {
-          ...dto,
-          reviews: reviews
-            ? {
-                connect: reviews.map((id) => ({ id })),
-              }
-            : undefined,
-        },
-      }),
-    );
+    const user = await this.prisma.user.update({
+      where: { id },
+      include: { reviews: true },
+      data: {
+        ...dto,
+        reviews: reviews
+          ? {
+              connect: reviews.map((id) => ({ id })),
+            }
+          : undefined,
+      },
+    });
+    return user ? new User(user) : null;
   }
   public async deleteById(id: number): Promise<User> {
-    return new User(
-      await this.prisma.user.delete({
-        where: { id },
-        include: { reviews: true },
-      }),
-    );
+    const user = await this.prisma.user.delete({
+      where: { id },
+      include: { reviews: true },
+    });
+    return user ? new User(user) : null;
   }
 }
