@@ -6,14 +6,14 @@ import { ConfigService } from '@nestjs/config';
 import { Review } from './entities/review.entity';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { EnvVar, IStore } from 'src/common/config/config';
+import { IConfig } from 'src/common/config/config';
 import { Paginated } from 'src/common/pagination/paginated.dto';
 
 @Injectable()
 export class ReviewService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cs: ConfigService,
+    private readonly cs: ConfigService<IConfig>,
   ) {}
 
   public async create({
@@ -44,7 +44,7 @@ export class ReviewService {
       ).map((el) => new Review(el)),
       count: await this.prisma.review.count(),
       route: `${
-        this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl
+        this.cs.get('onlineStore', { infer: true }).projectUrl
       }/api/reviews`,
     };
 

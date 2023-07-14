@@ -8,13 +8,15 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { Env } from './dto/dotenv.dto';
+import { IConfig } from './config/config';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  constructor(private readonly configServise: ConfigService) {}
+  constructor(private readonly configServise: ConfigService<IConfig>) {}
+
   catch(exception: Error, host: ArgumentsHost) {
     const res = host.switchToHttp().getResponse<Response>();
-    const env = this.configServise.get<string>('env');
+    const env = this.configServise.get('env', { infer: true });
     const status =
       exception instanceof HttpException
         ? exception.getStatus()

@@ -4,17 +4,9 @@ const { env } = process;
 export type IConfig = typeof config;
 export type IMySql = typeof config.mysql;
 export type IAWS = typeof config.aws;
-export type IJWT = typeof config.jwt;
+export type IStoreJWT = typeof config.onlineStore.jwt;
 export type IStore = typeof config.onlineStore;
 
-export enum EnvVar {
-  ENV = 'env',
-  PORT = 'port',
-  MYSQL = 'mysql',
-  AWS = 'aws',
-  JWT = 'jwt',
-  ONLINE_STORE = 'onlineStore',
-}
 const config = {
   env: env.NODE_ENV,
   port: +env.PORT,
@@ -23,6 +15,16 @@ const config = {
   },
   onlineStore: {
     projectUrl: env.PROJECT_URL,
+    jwt: {
+      accessToken: {
+        secret: env.JWT_ACCESS_TOKEN_SECRET,
+        time: env.JWT_ACCESS_TOKEN_TIME,
+      },
+      refreshToken: {
+        secret: env.JWT_REFRESH_TOKEN_SECRET,
+        time: env.JWT_REFRESH_TOKEN_TIME,
+      },
+    },
   },
   aws: {
     s3: {
@@ -32,15 +34,19 @@ const config = {
       bucketName: env.AWS_PUBLIC_BUCKET_NAME,
     },
   },
-  jwt: {
-    accessToken: {
-      secret: env.JWT_ACCESS_TOKEN_SECRET,
-      time: env.JWT_ACCESS_TOKEN_TIME,
+  mail: {
+    host: env.MAIL_HOST,
+    port: +env.MAIL_PORT,
+    secure: !!env.MAIL_SECURE,
+    auth: {
+      user: env.MAIL_AUTH_USER,
+      pass: env.MAIL_AUTH_PASS,
     },
-    refreshToken: {
-      secret: env.JWT_REFRESH_TOKEN_SECRET,
-      time: env.JWT_REFRESH_TOKEN_TIME,
+    from: {
+      name: env.MAIL_FROM_NAME,
+      address: env.MAIL_FROM,
     },
+    jwt: { time: env.MAIL_JWT_TOKEN_TIME, secret: env.MAIL_JWT_TOKEN_SECRET },
   },
 };
 export const getEnvVar = () => config;

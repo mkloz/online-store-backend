@@ -8,6 +8,8 @@ export interface IJwtPayload {
   id: number;
   email: string;
   role: Role;
+  iat: number;
+  exp: number;
 }
 
 export class JwtPayloadValidator {

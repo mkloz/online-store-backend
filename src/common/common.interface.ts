@@ -8,3 +8,6 @@ export interface IPagOpt {
 export interface URL {
   url: string;
 }
+export interface Ok {
+  ok: true;
+}

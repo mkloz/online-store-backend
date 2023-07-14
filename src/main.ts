@@ -9,7 +9,7 @@ import { GlobalExceptionFilter } from './common/global-exception.filter';
 import { ConfigService } from '@nestjs/config';
 import { createSwapiDocument } from './common/docs/create-swagger-doc';
 import { Env } from './common/dto/dotenv.dto';
-import { EnvVar } from './common/config/config';
+import { IConfig } from './common/config/config';
 
 function isDevelopment(env: string): boolean {
   return env === Env.Development;
@@ -20,7 +20,7 @@ function getMorganCfg(): string {
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const cs = app.get(ConfigService);
+  const cs = app.get(ConfigService<IConfig>);
   app
     .use(morgan(getMorganCfg()))
     .setGlobalPrefix('api', { exclude: ['/'] })
@@ -29,9 +29,9 @@ async function bootstrap() {
     )
     .useGlobalInterceptors(new GlobalResponseInterceptor());
 
-  const port = cs.get<number>(EnvVar.PORT);
+  const port = cs.get('port', { infer: true });
 
-  if (isDevelopment(cs.get<string>(EnvVar.ENV))) {
+  if (isDevelopment(cs.get('env', { infer: true }))) {
     SwaggerModule.setup('/api/docs', app, createSwapiDocument(app));
   } else {
     app.useGlobalFilters(new GlobalExceptionFilter(cs));

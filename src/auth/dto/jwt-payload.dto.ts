@@ -2,8 +2,7 @@ import { IsEmail, IsEnum, IsInt, IsPositive } from 'class-validator';
 import { IJwtPayload } from '../validators/jwt-payload.validator';
 import { Role } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
-
-export class JwtPayload implements IJwtPayload {
+export class CreateJwtPayload {
   @IsInt()
   @IsPositive()
   @ApiProperty()
@@ -16,4 +15,14 @@ export class JwtPayload implements IJwtPayload {
   @ApiProperty()
   @IsEnum(Role)
   role: Role;
+}
+
+export class JwtPayload extends CreateJwtPayload implements IJwtPayload {
+  @IsInt()
+  @IsPositive()
+  iat: number;
+
+  @IsPositive()
+  @IsInt()
+  exp: number;
 }

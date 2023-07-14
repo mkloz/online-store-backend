@@ -1,13 +1,13 @@
 import { applyDecorators } from '@nestjs/common';
-import { TokensDto } from '../dto/tokens.dto';
 import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { TokensDto } from 'src/auth/dto/tokens.dto';
 import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
-import { RegisterDto } from '../dto/register.dto';
+import { EmailRegisterDto } from '../dto/email-register.dto';
 
-export const ApiRegister = () =>
+export const ApiEmailRegister = () =>
   applyDecorators(
     ApiResponseData(TokensDto),
     ApiOkResponse(),
     ApiOperation({ summary: 'Register and returns tokens' }),
-    ApiBody({ type: RegisterDto }),
+    ApiBody({ type: EmailRegisterDto }),
   );

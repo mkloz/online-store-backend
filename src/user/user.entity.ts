@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
+import { Provider, Role } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 import { Review, ReviewDiscription } from 'src/review/entities/review.entity';
 import { User as IUser } from '@prisma/client';
@@ -21,6 +21,12 @@ export class UserDiscription {
     example: 'user',
   })
   role: Role;
+
+  @ApiProperty()
+  isEmailConfirmed: boolean;
+
+  @ApiProperty({ default: Provider.EMAIL })
+  provider: Provider;
 }
 export class User extends UserDiscription implements Omit<IUser, 'password'> {
   @ApiPropertyOptional({ type: () => [ReviewDiscription] })

@@ -5,13 +5,13 @@ import { Category } from './entities/category.entity';
 import { PrismaService } from 'src/db/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { EnvVar, IStore } from 'src/common/config/config';
+import { IConfig } from 'src/common/config/config';
 
 @Injectable()
 export class CategoryService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cs: ConfigService,
+    private readonly cs: ConfigService<IConfig>,
   ) {}
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Category>> {
@@ -23,7 +23,7 @@ export class CategoryService {
       }),
       count: await this.prisma.category.count(),
       route: `${
-        this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl
+        this.cs.get('onlineStore', { infer: true }).projectUrl
       }/api/categories`,
     };
 

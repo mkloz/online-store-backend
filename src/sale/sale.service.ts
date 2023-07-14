@@ -3,7 +3,7 @@ import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { PrismaService } from 'src/db/prisma.service';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { EnvVar, IStore } from 'src/common/config/config';
+import { IConfig } from 'src/common/config/config';
 import { ConfigService } from '@nestjs/config';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { Paginated } from 'src/common/pagination/paginated.dto';
@@ -13,7 +13,7 @@ import { Sale } from './entities/sale.entity';
 export class SaleService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cs: ConfigService,
+    private readonly cs: ConfigService<IConfig>,
   ) {}
 
   public async create({ article, ...createSaleDto }: CreateSaleDto) {
@@ -38,7 +38,9 @@ export class SaleService {
         })
       ).map((el) => new Sale(el)),
       count: await this.prisma.sale.count(),
-      route: `${this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl}/api/sales`,
+      route: `${
+        this.cs.get('onlineStore', { infer: true }).projectUrl
+      }/api/sales`,
     };
 
     return Paginator.paginate(pag, opt);

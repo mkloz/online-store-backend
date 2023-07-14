@@ -7,14 +7,14 @@ import { CartItem } from './entities/cart-item.entity';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
 import { Paginated } from 'src/common/pagination/paginated.dto';
-import { EnvVar, IStore } from 'src/common/config/config';
+import { IConfig } from 'src/common/config/config';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CartItemService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cs: ConfigService,
+    private readonly cs: ConfigService<IConfig>,
   ) {}
 
   async decrement(user: JwtPayload, dto: CreateCartItemDto): Promise<CartItem> {
@@ -86,7 +86,7 @@ export class CartItemService {
       ).map((el) => new CartItem(el)),
       count: await this.prisma.category.count(),
       route: `${
-        this.cs.get<IStore>(EnvVar.ONLINE_STORE).projectUrl
+        this.cs.get('onlineStore', { infer: true }).projectUrl
       }/api/users/me/cart`,
     };
 

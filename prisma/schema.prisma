@@ -85,15 +85,22 @@ enum Role {
   ADMIN
 }
 
+enum Provider {
+  EMAIL
+  GOOGLE
+}
+
 model User {
-  id        Int        @id() @default(autoincrement())
-  firstName String     @map("first_name") @db.Char(255)
-  lastName  String     @map("last_name") @db.Char(255)
-  password  String?    @db.Char(255)
-  email     String     @unique() @db.Char(255)
-  role      Role       @default(USER)
-  reviews   Review[]
-  cartItems CartItem[]
+  id               Int        @id() @default(autoincrement())
+  firstName        String     @map("first_name") @db.Char(255)
+  lastName         String     @map("last_name") @db.Char(255)
+  password         String?    @db.Char(255)
+  email            String     @unique() @db.Char(255)
+  isEmailConfirmed Boolean    @default(false) @map("is_email_confirmed")
+  provider         Provider   @default(EMAIL)
+  role             Role       @default(USER)
+  reviews          Review[]
+  cartItems        CartItem[]
 }
 
 model CartItem {

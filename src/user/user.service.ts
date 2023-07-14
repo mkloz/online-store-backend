@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/db/prisma.service';
-import { Role } from '@prisma/client';
+import { Provider, Role } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 export const SALT_ROUNDS = 10;
@@ -14,6 +14,26 @@ export class UserService {
 
   static async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, SALT_ROUNDS);
+  }
+  public async verify(id: number): Promise<void> {
+    await this.prisma.user.update({
+      where: { id },
+      data: { isEmailConfirmed: true },
+    });
+    return;
+  }
+  public async changePassword(
+    id: number,
+    password: string,
+    provider: Provider,
+  ) {
+    if (provider == Provider.EMAIL) {
+      return this.prisma.user.update({
+        where: { id },
+        data: { password: await UserService.hashPassword(password) },
+      });
+    }
+    throw new UnprocessableEntityException('Incorect provider');
   }
 
   public async add({
@@ -29,28 +49,63 @@ export class UserService {
             : undefined,
           role: Role.USER,
           ...dto,
-          reviews: {
-            connect: reviews.map((id) => ({ id })),
-          },
+          reviews: reviews
+            ? {
+                connect: reviews.map((id) => ({ id })),
+              }
+            : undefined,
         },
         include: { reviews: true },
       }),
     );
   }
 
-  public async getByEmail(email: string): Promise<User> {
+  public async getByEmail(email: string, provider: Provider): Promise<User> {
     return new User(
-      await this.prisma.user.findUnique({
-        where: { email },
+      await this.prisma.user.findFirst({
+        where: { email, provider },
+        include: { reviews: true },
+      }),
+    );
+  }
+  public async getByEmailVerified(
+    email: string,
+    provider: Provider,
+  ): Promise<User> {
+    return new User(
+      await this.prisma.user.findFirst({
+        where: { email, isEmailConfirmed: true, provider },
+        include: { reviews: true },
+      }),
+    );
+  }
+  public async getByEmailUnverified(
+    email: string,
+    provider: Provider,
+  ): Promise<User> {
+    return new User(
+      await this.prisma.user.findFirst({
+        where: { email, isEmailConfirmed: false, provider },
+        include: { reviews: true },
+      }),
+    );
+  }
+  public async getById(id: number): Promise<User> {
+    return new User(
+      await this.prisma.user.findFirst({
+        where: { id, isEmailConfirmed: true },
         include: { reviews: true },
       }),
     );
   }
 
-  public async getById(id: number): Promise<User> {
+  public async getByIdAndProvider(
+    id: number,
+    provider: Provider,
+  ): Promise<User> {
     return new User(
-      await this.prisma.user.findUnique({
-        where: { id },
+      await this.prisma.user.findFirst({
+        where: { id, isEmailConfirmed: true, provider },
         include: { reviews: true },
       }),
     );
@@ -66,9 +121,11 @@ export class UserService {
         include: { reviews: true },
         data: {
           ...dto,
-          reviews: {
-            connect: reviews.map((id) => ({ id })),
-          },
+          reviews: reviews
+            ? {
+                connect: reviews.map((id) => ({ id })),
+              }
+            : undefined,
         },
       }),
     );

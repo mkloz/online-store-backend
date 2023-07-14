@@ -34,12 +34,16 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { ApiArticleIncrement } from './docs/api-article-increment.decorator';
 import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
+import { UserMailService } from 'src/mail/user-mail.service';
 
 @ApiArticle()
 @Controller('articles')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ArticleController {
-  constructor(private readonly articleService: ArticleService) {}
+  constructor(
+    private readonly articleService: ArticleService,
+    private readonly userMail: UserMailService,
+  ) {}
 
   @Post()
   @Roles(Role.ADMIN)

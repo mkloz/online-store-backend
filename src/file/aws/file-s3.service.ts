@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IAWS } from '../../common/config/config';
+import { IAWS, IConfig } from '../../common/config/config';
 import { v4 as uuid } from 'uuid';
 import { Readable } from 'stream';
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
@@ -8,14 +8,18 @@ import { Upload } from '@aws-sdk/lib-storage';
 
 @Injectable()
 export class FileS3Service {
+  private readonly aws: IAWS;
+
   public constructor(
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService<IConfig>,
     @Inject(S3Client) private readonly s3: S3Client,
-  ) {}
+  ) {
+    this.aws = this.configService.get('aws', { infer: true });
+  }
 
   public async addFile(file: Express.Multer.File) {
     const params = {
-      Bucket: this.configService.get<IAWS>('aws').s3.bucketName,
+      Bucket: this.aws.s3.bucketName,
       Body: Readable.from(file.buffer),
       Key: `${uuid()}-${file.originalname}`,
       ContentDisposition: 'inline',
@@ -34,7 +38,7 @@ export class FileS3Service {
   public async removeFile(name: string) {
     await this.s3.send(
       new DeleteObjectCommand({
-        Bucket: this.configService.get<IAWS>('aws').s3.bucketName,
+        Bucket: this.aws.s3.bucketName,
         Key: name,
       }),
     );

@@ -8,6 +8,7 @@ import { ReviewModule } from './review/review.module';
 import { CategoryModule } from './category/category.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UserModule } from './user/user.module';
     ReviewModule,
     CategoryModule,
     UserModule,
+    MailModule,
     ConfigModule.forRoot({ isGlobal: true, load: [getEnvVar] }),
   ],
 })

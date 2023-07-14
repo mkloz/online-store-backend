@@ -1,13 +1,13 @@
 import { applyDecorators } from '@nestjs/common';
-import { LoginDto } from '../dto/login.dto';
-import { TokensDto } from '../dto/tokens.dto';
 import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
+import { EmailLoginDto } from '../dto/email-login.dto';
+import { TokensDto } from 'src/auth/dto/tokens.dto';
 
-export const ApiLogin = () =>
+export const ApiEmailLogin = () =>
   applyDecorators(
     ApiResponseData(TokensDto),
     ApiOkResponse(),
     ApiOperation({ summary: 'Login and returns tokens' }),
-    ApiBody({ type: LoginDto }),
+    ApiBody({ type: EmailLoginDto }),
   );
