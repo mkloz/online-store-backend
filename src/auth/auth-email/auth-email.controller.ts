@@ -9,7 +9,7 @@ import {
   Get,
   UseGuards,
 } from '@nestjs/common';
-import { EmailService } from './email.service';
+import { AuthEmailService } from './auth-email.service';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { UserNotExistPipe } from 'src/user/pipes/user-not-exist.pipe';
 import { EmailRegisterDto } from './dto/email-register.dto';
@@ -31,8 +31,8 @@ import { AuthGuard } from '../guards/auth.guard';
 
 @ApiEmail()
 @Controller('auth/email')
-export class EmailController {
-  constructor(private readonly emailService: EmailService) {}
+export class AuthEmailController {
+  constructor(private readonly emailService: AuthEmailService) {}
 
   @Post('/login')
   @HttpCode(HttpStatus.OK)

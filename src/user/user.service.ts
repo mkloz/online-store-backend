@@ -41,7 +41,7 @@ export class UserService {
     password,
     reviews,
     ...dto
-  }: CreateUserDto): Promise<User> {
+  }: CreateUserDto & { provider?: Provider }): Promise<User> {
     const user = await this.prisma.user.create({
       data: {
         password: password
@@ -59,14 +59,25 @@ export class UserService {
     });
     return user ? new User(user) : null;
   }
+  public async getByEmail(email: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      include: { reviews: true },
+    });
+    return user ? new User(user) : null;
+  }
 
-  public async getByEmail(email: string, provider: Provider): Promise<User> {
+  public async getByEmailAndProvider(
+    email: string,
+    provider: Provider,
+  ): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: { email, provider },
       include: { reviews: true },
     });
     return user ? new User(user) : null;
   }
+
   public async getByEmailVerified(
     email: string,
     provider: Provider,

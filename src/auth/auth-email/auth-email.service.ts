@@ -22,7 +22,7 @@ import { Provider } from '@prisma/client';
 import { Ok } from 'src/common/dto/ok.dto';
 
 @Injectable()
-export class EmailService {
+export class AuthEmailService {
   constructor(
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
@@ -36,7 +36,10 @@ export class EmailService {
   );
 
   private async generateTokensForUser(email: string): Promise<TokensDto> {
-    const user = await this.userService.getByEmail(email, Provider.EMAIL);
+    const user = await this.userService.getByEmailAndProvider(
+      email,
+      Provider.EMAIL,
+    );
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -61,7 +64,7 @@ export class EmailService {
   private async generateEmailToken(
     payload: EmailCreateTokenPayload,
   ): Promise<string> {
-    const mailJwt = this.cs.get('mail', { infer: true }).jwt;
+    const mailJwt = this.cs.get('auth', { infer: true }).mail.jwt;
 
     return await this.jwtService.signAsync(payload, {
       expiresIn: mailJwt.time,
@@ -96,17 +99,17 @@ export class EmailService {
     let payload;
     try {
       payload = await this.jwtService.verifyAsync(token, {
-        secret: this.cs.get('mail', { infer: true }).jwt.secret,
+        secret: this.cs.get('auth', { infer: true }).mail.jwt.secret,
       });
     } catch (error) {
-      throw EmailService.invalidTokenException;
+      throw AuthEmailService.invalidTokenException;
     }
 
     if (EmailTokenPayloadValidator.validate(payload)) {
       return this.generateTokensForUser(payload.email);
     }
 
-    throw EmailService.invalidTokenException;
+    throw AuthEmailService.invalidTokenException;
   }
 
   async sendConfirmation(email: string): Promise<Ok> {

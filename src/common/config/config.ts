@@ -46,7 +46,23 @@ const config = {
       name: env.MAIL_FROM_NAME,
       address: env.MAIL_FROM,
     },
-    jwt: { time: env.MAIL_JWT_TOKEN_TIME, secret: env.MAIL_JWT_TOKEN_SECRET },
+  },
+  auth: {
+    mail: {
+      jwt: {
+        time: env.MAIL_VALIDATE_TOKEN_TIME,
+        secret: env.MAIL_VALIDATE_TOKEN_SECRET,
+      },
+    },
+    google: {
+      clientId: env.AUTH_GOOGLE_APP_ID,
+      clientSecret: env.AUTH_GOOGLE_APP_SECRET,
+      callbackURL: env.AUTH_GOOGLE_CALLBACK,
+    },
+    facebook: {
+      appSecret: env.AUTH_FACEBOOK_APP_SECRET,
+      appId: env.AUTH_FACEBOOK_APP_ID,
+    },
   },
 };
 export const getEnvVar = () => config;

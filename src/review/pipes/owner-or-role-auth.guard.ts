@@ -32,7 +32,7 @@ export class OwnerOrRoleAuthGuard extends RoleAuthGuard {
       return false;
     }
 
-    if (request['user']?.id && typeof request['user'].id === 'number') {
+    if (this.isUserWithId(request['user'])) {
       if (
         await this.prisma.review.findFirst({
           where: { id, authorId: request['user'].id },
@@ -55,5 +55,13 @@ export class OwnerOrRoleAuthGuard extends RoleAuthGuard {
     }
 
     return id;
+  }
+  private isUserWithId(user: unknown): user is { id: number } {
+    return (
+      user &&
+      typeof user === 'object' &&
+      'id' in user &&
+      typeof user.id === 'number'
+    );
   }
 }

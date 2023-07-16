@@ -5,13 +5,15 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './guards/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { DbModule } from 'src/db/db.module';
-import { EmailModule } from './email/email.module';
+import { AuthEmailModule } from './auth-email/auth-email.module';
+import { AuthGoogleModule } from './auth-google/auth-google.module';
 
 @Module({
   imports: [
     UserModule,
     DbModule,
-    EmailModule,
+    AuthEmailModule,
+    AuthGoogleModule,
     JwtModule.register({
       global: true,
     }),

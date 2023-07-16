@@ -1,6 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { EmailService } from './email.service';
-import { EmailController } from './email.controller';
+import { AuthEmailService } from './auth-email.service';
+import { AuthEmailController } from './auth-email.controller';
 import { DbModule } from 'src/db/db.module';
 import { AuthModule } from '../auth.module';
 import { MailModule } from 'src/mail/mail.module';
@@ -15,7 +15,7 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
     JwtModule,
   ],
-  controllers: [EmailController],
-  providers: [EmailService],
+  controllers: [AuthEmailController],
+  providers: [AuthEmailService],
 })
-export class EmailModule {}
+export class AuthEmailModule {}

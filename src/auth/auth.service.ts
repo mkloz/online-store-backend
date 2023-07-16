@@ -1,10 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TokensDto } from './dto/tokens.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayloadValidator } from './validators/jwt-payload.validator';
 import { IConfig, IStoreJWT } from 'src/common/config/config';
 import { CreateJwtPayload } from './dto/jwt-payload.dto';
+import { Provider } from '@prisma/client';
+import { SocialInterface } from './interfaces/social.interface';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -13,8 +20,28 @@ export class AuthService {
   constructor(
     private readonly configService: ConfigService<IConfig>,
     private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {
     this.jwt = this.configService.get('onlineStore.jwt', { infer: true });
+  }
+  static invalidProvider = new UnprocessableEntityException('Invalid provider');
+  async validateSocialLogin(
+    provider: Provider,
+    socialData: SocialInterface,
+  ): Promise<TokensDto> {
+    let user = await this.userService.getByEmail(socialData.email);
+
+    if (!user) {
+      user = await this.userService.add({
+        email: socialData.email,
+        firstName: socialData.firstName,
+        lastName: socialData.lastName,
+      });
+    } else if (user.provider !== provider) {
+      throw AuthService.invalidProvider;
+    }
+
+    return this.generateTokens(user);
   }
 
   public async refresh(token: string) {
@@ -57,6 +84,7 @@ export class AuthService {
   public async generateTokens(payload: CreateJwtPayload): Promise<TokensDto> {
     const response = new TokensDto();
 
+    payload = { id: payload.id, email: payload.email, role: payload.role };
     response.accessToken = await this.generateAccessToken(payload);
     response.refreshToken = await this.generateRefreshToken(payload);
 
