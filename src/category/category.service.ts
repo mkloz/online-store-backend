@@ -5,7 +5,7 @@ import { Category } from './entities/category.entity';
 import { PrismaService } from 'src/db/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { IConfig } from 'src/common/config/config';
+import { IConfig } from 'src/common/configs/config.interface';
 
 @Injectable()
 export class CategoryService {
@@ -23,7 +23,7 @@ export class CategoryService {
       }),
       count: await this.prisma.category.count(),
       route: `${
-        this.cs.get('onlineStore', { infer: true }).projectUrl
+        this.cs.get('onlineStore', { infer: true }).backendUrl
       }/api/categories`,
     };
 

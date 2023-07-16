@@ -1,7 +1,6 @@
 import {
   Inject,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
   forwardRef,
@@ -14,12 +13,14 @@ import { User } from 'src/user/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
-import { IConfig } from 'src/common/config/config';
-import { EmailCreateTokenPayload } from './dto/email-token-payload.dto';
-import { JwtService } from '@nestjs/jwt';
-import { EmailTokenPayloadValidator } from './validators/email-token-payload.validator';
+import { IConfig } from 'src/common/configs/config.interface';
+import { EmailTokenPayloadValidator } from './jwt/email-token-payload.validator';
 import { Provider } from '@prisma/client';
 import { Ok } from 'src/common/dto/ok.dto';
+import { CreateJwtPayload } from '../dto/jwt-payload.dto';
+import { JwtService } from '@nestjs/jwt';
+import { EmailCreateVerificationTokenPayload } from './jwt/email-verification-token-payload.dto';
+import { EmailCreatePassResetTokenPayload } from './jwt/email-pass-reset-token-payload.dto';
 
 @Injectable()
 export class AuthEmailService {
@@ -35,53 +36,32 @@ export class AuthEmailService {
     'Invalid token',
   );
 
-  private async generateTokensForUser(email: string): Promise<TokensDto> {
-    const user = await this.userService.getByEmailAndProvider(
-      email,
-      Provider.EMAIL,
-    );
+  public generateEmailVerificationToken(
+    payload: EmailCreateVerificationTokenPayload,
+  ): string {
+    const mailJwt = this.cs.get('auth', { infer: true }).mail.jwt.verification;
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!user.isEmailConfirmed) {
-      await this.userService.verify(user.id);
-    }
-    return await this.authService.generateTokens({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    });
-  }
-
-  async changePassword(id: number, password: string): Promise<Ok> {
-    await this.userService.changePassword(id, password, Provider.EMAIL);
-
-    return { ok: true };
-  }
-
-  private async generateEmailToken(
-    payload: EmailCreateTokenPayload,
-  ): Promise<string> {
-    const mailJwt = this.cs.get('auth', { infer: true }).mail.jwt;
-
-    return await this.jwtService.signAsync(payload, {
+    return this.jwtService.sign(payload, {
       expiresIn: mailJwt.time,
       secret: mailJwt.secret,
     });
   }
 
-  public async login(username: string, password: string): Promise<TokensDto> {
-    const user = await this.validateUser(username, password);
-    if (!user) {
-      throw new UnauthorizedException();
-    }
+  public generateEmailResetPassToken(
+    payload: EmailCreatePassResetTokenPayload,
+  ): string {
+    const mailJwt = this.cs.get('auth', { infer: true }).mail.jwt.resetPass;
 
-    return this.authService.generateTokens(user);
+    return this.jwtService.sign(payload, {
+      expiresIn: mailJwt.time,
+      secret: mailJwt.secret,
+    });
   }
 
-  async validateUser(email: string, password: string) {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<CreateJwtPayload> {
     const user: User = await this.userService.getByEmailVerified(
       email,
       Provider.EMAIL,
@@ -95,33 +75,77 @@ export class AuthEmailService {
     return null;
   }
 
-  async confirm(token: string): Promise<TokensDto> {
-    let payload;
+  public async login(username: string, password: string): Promise<TokensDto> {
+    const user = await this.validateUser(username, password);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return this.authService.generateTokens(user);
+  }
+
+  async verify(token: string): Promise<Ok> {
     try {
-      payload = await this.jwtService.verifyAsync(token, {
-        secret: this.cs.get('auth', { infer: true }).mail.jwt.secret,
+      const payload = this.jwtService.verify(token, {
+        secret: this.cs.get('auth', { infer: true }).mail.jwt.verification
+          .secret,
       });
+      if (!EmailTokenPayloadValidator.validateVerification(payload)) {
+        throw AuthEmailService.invalidTokenException;
+      }
+      await this.userService.verifyByEmail(payload.email);
+
+      return { ok: true };
     } catch (error) {
       throw AuthEmailService.invalidTokenException;
     }
-
-    if (EmailTokenPayloadValidator.validate(payload)) {
-      return this.generateTokensForUser(payload.email);
-    }
-
-    throw AuthEmailService.invalidTokenException;
   }
 
-  async sendConfirmation(email: string): Promise<Ok> {
-    const token = await this.generateEmailToken({ email });
+  async resetPassword(password: string, token: string): Promise<Ok> {
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: this.cs.get('auth', { infer: true }).mail.jwt.resetPass.secret,
+      });
+      if (!EmailTokenPayloadValidator.validatePassReset(payload)) {
+        throw AuthEmailService.invalidTokenException;
+      }
+      await this.userService.changePassword(
+        payload.id,
+        password,
+        Provider.EMAIL,
+      );
+      return { ok: true };
+    } catch (error) {
+      throw AuthEmailService.invalidTokenException;
+    }
+  }
 
-    this.mailService.sendConfirmation(email, token);
+  async forgotPass(email: string): Promise<Ok> {
+    const user = await this.userService.getByEmail(email);
+    const token = this.generateEmailResetPassToken({
+      id: user.id,
+      email,
+    });
+
+    await this.mailService.sendPassReset(email, token);
+    return { ok: true };
+  }
+
+  async sendVerification(email: string): Promise<Ok> {
+    const user = await this.userService.getByEmail(email);
+
+    const token = this.generateEmailVerificationToken({
+      id: user.id,
+      email,
+    });
+
+    await this.mailService.sendVerification(email, token);
     return { ok: true };
   }
 
   public async register(dto: EmailRegisterDto): Promise<Ok> {
     await this.userService.add(dto);
-    await this.sendConfirmation(dto.email);
+    await this.sendVerification(dto.email);
     return { ok: true };
   }
 }

@@ -9,7 +9,7 @@ import { GlobalExceptionFilter } from './common/global-exception.filter';
 import { ConfigService } from '@nestjs/config';
 import { createSwapiDocument } from './common/docs/create-swagger-doc';
 import { Env } from './common/dto/dotenv.dto';
-import { IConfig } from './common/config/config';
+import { IConfig } from './common/configs/config.interface';
 
 function isDevelopment(env: string): boolean {
   return env === Env.Development;
@@ -29,9 +29,9 @@ async function bootstrap() {
     )
     .useGlobalInterceptors(new GlobalResponseInterceptor());
 
-  const port = cs.get('port', { infer: true });
+  const port = cs.get('onlineStore', { infer: true }).port;
 
-  if (isDevelopment(cs.get('env', { infer: true }))) {
+  if (isDevelopment(cs.get('onlineStore.env', { infer: true }))) {
     SwaggerModule.setup('/api/docs', app, createSwapiDocument(app));
   } else {
     app.useGlobalFilters(new GlobalExceptionFilter(cs));

@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokensDto } from './dto/tokens.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayloadValidator } from './validators/jwt-payload.validator';
-import { IConfig, IStoreJWT } from 'src/common/config/config';
+import { IConfig, IStoreJWT } from 'src/common/configs/config.interface';
 import { CreateJwtPayload } from './dto/jwt-payload.dto';
 import { Provider } from '@prisma/client';
 import { SocialInterface } from './interfaces/social.interface';

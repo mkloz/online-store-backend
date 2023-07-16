@@ -8,12 +8,13 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { PrismaService } from 'src/db/prisma.service';
 import { Request } from 'express';
+import { IConfig } from 'src/common/configs/config.interface';
 @Injectable()
 export class CartItemBelongsToUserGuard extends AuthGuard {
   constructor(
     private readonly prisma: PrismaService,
     jwtService: JwtService,
-    configService: ConfigService,
+    configService: ConfigService<IConfig>,
   ) {
     super(jwtService, configService);
   }

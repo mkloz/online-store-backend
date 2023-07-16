@@ -15,12 +15,18 @@ export class UserService {
   static async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, SALT_ROUNDS);
   }
-  public async verify(id: number): Promise<void> {
+  public async verifyByID(id: number): Promise<void> {
     await this.prisma.user.update({
       where: { id },
       data: { isEmailConfirmed: true },
     });
     return;
+  }
+  public verifyByEmail(email: string): Promise<User> {
+    return this.prisma.user.update({
+      where: { email },
+      data: { isEmailConfirmed: true },
+    });
   }
   public async changePassword(
     id: number,
@@ -28,11 +34,10 @@ export class UserService {
     provider: Provider,
   ) {
     if (provider == Provider.EMAIL) {
-      await this.prisma.user.update({
+      return await this.prisma.user.update({
         where: { id },
         data: { password: await UserService.hashPassword(password) },
       });
-      return { ok: true };
     }
     throw new UnprocessableEntityException('Incorect provider');
   }
@@ -83,9 +88,13 @@ export class UserService {
     provider: Provider,
   ): Promise<User> {
     const user = await this.prisma.user.findFirst({
-      where: { email, isEmailConfirmed: true, provider },
+      where: { email, provider },
       include: { reviews: true },
     });
+
+    if (user && !user.isEmailConfirmed) {
+      throw new UnprocessableEntityException('Email is not confirmed');
+    }
     return user ? new User(user) : null;
   }
   public async getByEmailUnverified(

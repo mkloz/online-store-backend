@@ -7,13 +7,14 @@ import { ConfigService } from '@nestjs/config';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { JwtPayloadValidator } from '../validators/jwt-payload.validator';
 import { Role } from '@prisma/client';
+import { IConfig } from 'src/common/configs/config.interface';
 
 @Injectable()
 export class RoleAuthGuard extends AuthGuard {
   constructor(
     private readonly reflector: Reflector,
     jwtServ: JwtService,
-    configServ: ConfigService,
+    configServ: ConfigService<IConfig>,
   ) {
     super(jwtServ, configServ);
   }

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IAWS, IConfig } from '../../common/config/config';
+import { IAWS, IConfig } from '../../common/configs/config.interface';
 import { v4 as uuid } from 'uuid';
 import { Readable } from 'stream';
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';

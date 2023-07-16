@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { Review } from './entities/review.entity';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { IConfig } from 'src/common/config/config';
+import { IConfig } from 'src/common/configs/config.interface';
 import { Paginated } from 'src/common/pagination/paginated.dto';
 
 @Injectable()
@@ -44,7 +44,7 @@ export class ReviewService {
       ).map((el) => new Review(el)),
       count: await this.prisma.review.count(),
       route: `${
-        this.cs.get('onlineStore', { infer: true }).projectUrl
+        this.cs.get('onlineStore', { infer: true }).backendUrl
       }/api/reviews`,
     };
 

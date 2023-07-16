@@ -8,6 +8,7 @@ import {
   Query,
   Get,
   UseGuards,
+  Redirect,
 } from '@nestjs/common';
 import { AuthEmailService } from './auth-email.service';
 import { EmailLoginDto } from './dto/email-login.dto';
@@ -19,15 +20,14 @@ import { ApiEmailRegister } from './docs/api-email-register.decorator';
 import { ApiEmailLogin } from './docs/api-email-login.decorator';
 import { ApiEmail } from './docs/api-email.decorator';
 import { Ok } from 'src/common/dto/ok.dto';
-import { EmailSendConfirmation } from './dto/email-send-confirmation.dto';
-import { EmailConfirmDto } from './dto/email-confirm.dto';
 import { ApiEmailConfirm } from './docs/api-email-confirm.decorator';
 import { ApiEmailSendConfirmation } from './docs/api-email-send-confirmation.decorator';
 import { ApiEmailPasswortReset } from './docs/api-email-passwort-reset.decorator';
 import { User } from 'src/user/user.decorator';
 import { JwtPayload } from '../dto/jwt-payload.dto';
 import { EmailPasswordResetDto } from './dto/email-password-reset.dto';
-import { AuthGuard } from '../guards/auth.guard';
+import { EmailTokenDto } from './dto/email-token.dto';
+import { EmailDto } from './dto/email.dto';
 
 @ApiEmail()
 @Controller('auth/email')
@@ -50,30 +50,35 @@ export class AuthEmailController {
     return this.emailService.register(dto);
   }
 
-  @Get('/confirm')
+  @Post('/confirm')
   @ApiEmailConfirm()
   @HttpCode(HttpStatus.OK)
-  async confirm(@Query() { token }: EmailConfirmDto): Promise<TokensDto> {
-    return this.emailService.confirm(token);
+  verify(@Query() { token }: EmailTokenDto): Promise<Ok> {
+    return this.emailService.verify(token);
   }
 
-  @Post('/send-confirmation/:email')
+  @Post('/verify')
   @HttpCode(HttpStatus.OK)
   @ApiEmailSendConfirmation()
-  async sendConfirmation(
-    @Param(UserExistPipe) { email }: EmailSendConfirmation,
+  async sendVerification(
+    @Query(UserExistPipe) { email }: EmailDto,
   ): Promise<Ok> {
-    return this.emailService.sendConfirmation(email);
+    return this.emailService.sendVerification(email);
   }
 
-  @Post('/reset-password')
+  @Post('/forgot/password')
+  @HttpCode(HttpStatus.OK)
+  @ApiEmailSendConfirmation()
+  async sendPasswordReset(
+    @Query(UserExistPipe) { email }: EmailDto,
+  ): Promise<Ok> {
+    return this.emailService.forgotPass(email);
+  }
+
+  @Post('/reset/password')
   @HttpCode(HttpStatus.OK)
   @ApiEmailPasswortReset()
-  @UseGuards(AuthGuard)
-  resetPassword(
-    @User() user: JwtPayload,
-    @Body() { password }: EmailPasswordResetDto,
-  ): Promise<Ok> {
-    return this.emailService.changePassword(user.id, password);
+  resetPassword(@Body() dto: EmailPasswordResetDto): Promise<Ok> {
+    return this.emailService.resetPassword(dto.password, dto.token);
   }
 }

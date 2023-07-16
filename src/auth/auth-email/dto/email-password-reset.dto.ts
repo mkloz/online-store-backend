@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Length, Matches } from 'class-validator';
+import { EmailTokenDto } from './email-token.dto';
 
-export class EmailPasswordResetDto {
+export class EmailPasswordResetDto extends EmailTokenDto {
   @IsString()
   @Length(8, 20)
   @Matches(/(?=.*?[A-Z])/, {

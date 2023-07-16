@@ -7,5 +7,8 @@ export const ApiEmailConfirm = () =>
   applyDecorators(
     ApiResponseData(TokensDto),
     ApiOkResponse(),
-    ApiOperation({ summary: 'Confirm email token and returns jwt tokens' }),
+    ApiOperation({
+      summary:
+        'Confirm email token and set status of user email as vefificated',
+    }),
   );

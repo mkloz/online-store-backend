@@ -1,11 +1,13 @@
 import { IsEmail, IsInt, IsPositive } from 'class-validator';
 
-export class EmailCreateTokenPayload {
+export class EmailCreatePassResetTokenPayload {
+  @IsInt()
+  id: number;
   @IsEmail()
   email: string;
 }
 
-export class EmailTokenPayload extends EmailCreateTokenPayload {
+export class EmailPassResetTokenPayload extends EmailCreatePassResetTokenPayload {
   @IsInt()
   @IsPositive()
   iat: number;

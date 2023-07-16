@@ -8,7 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { Env } from './dto/dotenv.dto';
-import { IConfig } from './config/config';
+import { IConfig } from './configs/config.interface';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -16,7 +16,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   catch(exception: Error, host: ArgumentsHost) {
     const res = host.switchToHttp().getResponse<Response>();
-    const env = this.configServise.get('env', { infer: true });
+    const env = this.configServise.get('onlineStore.env', { infer: true });
     const status =
       exception instanceof HttpException
         ? exception.getStatus()

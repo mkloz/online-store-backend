@@ -7,10 +7,11 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { AuthGuard } from './auth.guard';
+import { IConfig } from 'src/common/configs/config.interface';
 
 @Injectable()
 export class MeAuthGuard extends AuthGuard {
-  constructor(jwtService: JwtService, configService: ConfigService) {
+  constructor(jwtService: JwtService, configService: ConfigService<IConfig>) {
     super(jwtService, configService);
   }
 

@@ -7,7 +7,7 @@ import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.d
 import { Paginated } from 'src/common/pagination/paginated.dto';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
 import { ConfigService } from '@nestjs/config';
-import { IConfig } from 'src/common/config/config';
+import { IConfig } from 'src/common/configs/config.interface';
 
 @Injectable()
 export class ArticleService {
@@ -65,7 +65,7 @@ export class ArticleService {
       ).map((el) => new Article(el)),
       count: await this.prisma.article.count(),
       route: `${
-        this.cs.get('onlineStore', { infer: true }).projectUrl
+        this.cs.get('onlineStore', { infer: true }).backendUrl
       }/api/articles`,
     };
 

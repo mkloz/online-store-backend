@@ -22,9 +22,7 @@ export class JwtPayloadValidator {
         skipMissingProperties: false,
       });
     } catch (errors) {
-      if (errors.length > 0) {
-        throw new UnauthorizedException(errors.toString());
-      }
+      if (errors) throw new UnauthorizedException(errors.toString());
     }
 
     return true;
