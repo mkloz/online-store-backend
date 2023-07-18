@@ -4,11 +4,7 @@ import {
   Body,
   HttpStatus,
   HttpCode,
-  Param,
   Query,
-  Get,
-  UseGuards,
-  Redirect,
 } from '@nestjs/common';
 import { AuthEmailService } from './auth-email.service';
 import { EmailLoginDto } from './dto/email-login.dto';
@@ -23,8 +19,7 @@ import { Ok } from 'src/common/dto/ok.dto';
 import { ApiEmailConfirm } from './docs/api-email-confirm.decorator';
 import { ApiEmailSendConfirmation } from './docs/api-email-send-confirmation.decorator';
 import { ApiEmailPasswortReset } from './docs/api-email-passwort-reset.decorator';
-import { User } from 'src/user/user.decorator';
-import { JwtPayload } from '../dto/jwt-payload.dto';
+
 import { EmailPasswordResetDto } from './dto/email-password-reset.dto';
 import { EmailTokenDto } from './dto/email-token.dto';
 import { EmailDto } from './dto/email.dto';

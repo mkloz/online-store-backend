@@ -5,51 +5,50 @@ name: Node.js CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   build:
-
     runs-on: citywheels-server
 
     strategy:
       matrix:
         node-version: [20.x]
-        
+
     steps:
-    - name: Download repo
-      uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Set .env file
-      run: echo '${{ secrets.ENV_FILE }}' > .env
-    - name: Install packeges
-      run: npm ci
-    - name: Build ts to js
-      run:   npm run build
+      - name: Download repo
+        uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Set .env file
+        run: echo '${{ secrets.ENV_FILE }}' > .env
+      - name: Install packeges
+        run: npm ci
+      - name: Build ts to js
+        run: npm run build
   migrate:
     runs-on: self-hosted
     needs: [build]
     steps:
-    - name: Migrate
-      run: migration:run
-      
+      - name: Migrate
+        run: migration:run
+
   test:
     runs-on: citywheels-server
     needs: [migrate]
     steps:
-    - name: Test
-      run: |
-        npm run format
-        npm run lint
-        npm run test
-      
+      - name: Test
+        run: |
+          npm run format
+          npm run lint
+          npm run test
+
   deploy:
     runs-on: citywheels-server
     needs: [test]
     steps:
-    - name: Restart PM2
-    - run: pm2 restart OnlineStore
+      - name: Restart PM2
+        run: pm2 restart OnlineStore
