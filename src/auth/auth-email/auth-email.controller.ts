@@ -5,6 +5,7 @@ import {
   HttpStatus,
   HttpCode,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthEmailService } from './auth-email.service';
 import { EmailLoginDto } from './dto/email-login.dto';
@@ -23,6 +24,10 @@ import { ApiEmailPasswortReset } from './docs/api-email-passwort-reset.decorator
 import { EmailPasswordResetDto } from './dto/email-password-reset.dto';
 import { EmailTokenDto } from './dto/email-token.dto';
 import { EmailDto } from './dto/email.dto';
+import { RoleAuthGuard } from '../guards/role-auth.guard';
+import { Role } from '@prisma/client';
+import { Roles } from '../decorators/roles.decorator';
+import { ApiAdminCreate } from './docs/api-admin-create.decorator';
 
 @ApiEmail()
 @Controller('auth/email')
@@ -39,10 +44,19 @@ export class AuthEmailController {
   }
 
   @Post('/register')
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @ApiEmailRegister()
   async register(@Body(UserNotExistPipe) dto: EmailRegisterDto): Promise<Ok> {
     return this.emailService.register(dto);
+  }
+
+  @Post('add/admin')
+  @Roles(Role.ADMIN)
+  @UseGuards(RoleAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiAdminCreate()
+  createAdmin(@Body() dto: EmailRegisterDto): Promise<Ok> {
+    return this.emailService.createAdmin(dto);
   }
 
   @Post('/confirm')

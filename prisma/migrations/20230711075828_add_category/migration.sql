@@ -15,6 +15,7 @@ CREATE TABLE `__article_category` (
     INDEX `__article_category_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE UNIQUE INDEX `category_name_key` ON `category`(`name`);
 -- AddForeignKey
 ALTER TABLE `__article_category` ADD CONSTRAINT `__article_category_A_fkey` FOREIGN KEY (`A`) REFERENCES `article`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 

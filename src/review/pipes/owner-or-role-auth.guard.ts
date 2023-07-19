@@ -3,13 +3,12 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { PrismaService } from 'src/db/prisma.service';
 import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
 import { Reflector } from '@nestjs/core';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class OwnerOrRoleAuthGuard extends RoleAuthGuard {
@@ -17,9 +16,9 @@ export class OwnerOrRoleAuthGuard extends RoleAuthGuard {
     private readonly prisma: PrismaService,
     reflector: Reflector,
     jwtService: JwtService,
-    configService: ConfigService<IConfig>,
+    cs: ApiConfigService,
   ) {
-    super(reflector, jwtService, configService);
+    super(reflector, jwtService, cs);
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

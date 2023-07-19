@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { ConfigValidator } from './config.validator';
-import { IAWS } from './config.interface';
+import { ConfigValidator } from '../config.validator';
+import { IAWS } from '../config.interface';
 const { env } = process;
 
 export class AWSVariables {

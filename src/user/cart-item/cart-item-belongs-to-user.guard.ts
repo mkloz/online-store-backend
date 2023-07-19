@@ -3,20 +3,20 @@ import {
   ExecutionContext,
   Injectable,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { PrismaService } from 'src/db/prisma.service';
 import { Request } from 'express';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
+
 @Injectable()
 export class CartItemBelongsToUserGuard extends AuthGuard {
   constructor(
     private readonly prisma: PrismaService,
     jwtService: JwtService,
-    configService: ConfigService<IConfig>,
+    cs: ApiConfigService,
   ) {
-    super(jwtService, configService);
+    super(jwtService, cs);
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

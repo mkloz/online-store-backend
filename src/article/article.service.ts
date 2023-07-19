@@ -6,15 +6,17 @@ import { Article } from './entities/article.entity';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { Paginated } from 'src/common/pagination/paginated.dto';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { ConfigService } from '@nestjs/config';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class ArticleService {
+  private readonly backendUrl: string;
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cs: ConfigService<IConfig>,
-  ) {}
+    private readonly cs: ApiConfigService,
+  ) {
+    this.backendUrl = this.cs.getOnlineStore().backendUrl;
+  }
 
   async incrementViews(id: number): Promise<Article> {
     const { views } = await this.prisma.article.findUnique({ where: { id } });
@@ -64,9 +66,7 @@ export class ArticleService {
         })
       ).map((el) => new Article(el)),
       count: await this.prisma.article.count(),
-      route: `${
-        this.cs.get('onlineStore', { infer: true }).backendUrl
-      }/api/articles`,
+      route: `${this.backendUrl}/api/articles`,
     };
 
     return Paginator.paginate(pag, opt);

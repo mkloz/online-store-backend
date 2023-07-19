@@ -1,5 +1,5 @@
--- DropIndex
-DROP INDEX `category_name_key` ON `category`;
+-- AlterTable
+ALTER TABLE `user` DROP COLUMN `provider`;
 
 -- CreateIndex
 CREATE INDEX `file_article_id_fkey` ON `file`(`article_id` ASC);

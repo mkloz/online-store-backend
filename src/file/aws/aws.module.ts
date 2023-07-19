@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { S3Client } from '@aws-sdk/client-s3';
-import { ConfigService } from '@nestjs/config';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
+import { ApiConfigModule } from 'src/config/api-config.module';
+import { FileS3Service } from './file-s3.service';
 
 @Module({
+  imports: [ApiConfigModule],
   providers: [
     {
       provide: S3Client,
-      inject: [ConfigService<IConfig>],
-      useFactory: (configService: ConfigService<IConfig>) => {
-        const aws = configService.get('aws', { infer: true });
+      inject: [ApiConfigService],
+      useFactory: (cs: ApiConfigService) => {
+        const aws = cs.getAWS();
         return new S3Client({
           region: aws.s3.region,
           credentials: {
@@ -19,7 +21,8 @@ import { IConfig } from 'src/common/configs/config.interface';
         });
       },
     },
+    FileS3Service,
   ],
-  exports: [S3Client],
+  exports: [FileS3Service],
 })
 export class AWSModule {}

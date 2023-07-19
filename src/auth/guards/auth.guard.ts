@@ -5,18 +5,23 @@ import {
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { JwtPayloadValidator } from '../validators/jwt-payload.validator';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
+import { IStoreJWT } from 'src/config/config.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  private readonly storeJWT: IStoreJWT;
+
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService<IConfig>,
-  ) {}
+    private readonly cs: ApiConfigService,
+  ) {
+    this.storeJWT = this.cs.getOnlineStore().jwt;
+  }
+
   static invalidTokenException = new UnprocessableEntityException(
     'Invalid token',
   );
@@ -33,8 +38,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get('onlineStore.jwt', { infer: true })
-          .accessToken.secret,
+        secret: this.storeJWT.accessToken.secret,
       });
 
       if (JwtPayloadValidator.validate(payload)) {

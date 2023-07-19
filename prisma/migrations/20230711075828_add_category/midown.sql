@@ -1,3 +1,4 @@
+DROP INDEX `category_name_key` ON `category`;
 -- DropForeignKey
 ALTER TABLE `__article_category` DROP FOREIGN KEY `__article_category_A_fkey`;
 

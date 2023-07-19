@@ -5,9 +5,12 @@ import { PrismaService } from 'src/db/prisma.service';
 export class UserExistPipe implements PipeTransform {
   constructor(private readonly prisma: PrismaService) {}
 
-  async transform(value: { email: string }) {
+  async transform(value: { email: string } | { id: number }) {
     const name = await this.prisma.user.findUnique({
-      where: { email: value.email },
+      where: {
+        email: 'email' in value ? value.email : undefined,
+        id: 'id' in value ? value.id : undefined,
+      },
     });
     if (!name) throw new BadRequestException('User does not exist');
 

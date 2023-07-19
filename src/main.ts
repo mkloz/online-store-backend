@@ -6,21 +6,16 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { GlobalResponseInterceptor } from './common/global-response.interceptor';
 import { SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './common/global-exception.filter';
-import { ConfigService } from '@nestjs/config';
 import { createSwapiDocument } from './common/docs/create-swagger-doc';
-import { Env } from './common/dto/dotenv.dto';
-import { IConfig } from './common/configs/config.interface';
+import { ApiConfigService } from './config/api-config.service';
 
-function isDevelopment(env: string): boolean {
-  return env === Env.Development;
-}
 function getMorganCfg(): string {
   return ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] - :response-time ms';
 }
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const cs = app.get(ConfigService<IConfig>);
+  const cs = app.get(ApiConfigService);
   app
     .use(morgan(getMorganCfg()))
     .setGlobalPrefix('api', { exclude: ['/'] })
@@ -29,9 +24,9 @@ async function bootstrap() {
     )
     .useGlobalInterceptors(new GlobalResponseInterceptor());
 
-  const port = cs.get('onlineStore', { infer: true }).port;
+  const port = cs.getPort();
 
-  if (isDevelopment(cs.get('onlineStore.env', { infer: true }))) {
+  if (cs.isDevelopment()) {
     SwaggerModule.setup('/api/docs', app, createSwapiDocument(app));
   } else {
     app.useGlobalFilters(new GlobalExceptionFilter(cs));

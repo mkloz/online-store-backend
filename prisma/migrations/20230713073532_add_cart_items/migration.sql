@@ -14,4 +14,4 @@ CREATE TABLE `cart_item` (
 ALTER TABLE `cart_item` ADD CONSTRAINT `cart_item_article_id_fkey` FOREIGN KEY (`article_id`) REFERENCES `article`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `cart_item` ADD CONSTRAINT `cart_item_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `cart_item` ADD CONSTRAINT `cart_item_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

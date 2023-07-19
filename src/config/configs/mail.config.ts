@@ -8,8 +8,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { ConfigValidator } from './config.validator';
-import { IMail } from './config.interface';
+import { ConfigValidator } from '../config.validator';
+import { IMail } from '../config.interface';
 const { env } = process;
 
 export class MailVariables {

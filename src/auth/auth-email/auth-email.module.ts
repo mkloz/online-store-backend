@@ -5,9 +5,18 @@ import { DbModule } from 'src/db/db.module';
 import { AuthModule } from '../auth.module';
 import { MailModule } from 'src/mail/mail.module';
 import { UserModule } from 'src/user/user.module';
+import { ApiConfigModule } from 'src/config/api-config.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [forwardRef(() => AuthModule), DbModule, MailModule, UserModule],
+  imports: [
+    forwardRef(() => AuthModule),
+    DbModule,
+    MailModule,
+    UserModule,
+    ApiConfigModule,
+    JwtModule,
+  ],
   controllers: [AuthEmailController],
   providers: [AuthEmailService],
 })

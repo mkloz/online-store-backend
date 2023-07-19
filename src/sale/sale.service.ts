@@ -3,18 +3,21 @@ import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { PrismaService } from 'src/db/prisma.service';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { IConfig } from 'src/common/configs/config.interface';
-import { ConfigService } from '@nestjs/config';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { Paginated } from 'src/common/pagination/paginated.dto';
 import { Sale } from './entities/sale.entity';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class SaleService {
+  private readonly backendUrl: string;
+
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cs: ConfigService<IConfig>,
-  ) {}
+    private readonly cs: ApiConfigService,
+  ) {
+    this.backendUrl = this.cs.getOnlineStore().backendUrl;
+  }
 
   public async create({ article, ...createSaleDto }: CreateSaleDto) {
     return new Sale(
@@ -38,9 +41,7 @@ export class SaleService {
         })
       ).map((el) => new Sale(el)),
       count: await this.prisma.sale.count(),
-      route: `${
-        this.cs.get('onlineStore', { infer: true }).backendUrl
-      }/api/sales`,
+      route: `${this.backendUrl}/api/sales`,
     };
 
     return Paginator.paginate(pag, opt);

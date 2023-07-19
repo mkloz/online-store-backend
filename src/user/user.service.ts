@@ -64,6 +64,27 @@ export class UserService {
     });
     return user ? new User(user) : null;
   }
+
+  public async createAdmin({
+    reviews,
+    ...dto
+  }: CreateUserDto & { provider?: Provider }): Promise<User> {
+    return new User(
+      await this.prisma.user.upsert({
+        where: { email: dto.email },
+        update: { role: Role.ADMIN },
+        create: {
+          reviews: reviews
+            ? {
+                connect: reviews.map((id) => ({ id })),
+              }
+            : undefined,
+          ...dto,
+        },
+        include: { reviews: true },
+      }),
+    );
+  }
   public async getByEmail(email: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { email },

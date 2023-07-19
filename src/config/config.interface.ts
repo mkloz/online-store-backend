@@ -1,4 +1,9 @@
-import { Env } from './online-store.config';
+export enum Env {
+  DEVELOPMENT = 'development',
+  PRODUCTION = 'production',
+  TEST = 'test',
+  PROVISION = 'provision',
+}
 
 export interface IConfig {
   mySql: IMySql;
@@ -7,6 +12,7 @@ export interface IConfig {
   mail: IMail;
   auth: IAuth;
 }
+
 export interface IMySql {
   url: string;
   port: number;
@@ -35,6 +41,12 @@ export interface IStore {
   backendUrl: string;
   frontendUrl: string;
   jwt: IStoreJWT;
+  admin: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  };
 }
 export interface IMail {
   host: string;
@@ -49,6 +61,7 @@ export interface IMail {
     address: string;
   };
 }
+
 export interface IAuth {
   mail: {
     jwt: {

@@ -3,20 +3,19 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { JwtPayloadValidator } from '../validators/jwt-payload.validator';
 import { Role } from '@prisma/client';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class RoleAuthGuard extends AuthGuard {
   constructor(
     private readonly reflector: Reflector,
     jwtServ: JwtService,
-    configServ: ConfigService<IConfig>,
+    cs: ApiConfigService,
   ) {
-    super(jwtServ, configServ);
+    super(jwtServ, cs);
   }
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {

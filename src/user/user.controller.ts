@@ -29,13 +29,13 @@ import {
   ApiUserMeUpdate,
 } from './docs';
 import { RelationsExistsPipe } from './pipes/relations-exists.pipe';
+import { UserExistPipe } from './pipes/user-exist.pipe';
 
 @ApiUser()
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
   @Get('me')
   @UseGuards(AuthGuard)
   @ApiUserMe()
@@ -82,7 +82,7 @@ export class UserController {
   @UseGuards(RoleAuthGuard)
   @Roles(Role.ADMIN)
   @ApiUserByIdDelete()
-  deleteById(@Param() { id }: IDDto): Promise<User> {
+  deleteById(@Param(UserExistPipe) { id }: IDDto): Promise<User> {
     return this.userService.deleteById(id);
   }
 }

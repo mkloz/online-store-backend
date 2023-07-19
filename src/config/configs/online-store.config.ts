@@ -5,21 +5,17 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Length,
+  Matches,
   Max,
   Min,
 } from 'class-validator';
-import { ConfigValidator } from './config.validator';
+import { ConfigValidator } from '../config.validator';
 import { registerAs } from '@nestjs/config';
 import { randomUUID } from 'crypto';
-import { IStore } from './config.interface';
+import { Env, IStore } from '../config.interface';
 const { env } = process;
 
-export enum Env {
-  Development = 'development',
-  Production = 'production',
-  Test = 'test',
-  Provision = 'provision',
-}
 export class OnlineStoreVariables {
   @IsEnum(Env)
   NODE_ENV: Env;
@@ -52,6 +48,34 @@ export class OnlineStoreVariables {
   @IsString()
   @IsNotEmpty()
   JWT_REFRESH_TOKEN_TIME: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ADMIN_FIRST_NAME: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ADMIN_LAST_NAME: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ADMIN_EMAIL: string;
+
+  @IsString()
+  @Length(8, 20)
+  @Matches(/(?=.*?[A-Z])/, {
+    message: 'Missing a upper case leters in pasword',
+  })
+  @Matches(/(?=.*?[a-z])/, {
+    message: 'Missing a lower case leters in pasword',
+  })
+  @Matches(/(?=.*?[0-9])/, {
+    message: 'Missing a numbers in pasword',
+  })
+  @Matches(/(?=.*?[#?!@$%^&*-])/, {
+    message: 'Missing a special charecters in pasword',
+  })
+  ADMIN_PASSWORD: string;
 }
 
 export const onlineStoreConfig = registerAs<IStore>('onlineStore', () => {
@@ -71,6 +95,12 @@ export const onlineStoreConfig = registerAs<IStore>('onlineStore', () => {
         secret: env.JWT_REFRESH_TOKEN_SECRET ?? randomUUID(),
         time: env.JWT_REFRESH_TOKEN_TIME,
       },
+    },
+    admin: {
+      firstName: env.ADMIN_FIRST_NAME,
+      lastName: env.ADMIN_LAST_NAME,
+      email: env.ADMIN_EMAIL,
+      password: env.ADMIN_PASSWORD,
     },
   };
 });

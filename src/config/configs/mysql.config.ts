@@ -7,8 +7,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { ConfigValidator } from './config.validator';
-import { IMySql } from './config.interface';
+import { ConfigValidator } from '../config.validator';
+import { IMySql } from '../config.interface';
 const { env } = process;
 
 export class MySqlVariables {

@@ -1,8 +1,8 @@
 import { registerAs } from '@nestjs/config';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ConfigValidator } from './config.validator';
+import { ConfigValidator } from '../config.validator';
 import { randomUUID } from 'crypto';
-import { IAuth } from './config.interface';
+import { IAuth } from '../config.interface';
 const { env } = process;
 
 export class AuthVariables {

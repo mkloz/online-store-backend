@@ -3,9 +3,10 @@ import { UserService } from './user.service';
 import { DbModule } from 'src/db/db.module';
 import { UserController } from './user.controller';
 import { CartItemModule } from './cart-item/cart-item.module';
+import { ApiConfigModule } from 'src/config/api-config.module';
 
 @Module({
-  imports: [DbModule, CartItemModule],
+  imports: [ApiConfigModule, DbModule, CartItemModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],

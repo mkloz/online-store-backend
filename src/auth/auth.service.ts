@@ -5,24 +5,24 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TokensDto } from './dto/tokens.dto';
-import { ConfigService } from '@nestjs/config';
 import { JwtPayloadValidator } from './validators/jwt-payload.validator';
-import { IConfig, IStoreJWT } from 'src/common/configs/config.interface';
+import { IStoreJWT } from 'src/config/config.interface';
 import { CreateJwtPayload } from './dto/jwt-payload.dto';
 import { Provider } from '@prisma/client';
 import { SocialInterface } from './interfaces/social.interface';
 import { UserService } from 'src/user/user.service';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class AuthService {
   private readonly jwt: IStoreJWT;
 
   constructor(
-    private readonly configService: ConfigService<IConfig>,
+    private readonly cs: ApiConfigService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
   ) {
-    this.jwt = this.configService.get('onlineStore.jwt', { infer: true });
+    this.jwt = this.cs.getOnlineStore().jwt;
   }
   static invalidProvider = new UnprocessableEntityException('Invalid provider');
   async validateSocialLogin(

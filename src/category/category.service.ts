@@ -3,16 +3,19 @@ import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.d
 import { Paginated } from 'src/common/pagination/paginated.dto';
 import { Category } from './entities/category.entity';
 import { PrismaService } from 'src/db/prisma.service';
-import { ConfigService } from '@nestjs/config';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class CategoryService {
+  private readonly backendUrl: string;
+
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cs: ConfigService<IConfig>,
-  ) {}
+    private readonly cs: ApiConfigService,
+  ) {
+    this.backendUrl = this.cs.getOnlineStore().backendUrl;
+  }
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Category>> {
     const pag: IPag<Category> = {
@@ -22,9 +25,7 @@ export class CategoryService {
         include: { articles: true },
       }),
       count: await this.prisma.category.count(),
-      route: `${
-        this.cs.get('onlineStore', { infer: true }).backendUrl
-      }/api/categories`,
+      route: `${this.backendUrl}/api/categories`,
     };
 
     return Paginator.paginate(pag, opt);

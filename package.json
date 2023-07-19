@@ -5,6 +5,9 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "prisma": {
+    "seed": "node dist/prisma/seeds/main.seed.js"
+  },
   "scripts": {
     "go": "npm i && npm run build && npm run format && npm run lint && jest --passWithNoTests && npm run start:prod",
     "go:dev": "npm i && npm run build && npm run format && npm run lint && jest --passWithNoTests && npm run start:dev",
@@ -20,11 +23,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:run": "npx prisma migrate dev",
+    "migration:run:dev": "npx prisma migrate dev",
+    "migration:run:prod": "npx prisma migrate deploy",
     "migration:down": "npx prisma migrate resolve --rolled-back",
     "migration:down:generate": "npx prisma migrate diff --from-schema-datamodel prisma/schema.prisma --to-schema-datasource prisma/schema.prisma --script > prisma/midown.sql",
-    "seed:run": "",
-    "seed:down": ""
+    "seed:run": "npx prisma db seed"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.367.0",
@@ -58,7 +61,7 @@
     "@types/jest": "^29.5.2",
     "@types/morgan": "^1.9.4",
     "@types/multer": "^1.4.7",
-    "@types/node": "^20.3.1",
+    "@types/node": "^20.4.2",
     "@types/nodemailer": "^6.4.8",
     "@types/supertest": "^2.0.12",
     "@types/uuid": "^9.0.2",
@@ -73,6 +76,7 @@
     "prettier": "^2.8.8",
     "source-map-support": "^0.5.21",
     "supertest": "^6.3.3",
+    "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },

@@ -3,16 +3,15 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { AuthGuard } from './auth.guard';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class MeAuthGuard extends AuthGuard {
-  constructor(jwtService: JwtService, configService: ConfigService<IConfig>) {
-    super(jwtService, configService);
+  constructor(jwtService: JwtService, cs: ApiConfigService) {
+    super(jwtService, cs);
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

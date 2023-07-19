@@ -74,7 +74,7 @@ model Review {
 
 model Category {
   id       Int       @id() @default(autoincrement())
-  name     String    @db.Char(255)
+  name     String    @unique() @db.Char(255)
   articles Article[] @relation(name: "_article_category")
 
   @@map("category")
@@ -101,6 +101,8 @@ model User {
   role             Role       @default(USER)
   reviews          Review[]
   cartItems        CartItem[]
+
+  @@map("user")
 }
 
 model CartItem {

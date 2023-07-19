@@ -2,19 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { PrismaService } from 'src/db/prisma.service';
-import { ConfigService } from '@nestjs/config';
 import { Review } from './entities/review.entity';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { IConfig } from 'src/common/configs/config.interface';
 import { Paginated } from 'src/common/pagination/paginated.dto';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class ReviewService {
+  private readonly backendUrl: string;
   constructor(
     private readonly prisma: PrismaService,
-    private readonly cs: ConfigService<IConfig>,
-  ) {}
+    private readonly cs: ApiConfigService,
+  ) {
+    this.backendUrl = this.cs.getOnlineStore().backendUrl;
+  }
 
   public async create({
     article,
@@ -43,9 +45,7 @@ export class ReviewService {
         })
       ).map((el) => new Review(el)),
       count: await this.prisma.review.count(),
-      route: `${
-        this.cs.get('onlineStore', { infer: true }).backendUrl
-      }/api/reviews`,
+      route: `${this.backendUrl}/api/reviews`,
     };
 
     return Paginator.paginate(pag, opt);

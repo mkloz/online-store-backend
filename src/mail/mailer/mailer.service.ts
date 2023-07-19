@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import fs from 'node:fs/promises';
-import { ConfigService } from '@nestjs/config';
 import { SendMailOptions, Transporter, createTransport } from 'nodemailer';
 import Handlebars from 'handlebars';
-import { IConfig } from 'src/common/configs/config.interface';
+import { ApiConfigService } from 'src/config/api-config.service';
 
 @Injectable()
 export class MailerService {
   private readonly transporter: Transporter;
-  constructor(private readonly configService: ConfigService<IConfig>) {
-    const mail = this.configService.get('mail', { infer: true });
+
+  constructor(private readonly cs: ApiConfigService) {
+    const mail = this.cs.getMail();
 
     this.transporter = createTransport(
       {
