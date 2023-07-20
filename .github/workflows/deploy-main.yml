@@ -35,7 +35,7 @@ jobs:
     needs: [build]
     steps:
       - name: Migrate
-        run: migration:run:prod
+        run: npm run migration:run:prod
 
   test:
     runs-on: citywheels-server
