@@ -57,25 +57,12 @@ export class CreateArticleDto {
   @FileExist({ each: true })
   @IsArray()
   @ApiPropertyOptional({ example: [1, 2, 3] })
-  images?: number[] = [];
-
-  @IsOptional()
-  @IsInt({ each: true })
-  @SaleExist({ each: true })
-  @ApiPropertyOptional({ example: 1 })
-  sale?: number;
-
-  @IsOptional()
-  @IsInt({ each: true })
-  @IsArray()
-  @ReviewExist({ each: true })
-  @ApiPropertyOptional({ example: [1, 2, 3] })
-  reviews?: number[] = [];
+  images?: number[];
 
   @IsOptional()
   @IsInt({ each: true })
   @IsArray()
   @CategoryExist({ each: true })
   @ApiPropertyOptional({ example: [1, 2, 3] })
-  categories?: number[] = [];
+  categories?: number[];
 }

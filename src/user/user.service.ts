@@ -1,107 +1,56 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from 'src/db/prisma.service';
-import { Provider, Role } from '@prisma/client';
+import { Provider } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRepository } from './user.repository';
 
 export const SALT_ROUNDS = 10;
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly repo: UserRepository) {}
 
   static async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, SALT_ROUNDS);
   }
   public async verifyByID(id: number): Promise<void> {
-    await this.prisma.user.update({
-      where: { id },
-      data: { isEmailConfirmed: true },
-    });
-    return;
+    await this.repo.verifyByUniqueInput({ id });
   }
-  public verifyByEmail(email: string): Promise<User> {
-    return this.prisma.user.update({
-      where: { email },
-      data: { isEmailConfirmed: true },
-    });
+
+  public async verifyByEmail(email: string): Promise<void> {
+    await this.repo.verifyByUniqueInput({ email });
   }
+
   public async changePassword(
     id: number,
     password: string,
     provider: Provider,
   ) {
-    if (provider == Provider.EMAIL) {
-      return await this.prisma.user.update({
-        where: { id },
-        data: { password: await UserService.hashPassword(password) },
-      });
-    }
-    throw new UnprocessableEntityException('Incorect provider');
+    await this.repo.changePassword(id, password, provider);
+    return { ok: true };
   }
 
-  public async add({
-    password,
-    reviews,
-    favorites,
-    ...dto
-  }: CreateUserDto & { provider?: Provider }): Promise<User> {
-    const user = await this.prisma.user.create({
-      data: {
-        password: password
-          ? await UserService.hashPassword(password)
-          : undefined,
-        role: Role.USER,
-        ...dto,
-        reviews: reviews
-          ? {
-              connect: reviews.map((id) => ({ id })),
-            }
-          : undefined,
-        favorites: favorites
-          ? {
-              connect: favorites.map((id) => ({ id })),
-            }
-          : undefined,
-      },
-      include: { reviews: true, favorites: true },
-    });
+  public async add(
+    dto: CreateUserDto & { provider?: Provider },
+  ): Promise<User> {
+    const user = await this.repo.add(dto);
+
     return user ? new User(user) : null;
   }
 
-  public async createAdmin({
-    reviews,
-    favorites,
-    ...dto
-  }: CreateUserDto & { provider?: Provider }): Promise<User> {
-    return new User(
-      await this.prisma.user.upsert({
-        where: { email: dto.email },
-        update: { role: Role.ADMIN },
-        create: {
-          reviews: reviews
-            ? {
-                connect: reviews.map((id) => ({ id })),
-              }
-            : undefined,
-          favorites: favorites
-            ? {
-                connect: favorites.map((id) => ({ id })),
-              }
-            : undefined,
-          ...dto,
-        },
-        include: { reviews: true, favorites: true },
-      }),
-    );
+  public async createAdmin(
+    dto: CreateUserDto & { provider?: Provider },
+  ): Promise<User> {
+    const user = await this.repo.createAdmin(dto);
+
+    return user ? new User(user) : null;
   }
+
   public async getByEmail(email: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-      include: { reviews: true, favorites: true },
-    });
+    const user = await this.repo.getByUniqueInput({ email });
+
     return user ? new User(user) : null;
   }
 
@@ -109,10 +58,8 @@ export class UserService {
     email: string,
     provider: Provider,
   ): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: { email, provider },
-      include: { reviews: true, favorites: true },
-    });
+    const user = await this.repo.getByUniqueInput({ email, provider });
+
     return user ? new User(user) : null;
   }
 
@@ -120,32 +67,30 @@ export class UserService {
     email: string,
     provider: Provider,
   ): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: { email, provider },
-      include: { reviews: true, favorites: true },
+    const user = await this.repo.getByUniqueInput({
+      email,
+      provider,
+      verified: true,
     });
 
-    if (user && !user.isEmailConfirmed) {
-      throw new UnprocessableEntityException('Email is not confirmed');
-    }
     return user ? new User(user) : null;
   }
+
   public async getByEmailUnverified(
     email: string,
     provider: Provider,
   ): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: { email, isEmailConfirmed: false, provider },
-      include: { reviews: true, favorites: true },
+    const user = await this.repo.getByUniqueInput({
+      email,
+      provider,
+      verified: false,
     });
 
     return user ? new User(user) : user;
   }
+
   public async getById(id: number): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: { id, isEmailConfirmed: true },
-      include: { reviews: true, favorites: true },
-    });
+    const user = await this.repo.getByUniqueInput({ id });
 
     return user ? new User(user) : null;
   }
@@ -154,42 +99,20 @@ export class UserService {
     id: number,
     provider: Provider,
   ): Promise<User> {
-    const user = await this.prisma.user.findFirst({
-      where: { id, isEmailConfirmed: true, provider },
-      include: { reviews: true, favorites: true },
-    });
+    const user = await this.repo.getByUniqueInput({ id, provider });
 
     return user ? new User(user) : null;
   }
 
-  public async updateById(
-    id: number,
-    { reviews, favorites, ...dto }: UpdateUserDto,
-  ): Promise<User> {
-    const user = await this.prisma.user.update({
-      where: { id },
-      include: { reviews: true, favorites: true },
-      data: {
-        ...dto,
-        reviews: reviews
-          ? {
-              connect: reviews.map((id) => ({ id })),
-            }
-          : undefined,
-        favorites: favorites
-          ? {
-              connect: favorites.map((id) => ({ id })),
-            }
-          : undefined,
-      },
-    });
+  public async updateById(id: number, dto: UpdateUserDto): Promise<User> {
+    const user = await this.repo.updateById(id, dto);
+
     return user ? new User(user) : null;
   }
+
   public async deleteById(id: number): Promise<User> {
-    const user = await this.prisma.user.delete({
-      where: { id },
-      include: { reviews: true, favorites: true },
-    });
+    const user = await this.repo.deleteById(id);
+
     return user ? new User(user) : null;
   }
 }

@@ -26,16 +26,9 @@ export class CreateUserDto {
   password?: string;
 
   @IsInt({ each: true })
-  @ReviewExist({ each: true })
-  @IsArray()
-  @IsOptional()
-  @ApiPropertyOptional({ example: [1, 2, 3] })
-  reviews?: number[] = [];
-
-  @IsInt({ each: true })
   @ArticleExist({ each: true })
   @IsArray()
   @IsOptional()
   @ApiPropertyOptional({ example: [1, 2, 3] })
-  favorites?: number[] = [];
+  favorites?: number[];
 }

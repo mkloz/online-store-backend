@@ -18,21 +18,20 @@ export class ReviewService {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
   }
 
-  public async create({
-    article,
-    author,
-    ...createReviewDto
-  }: CreateReviewDto): Promise<Review> {
-    return new Review(
-      await this.prisma.review.create({
-        data: {
-          ...createReviewDto,
-          article: article ? { connect: { id: article } } : undefined,
-          author: author ? { connect: { id: author } } : undefined,
-        },
-        include: { article: true, author: true },
-      }),
-    );
+  public async create(
+    authorId: number,
+    { article, ...createReviewDto }: CreateReviewDto,
+  ): Promise<Review> {
+    const rew = await this.prisma.review.create({
+      data: {
+        ...createReviewDto,
+        article: { connect: { id: article } },
+        author: { connect: { id: authorId } },
+      },
+      include: { article: true, author: true },
+    });
+
+    return rew ? new Review(rew) : null;
   }
 
   public async findAll(opt: PaginationOptionsDto): Promise<Paginated<Review>> {
@@ -52,36 +51,29 @@ export class ReviewService {
   }
 
   public async findOne(id: number): Promise<Review> {
-    return new Review(
-      await this.prisma.review.findUnique({
-        where: { id },
-        include: { article: true, author: true },
-      }),
-    );
+    const rew = await this.prisma.review.findUnique({
+      where: { id },
+      include: { article: true, author: true },
+    });
+
+    return rew ? new Review(rew) : null;
   }
 
-  public async update(
-    id: number,
-    { article, author, ...updateReviewDto }: UpdateReviewDto,
-  ): Promise<Review> {
-    return new Review(
-      await this.prisma.review.update({
-        where: { id },
-        data: {
-          ...updateReviewDto,
-          article: article ? { connect: { id: article } } : undefined,
-          author: author ? { connect: { id: author } } : undefined,
-        },
-        include: { article: true, author: true },
-      }),
-    );
+  public async update(id: number, dto: UpdateReviewDto): Promise<Review> {
+    const rew = await this.prisma.review.update({
+      where: { id },
+      data: dto,
+      include: { article: true, author: true },
+    });
+
+    return rew ? new Review(rew) : null;
   }
 
   public async remove(id: number): Promise<Review> {
-    return new Review(
-      await this.prisma.review.delete({
-        where: { id },
-      }),
-    );
+    const rew = await this.prisma.review.delete({
+      where: { id },
+    });
+
+    return rew ? new Review(rew) : null;
   }
 }

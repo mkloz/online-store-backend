@@ -31,6 +31,8 @@ import { Role } from '@prisma/client';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
 import { OwnerOrRoleAuthGuard } from './pipes/owner-or-role-auth.guard';
+import { User } from 'src/user/user.decorator';
+import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 
 @ApiReview()
 @Controller('reviews')
@@ -42,8 +44,11 @@ export class ReviewController {
   @Roles(Role.USER, Role.ADMIN)
   @ApiReviewCreate()
   @UseGuards(RoleAuthGuard)
-  public create(@Body() createReviewDto: CreateReviewDto): Promise<Review> {
-    return this.reviewService.create(createReviewDto);
+  public create(
+    @User() user: JwtPayload,
+    @Body() createReviewDto: CreateReviewDto,
+  ): Promise<Review> {
+    return this.reviewService.create(user.id, createReviewDto);
   }
 
   @Get()

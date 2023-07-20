@@ -32,6 +32,7 @@ export class CartItemService {
       throw new NotFoundException('Item not found');
     }
     const quantity = cartItem.quantity - dto.quantity;
+
     return quantity > 0
       ? this.update(cartItem.id, {
           quantity: cartItem.quantity - dto.quantity,
@@ -43,16 +44,16 @@ export class CartItemService {
     { id }: JwtPayload,
     dto: CreateCartItemDto,
   ): Promise<CartItem> {
-    return new CartItem(
-      await this.prisma.cartItem.create({
-        data: {
-          ...dto,
-          user: { connect: { id } },
-          article: { connect: { id: dto.article } },
-        },
-        include: { user: true, article: true },
-      }),
-    );
+    const item = await this.prisma.cartItem.create({
+      data: {
+        ...dto,
+        user: { connect: { id } },
+        article: { connect: { id: dto.article } },
+      },
+      include: { user: true, article: true },
+    });
+
+    return item ? new CartItem(item) : null;
   }
 
   async add(user: JwtPayload, dto: CreateCartItemDto) {
@@ -94,25 +95,27 @@ export class CartItemService {
   }
 
   public async findOne(id: number): Promise<CartItem> {
-    return new CartItem(
-      await this.prisma.cartItem.findUnique({
-        where: { id },
-        include: { user: true, article: true },
-      }),
-    );
+    const item = await this.prisma.cartItem.findUnique({
+      where: { id },
+      include: { user: true, article: true },
+    });
+
+    return item ? new CartItem(item) : null;
   }
 
-  public async update(id: number, { article, ...dto }: UpdateCartItemDto) {
-    return new CartItem(
-      await this.prisma.cartItem.update({
-        where: { id },
-        data: { ...dto, article: { connect: { id: article } } },
-        include: { user: true, article: true },
-      }),
-    );
+  public async update(id: number, dto: UpdateCartItemDto) {
+    const item = await this.prisma.cartItem.update({
+      where: { id },
+      data: dto,
+      include: { user: true, article: true },
+    });
+
+    return item ? new CartItem(item) : null;
   }
 
   public async remove(id: number): Promise<CartItem> {
-    return new CartItem(await this.prisma.cartItem.delete({ where: { id } }));
+    const item = await this.prisma.cartItem.delete({ where: { id } });
+
+    return item ? new CartItem(item) : null;
   }
 }

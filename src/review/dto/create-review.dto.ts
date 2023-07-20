@@ -1,14 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsInt,
-  IsOptional,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-} from 'class-validator';
+import { IsInt, IsString, Max, MaxLength, Min } from 'class-validator';
 import { ArticleExist } from 'src/article/validators/article-exist.validator';
-import { UserExist } from 'src/user/validators/user-exist.validator';
 
 export class CreateReviewDto {
   @IsString()
@@ -24,14 +16,6 @@ export class CreateReviewDto {
 
   @IsInt()
   @ArticleExist()
-  @IsOptional()
-  @ArticleExist()
-  @ApiPropertyOptional()
-  article?: number;
-
-  @IsInt()
-  @UserExist()
-  @IsOptional()
-  @ApiPropertyOptional()
-  author?: number;
+  @ApiProperty()
+  article: number;
 }

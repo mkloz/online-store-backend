@@ -15,8 +15,6 @@ export class MeAuthGuard extends AuthGuard {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    return true;
-
     const res = await super.canActivate(context);
     if (!res) return false;
 

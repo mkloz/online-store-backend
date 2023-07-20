@@ -20,15 +20,15 @@ export class SaleService {
   }
 
   public async create({ article, ...createSaleDto }: CreateSaleDto) {
-    return new Sale(
-      await this.prisma.sale.create({
-        data: {
-          ...createSaleDto,
-          article: article ? { connect: { id: article } } : undefined,
-        },
-        include: { article: true },
-      }),
-    );
+    const sale = await this.prisma.sale.create({
+      data: {
+        ...createSaleDto,
+        article: { connect: { id: article } },
+      },
+      include: { article: true },
+    });
+
+    return sale ? new Sale(sale) : null;
   }
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Sale>> {
@@ -48,31 +48,27 @@ export class SaleService {
   }
 
   public async findOne(id: number): Promise<Sale> {
-    return new Sale(
-      await this.prisma.sale.findUnique({
-        where: { id },
-        include: { article: true },
-      }),
-    );
+    const sale = await this.prisma.sale.findUnique({
+      where: { id },
+      include: { article: true },
+    });
+
+    return sale ? new Sale(sale) : null;
   }
 
-  public async update(
-    id: number,
-    { article, ...updateSaleDto }: UpdateSaleDto,
-  ): Promise<Sale> {
-    return new Sale(
-      await this.prisma.sale.update({
-        where: { id },
-        data: {
-          ...updateSaleDto,
-          article: article ? { connect: { id: article } } : undefined,
-        },
-        include: { article: true },
-      }),
-    );
+  public async update(id: number, dto: UpdateSaleDto): Promise<Sale> {
+    const sale = await this.prisma.sale.update({
+      where: { id },
+      data: dto,
+      include: { article: true },
+    });
+
+    return sale ? new Sale(sale) : null;
   }
 
   public async remove(id: number): Promise<Sale> {
-    return new Sale(await this.prisma.sale.delete({ where: { id } }));
+    const sale = await this.prisma.sale.delete({ where: { id } });
+
+    return sale ? new Sale(sale) : null;
   }
 }

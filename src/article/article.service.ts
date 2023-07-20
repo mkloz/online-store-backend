@@ -26,29 +26,18 @@ export class ArticleService {
 
   async create({
     images,
-    sale,
-    reviews,
     categories,
     ...createArticleDto
   }: CreateArticleDto): Promise<Article> {
-    return new Article(
-      await this.prisma.article.create({
-        data: {
-          ...createArticleDto,
-          images: {
-            connect: images.map((id) => ({ id })),
-          },
-          sale: sale ? { connect: { id: sale } } : undefined,
-          reviews: {
-            connect: reviews.map((id) => ({ id })),
-          },
-          categories: {
-            connect: categories.map((id) => ({ id })),
-          },
-        },
-        include: { images: true, sale: true, reviews: true, categories: true },
-      }),
-    );
+    const article = await this.prisma.article.create({
+      data: {
+        ...createArticleDto,
+        images: this.prisma.connectArrayIfDefined(images),
+        categories: this.prisma.connectArrayIfDefined(categories),
+      },
+      include: { images: true, sale: true, reviews: true, categories: true },
+    });
+    return article ? new Article(article) : null;
   }
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Article>> {
@@ -73,51 +62,35 @@ export class ArticleService {
   }
 
   async findOne(id: number): Promise<Article> {
-    return new Article(
-      await this.prisma.article.findUnique({
-        where: { id },
-        include: { images: true, sale: true, reviews: true, categories: true },
-      }),
-    );
+    const art = await this.prisma.article.findUnique({
+      where: { id },
+      include: { images: true, sale: true, reviews: true, categories: true },
+    });
+    return art ? new Article(art) : null;
   }
 
   async update(
     id: number,
-    {
-      images,
-      sale,
-      reviews,
-      categories,
-      ...updateArticleDto
-    }: UpdateArticleDto,
+    { images, categories, ...updateArticleDto }: UpdateArticleDto,
   ): Promise<Article> {
-    return new Article(
-      await this.prisma.article.update({
-        where: { id },
-        data: {
-          ...updateArticleDto,
-          images: {
-            connect: images.map((id) => ({ id })),
-          },
-          sale: sale ? { connect: { id: sale } } : undefined,
-          reviews: {
-            connect: reviews.map((id) => ({ id })),
-          },
-          categories: {
-            connect: categories.map((id) => ({ id })),
-          },
-        },
-        include: { images: true, sale: true, reviews: true, categories: true },
-      }),
-    );
+    const updated = await this.prisma.article.update({
+      where: { id },
+      data: {
+        ...updateArticleDto,
+        images: this.prisma.setArrayIfDefined(images),
+        categories: this.prisma.setArrayIfDefined(categories),
+      },
+      include: { images: true, sale: true, reviews: true, categories: true },
+    });
+    return updated ? new Article(updated) : null;
   }
 
   async remove(id: number) {
-    return new Article(
-      await this.prisma.article.delete({
-        where: { id },
-        include: { images: true, sale: true, reviews: true, categories: true },
-      }),
-    );
+    const art = await this.prisma.article.delete({
+      where: { id },
+      include: { images: true, sale: true, reviews: true, categories: true },
+    });
+
+    return art ? new Article(art) : null;
   }
 }
