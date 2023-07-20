@@ -29,12 +29,13 @@ jobs:
         run: npm ci
       - name: Build ts to js
         run: npm run build
+
   migrate:
     runs-on: self-hosted
     needs: [build]
     steps:
       - name: Migrate
-        run: migration:run
+        run: migration:run:prod
 
   test:
     runs-on: citywheels-server
