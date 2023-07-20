@@ -32,5 +32,11 @@ export class CartItem extends CartItemDiscription implements ICartItem {
   constructor(partial: Partial<CartItem>) {
     super();
     Object.assign(this, partial);
+    if (this.article) {
+      this.article = new Article(this.article);
+    }
+    if (this.user) {
+      this.user = new User(this.user);
+    }
   }
 }

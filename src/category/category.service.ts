@@ -19,11 +19,13 @@ export class CategoryService {
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Category>> {
     const pag: IPag<Category> = {
-      data: await this.prisma.category.findMany({
-        take: opt.limit,
-        skip: opt.limit * (opt.page - 1),
-        include: { articles: true },
-      }),
+      data: (
+        await this.prisma.category.findMany({
+          take: opt.limit,
+          skip: opt.limit * (opt.page - 1),
+          include: { articles: true },
+        })
+      ).map((el) => new Category(el)),
       count: await this.prisma.category.count(),
       route: `${this.backendUrl}/api/categories`,
     };
@@ -31,10 +33,12 @@ export class CategoryService {
     return Paginator.paginate(pag, opt);
   }
 
-  findOne(id: number) {
-    return this.prisma.category.findUnique({
+  async findOne(id: number) {
+    const cat = await this.prisma.category.findUnique({
       where: { id },
       include: { articles: true },
     });
+
+    return cat ? new Category(cat) : null;
   }
 }

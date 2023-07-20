@@ -2,7 +2,14 @@ import { PrismaClient } from '@prisma/client';
 import { Ok } from 'src/common/dto/ok.dto';
 
 export async function createCategories(prisma: PrismaClient): Promise<Ok> {
-  const categoriesNames = ['bicycle', 'bike', 'scateboard', 'scooter'];
+  const categoriesNames = [
+    'bicycle',
+    'gyroboard',
+    'skateboard',
+    'scooter',
+    'monowheel',
+    'accessory',
+  ];
 
   await Promise.all(
     categoriesNames.map((name) =>

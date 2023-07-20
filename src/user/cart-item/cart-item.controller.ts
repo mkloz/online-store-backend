@@ -19,7 +19,6 @@ import { CartItemService } from './cart-item.service';
 import { CartItem } from './entities/cart-item.entity';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { Paginated } from 'src/common/pagination/paginated.dto';
-import { CartRelationsExistsPipe } from './pipes/cart-relations-exists.pipe';
 import { CartItemExistPipe } from './pipes/cart-item-exist.pipe';
 import { CartItemBelongsToUserGuard } from './cart-item-belongs-to-user.guard';
 import {
@@ -42,7 +41,7 @@ export class CartItemController {
   cartAdd(
     @UserPayload()
     user: JwtPayload,
-    @Body(CartRelationsExistsPipe) createCartItemDto: CreateCartItemDto,
+    @Body() createCartItemDto: CreateCartItemDto,
   ): Promise<CartItem> {
     return this.cartItemService.add(user, createCartItemDto);
   }
@@ -52,7 +51,7 @@ export class CartItemController {
   @UseGuards(AuthGuard)
   cartDecrement(
     @UserPayload() user: JwtPayload,
-    @Body(CartRelationsExistsPipe) createCartItemDto: CreateCartItemDto,
+    @Body() createCartItemDto: CreateCartItemDto,
   ): Promise<CartItem> {
     return this.cartItemService.decrement(user, createCartItemDto);
   }

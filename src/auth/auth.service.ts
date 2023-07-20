@@ -34,8 +34,7 @@ export class AuthService {
     if (!user) {
       user = await this.userService.add({
         email: socialData.email,
-        firstName: socialData.firstName,
-        lastName: socialData.lastName,
+        name: socialData.name,
       });
     } else if (user.provider !== provider) {
       throw AuthService.invalidProvider;

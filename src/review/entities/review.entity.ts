@@ -15,11 +15,16 @@ export class ReviewDiscription {
   text: string;
   @ApiProperty({ example: 5 })
   stars: number;
+  @ApiProperty()
+  createdAt: Date;
+  @ApiProperty()
+  updatedAt: Date;
 }
 
 export class Review extends ReviewDiscription implements IReview {
   @ApiPropertyOptional({ type: () => ArticleDiscription })
   article?: Article;
+
   @ApiPropertyOptional({ type: () => UserDiscription })
   author?: User;
 
@@ -27,13 +32,15 @@ export class Review extends ReviewDiscription implements IReview {
   articleId: number;
   @Exclude()
   authorId: number;
-  @Exclude()
-  createdAt: Date;
-  @Exclude()
-  updatedAt: Date;
 
   constructor(partial: Partial<Review>) {
     super();
     Object.assign(this, partial);
+    if (this.article) {
+      this.article = new Article(partial.article);
+    }
+    if (this.author) {
+      this.author = new User(partial.author);
+    }
   }
 }

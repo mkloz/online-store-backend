@@ -8,6 +8,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './common/global-exception.filter';
 import { createSwapiDocument } from './common/docs/create-swagger-doc';
 import { ApiConfigService } from './config/api-config.service';
+import { useContainer } from 'class-validator';
 
 function getMorganCfg(): string {
   return ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] - :response-time ms';
@@ -16,6 +17,9 @@ function getMorganCfg(): string {
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const cs = app.get(ApiConfigService);
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
   app
     .use(morgan(getMorganCfg()))
     .setGlobalPrefix('api', { exclude: ['/'] })

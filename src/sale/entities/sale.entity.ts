@@ -11,9 +11,6 @@ export class SaleDiscription {
   id: number;
 
   @ApiProperty()
-  reason: string;
-
-  @ApiProperty()
   oldPrise: number;
 
   @ApiProperty()
@@ -37,5 +34,8 @@ export class Sale extends SaleDiscription implements ISale {
   constructor(partial: Partial<Sale>) {
     super();
     Object.assign(this, partial);
+    if (this.article) {
+      this.article = new Article(partial.article);
+    }
   }
 }

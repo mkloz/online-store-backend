@@ -23,7 +23,6 @@ import {
   ApiReviewUpdate,
 } from './docs';
 import { IDDto } from 'src/common/dto/id.dto';
-import { RelationsExistsPipe } from './pipes/relations-exists.pipe';
 import { ReviewExistPipe } from './pipes/review-exist.pipe';
 import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { Review } from './entities/review.entity';
@@ -43,9 +42,7 @@ export class ReviewController {
   @Roles(Role.USER, Role.ADMIN)
   @ApiReviewCreate()
   @UseGuards(RoleAuthGuard)
-  public create(
-    @Body(RelationsExistsPipe) createReviewDto: CreateReviewDto,
-  ): Promise<Review> {
+  public create(@Body() createReviewDto: CreateReviewDto): Promise<Review> {
     return this.reviewService.create(createReviewDto);
   }
 
@@ -69,7 +66,7 @@ export class ReviewController {
   @ApiReviewUpdate()
   public update(
     @Param(ReviewExistPipe) { id }: IDDto,
-    @Body(RelationsExistsPipe) updateReviewDto: UpdateReviewDto,
+    @Body() updateReviewDto: UpdateReviewDto,
   ): Promise<Review> {
     return this.reviewService.update(id, updateReviewDto);
   }

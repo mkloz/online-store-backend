@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsOptional, IsPositive } from 'class-validator';
+import { ArticleExist } from 'src/article/validators/article-exist.validator';
 
 export class CreateCartItemDto {
   @IsInt()
@@ -9,6 +10,7 @@ export class CreateCartItemDto {
   quantity?: number = 1;
 
   @IsInt()
+  @ArticleExist()
   @IsPositive()
   @ApiProperty({ example: 1 })
   article: number;

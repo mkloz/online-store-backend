@@ -4,11 +4,12 @@ import { DbModule } from 'src/db/db.module';
 import { UserController } from './user.controller';
 import { CartItemModule } from './cart-item/cart-item.module';
 import { ApiConfigModule } from 'src/config/api-config.module';
+import { UserExistConstraint } from './validators/user-exist.validator';
 
 @Module({
   imports: [ApiConfigModule, DbModule, CartItemModule],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, UserExistConstraint],
   exports: [UserService],
 })
 export class UserModule {}

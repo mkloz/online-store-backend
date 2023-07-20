@@ -28,7 +28,6 @@ import {
   ApiUserMeDelete,
   ApiUserMeUpdate,
 } from './docs';
-import { RelationsExistsPipe } from './pipes/relations-exists.pipe';
 import { UserExistPipe } from './pipes/user-exist.pipe';
 
 @ApiUser()
@@ -56,7 +55,7 @@ export class UserController {
   @ApiUserMeUpdate()
   updateMe(
     @UserPayload() user: JwtPayload,
-    @Body(RelationsExistsPipe) dto: UpdateUserDto,
+    @Body() dto: UpdateUserDto,
   ): Promise<User> {
     return this.userService.updateById(user.id, dto);
   }
@@ -66,7 +65,7 @@ export class UserController {
   @ApiUserByIdUpdate()
   updateById(
     @Param() { id }: IDDto,
-    @Body(RelationsExistsPipe) dto: UpdateUserDto,
+    @Body() dto: UpdateUserDto,
   ): Promise<User> {
     return this.userService.updateById(id, dto);
   }

@@ -16,7 +16,6 @@ import {
 import { SaleService } from './sale.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
-import { RelationsExistsPipe } from './pipes/relations-exists.pipe';
 import {
   ApiSale,
   ApiSaleCreate,
@@ -43,7 +42,7 @@ export class SaleController {
   @UseGuards(RoleAuthGuard)
   @ApiSaleCreate()
   @Roles(Role.ADMIN)
-  create(@Body(RelationsExistsPipe) createSaleDto: CreateSaleDto) {
+  create(@Body() createSaleDto: CreateSaleDto) {
     return this.saleService.create(createSaleDto);
   }
 
@@ -65,7 +64,7 @@ export class SaleController {
   @Roles(Role.ADMIN)
   update(
     @Param(SaleExistPipe) { id }: IDDto,
-    @Body(RelationsExistsPipe) updateSaleDto: UpdateSaleDto,
+    @Body() updateSaleDto: UpdateSaleDto,
   ) {
     return this.saleService.update(id, updateSaleDto);
   }

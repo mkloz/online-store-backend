@@ -51,11 +51,7 @@ export class OnlineStoreVariables {
 
   @IsString()
   @IsNotEmpty()
-  ADMIN_FIRST_NAME: string;
-
-  @IsString()
-  @IsNotEmpty()
-  ADMIN_LAST_NAME: string;
+  ADMIN_NAME: string;
 
   @IsString()
   @IsNotEmpty()
@@ -97,8 +93,7 @@ export const onlineStoreConfig = registerAs<IStore>('onlineStore', () => {
       },
     },
     admin: {
-      firstName: env.ADMIN_FIRST_NAME,
-      lastName: env.ADMIN_LAST_NAME,
+      name: env.ADMIN_NAME,
       email: env.ADMIN_EMAIL,
       password: env.ADMIN_PASSWORD,
     },

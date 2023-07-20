@@ -7,8 +7,7 @@ dotenv.config();
 
 export async function createAdmin(prisma: PrismaClient): Promise<Ok> {
   const admin = {
-    firstName: process.env.ADMIN_FIRST_NAME,
-    lastName: process.env.ADMIN_LAST_NAME,
+    name: process.env.ADMIN_NAME,
     email: process.env.ADMIN_EMAIL,
     password: await UserService.hashPassword(process.env.ADMIN_PASSWORD),
   };

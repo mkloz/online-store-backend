@@ -1,12 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsInt, IsString, MaxLength } from 'class-validator';
+import { IsDateString, IsInt, IsOptional } from 'class-validator';
+import { ArticleExist } from 'src/article/validators/article-exist.validator';
 
 export class CreateSaleDto {
-  @IsString()
-  @MaxLength(1000)
-  @ApiProperty()
-  reason: string;
-
   @IsInt()
   @ApiProperty()
   oldPrise: number;
@@ -20,6 +16,8 @@ export class CreateSaleDto {
   activeTill: Date;
 
   @IsInt()
+  @ArticleExist()
+  @IsOptional()
   @ApiPropertyOptional()
   article?: number;
 }

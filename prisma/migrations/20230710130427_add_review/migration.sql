@@ -10,5 +10,43 @@ CREATE TABLE `review` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TRIGGER update_rating_insert
+AFTER INSERT ON review
+FOR EACH ROW
+BEGIN
+  UPDATE article
+  SET rating = (
+    SELECT AVG(stars)
+    FROM review
+    WHERE article_id = NEW.article_id
+  )
+  WHERE id = NEW.article_id;
+END;
+
+CREATE TRIGGER update_rating_update
+AFTER UPDATE ON review
+FOR EACH ROW
+BEGIN
+  UPDATE article
+  SET rating = (
+    SELECT AVG(stars)
+    FROM review
+    WHERE article_id = NEW.article_id
+  )
+  WHERE id = NEW.article_id;
+END;
+
+CREATE TRIGGER update_rating_delete
+AFTER DELETE ON review
+FOR EACH ROW
+BEGIN
+  UPDATE article
+  SET rating = (
+    SELECT AVG(stars)
+    FROM review
+    WHERE article_id = OLD.article_id
+  )
+  WHERE id = OLD.article_id;
+END;
 -- AddForeignKey
 ALTER TABLE `review` ADD CONSTRAINT `review_article_id_fkey` FOREIGN KEY (`article_id`) REFERENCES `article`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

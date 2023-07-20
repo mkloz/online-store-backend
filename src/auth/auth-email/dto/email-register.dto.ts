@@ -4,12 +4,11 @@ import { IsEmail, IsString, Length, Matches } from 'class-validator';
 export class EmailRegisterDto {
   @IsString()
   @Length(4, 255)
+  @Matches(/^[A-Z][a-zA-Z]+$/, {
+    message: 'Invalid name. Format ^[A-Z][a-zA-Z]+$ required',
+  })
   @ApiProperty({ example: 'Mykhailo' })
-  firstName: string;
-  @IsString()
-  @Length(4, 255)
-  @ApiProperty({ example: 'Kloz' })
-  lastName: string;
+  name: string;
 
   @IsEmail()
   @ApiProperty({ example: 'email@gmail.com' })

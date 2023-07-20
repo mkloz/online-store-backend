@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { ApiCategory, ApiCategoryGetMany, ApiCategoryGetOne } from './docs';
 import { IDDto } from 'src/common/dto/id.dto';
@@ -7,6 +14,7 @@ import { CategoryExistPipe } from './pipes/category-exist.pipe';
 
 @ApiCategory()
 @Controller('categories')
+@UseInterceptors(ClassSerializerInterceptor)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

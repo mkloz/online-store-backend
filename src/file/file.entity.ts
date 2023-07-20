@@ -33,5 +33,8 @@ export class File extends FileDiscription implements IFile {
   constructor(partial: Partial<File>) {
     super();
     Object.assign(this, partial);
+    if (this.article) {
+      this.article = new Article(this.article);
+    }
   }
 }

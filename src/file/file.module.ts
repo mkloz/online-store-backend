@@ -5,10 +5,11 @@ import { MulterModule } from '@nestjs/platform-express';
 import { DbModule } from 'src/db/db.module';
 import { AWSModule } from './aws/aws.module';
 import { ApiConfigModule } from 'src/config/api-config.module';
+import { FileExistConstraint } from './validators/file-exist.validator';
 
 @Module({
   imports: [ApiConfigModule, DbModule, AWSModule, MulterModule.register()],
   controllers: [FileController],
-  providers: [FileService],
+  providers: [FileService, FileExistConstraint],
 })
 export class FileModule {}

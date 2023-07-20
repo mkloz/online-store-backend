@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsJWT } from 'class-validator';
 
 export class EmailTokenDto {
-  @IsString()
+  @IsJWT()
   @ApiProperty({ example: 'wsdgv.gbtrsedrtdgargdfsg.sergfawrzr' })
   token: string;
 }

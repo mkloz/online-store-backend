@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArticleDiscription } from 'src/article/entities/article.entity';
+import {
+  Article,
+  ArticleDiscription,
+} from 'src/article/entities/article.entity';
 import { Category as ICategory } from '@prisma/client';
 
 export class CategoryDiscription {
@@ -12,4 +15,11 @@ export class CategoryDiscription {
 export class Category extends CategoryDiscription implements ICategory {
   @ApiProperty({ type: () => [ArticleDiscription] })
   articles?: ArticleDiscription[];
+  constructor(partial: Partial<Category>) {
+    super();
+    Object.assign(this, partial);
+    if (this.articles?.length) {
+      this.articles = this.articles.map((el) => new Article(el));
+    }
+  }
 }

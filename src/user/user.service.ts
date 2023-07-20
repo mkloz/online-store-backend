@@ -45,6 +45,7 @@ export class UserService {
   public async add({
     password,
     reviews,
+    favorites,
     ...dto
   }: CreateUserDto & { provider?: Provider }): Promise<User> {
     const user = await this.prisma.user.create({
@@ -59,14 +60,20 @@ export class UserService {
               connect: reviews.map((id) => ({ id })),
             }
           : undefined,
+        favorites: favorites
+          ? {
+              connect: favorites.map((id) => ({ id })),
+            }
+          : undefined,
       },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
     });
     return user ? new User(user) : null;
   }
 
   public async createAdmin({
     reviews,
+    favorites,
     ...dto
   }: CreateUserDto & { provider?: Provider }): Promise<User> {
     return new User(
@@ -79,16 +86,21 @@ export class UserService {
                 connect: reviews.map((id) => ({ id })),
               }
             : undefined,
+          favorites: favorites
+            ? {
+                connect: favorites.map((id) => ({ id })),
+              }
+            : undefined,
           ...dto,
         },
-        include: { reviews: true },
+        include: { reviews: true, favorites: true },
       }),
     );
   }
   public async getByEmail(email: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { email },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
     });
     return user ? new User(user) : null;
   }
@@ -99,7 +111,7 @@ export class UserService {
   ): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: { email, provider },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
     });
     return user ? new User(user) : null;
   }
@@ -110,7 +122,7 @@ export class UserService {
   ): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: { email, provider },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
     });
 
     if (user && !user.isEmailConfirmed) {
@@ -124,7 +136,7 @@ export class UserService {
   ): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: { email, isEmailConfirmed: false, provider },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
     });
 
     return user ? new User(user) : user;
@@ -132,7 +144,7 @@ export class UserService {
   public async getById(id: number): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: { id, isEmailConfirmed: true },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
     });
 
     return user ? new User(user) : null;
@@ -144,7 +156,7 @@ export class UserService {
   ): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: { id, isEmailConfirmed: true, provider },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
     });
 
     return user ? new User(user) : null;
@@ -152,16 +164,21 @@ export class UserService {
 
   public async updateById(
     id: number,
-    { reviews, ...dto }: UpdateUserDto,
+    { reviews, favorites, ...dto }: UpdateUserDto,
   ): Promise<User> {
     const user = await this.prisma.user.update({
       where: { id },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
       data: {
         ...dto,
         reviews: reviews
           ? {
               connect: reviews.map((id) => ({ id })),
+            }
+          : undefined,
+        favorites: favorites
+          ? {
+              connect: favorites.map((id) => ({ id })),
             }
           : undefined,
       },
@@ -171,7 +188,7 @@ export class UserService {
   public async deleteById(id: number): Promise<User> {
     const user = await this.prisma.user.delete({
       where: { id },
-      include: { reviews: true },
+      include: { reviews: true, favorites: true },
     });
     return user ? new User(user) : null;
   }

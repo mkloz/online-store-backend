@@ -12,6 +12,7 @@ import {
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  SerializeOptions,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -27,31 +28,27 @@ import {
   ApiArticleGetOne,
   ApiArticleUpdate,
 } from './docs';
-import { RelationsExistsPipe } from './pipes/relations-exists.pipe';
 import { ArticleNotExistPipe } from './pipes/article-not-exist.pipe';
 import { ArticleExistPipe } from './pipes/article-exist.pipe';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { ApiArticleIncrement } from './docs/api-article-increment.decorator';
 import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
-import { UserMailService } from 'src/mail/user-mail.service';
 
 @ApiArticle()
 @Controller('articles')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ArticleController {
-  constructor(
-    private readonly articleService: ArticleService,
-    private readonly userMail: UserMailService,
-  ) {}
+  constructor(private readonly articleService: ArticleService) {}
 
   @Post()
   @Roles(Role.ADMIN)
+  @SerializeOptions({ groups: [Role.ADMIN] })
   @UseGuards(RoleAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiArticleCreate()
   create(
-    @Body(ArticleNotExistPipe, RelationsExistsPipe)
+    @Body(ArticleNotExistPipe)
     createArticleDto: CreateArticleDto,
   ): Promise<Article> {
     return this.articleService.create(createArticleDto);
@@ -78,10 +75,11 @@ export class ArticleController {
   @Patch(':id')
   @UseGuards(RoleAuthGuard)
   @ApiArticleUpdate()
+  @SerializeOptions({ groups: [Role.ADMIN] })
   @Roles(Role.ADMIN)
   update(
     @Param(ArticleExistPipe) { id }: IDDto,
-    @Body(RelationsExistsPipe)
+    @Body()
     updateArticleDto: UpdateArticleDto,
   ) {
     return this.articleService.update(id, updateArticleDto);
@@ -90,6 +88,7 @@ export class ArticleController {
   @Delete(':id')
   @ApiArticleDelete()
   @UseGuards(RoleAuthGuard)
+  @SerializeOptions({ groups: [Role.ADMIN] })
   @Roles(Role.ADMIN)
   remove(@Param(ArticleExistPipe) { id }: IDDto) {
     return this.articleService.remove(id);

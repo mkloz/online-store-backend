@@ -42,8 +42,7 @@ export interface IStore {
   frontendUrl: string;
   jwt: IStoreJWT;
   admin: {
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
     password: string;
   };

@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MinLength } from 'class-validator';
+import { IsJWT } from 'class-validator';
 
 export class RefreshDto {
-  @IsString()
-  @MinLength(12)
+  @IsJWT()
   @ApiProperty({ example: 'shiovpm.sefdvssfv.ndsgfesdcv' })
   refreshToken: string;
 }
