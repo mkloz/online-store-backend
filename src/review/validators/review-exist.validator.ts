@@ -26,7 +26,7 @@ export class ReviewExistConstraint implements ValidatorConstraintInterface {
 }
 
 export function ReviewExist(validationOptions?: ValidationOptions) {
-  return function (object: unknown, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,

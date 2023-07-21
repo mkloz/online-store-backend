@@ -10,8 +10,8 @@ export class FilesValidator extends FileValidator {
     super(validationOptions);
   }
 
-  public isValid(file: IFile): boolean | Promise<boolean> {
-    if (!this.validationOptions) return true;
+  public isValid(file?: IFile): boolean | Promise<boolean> {
+    if (!this.validationOptions || !file) return true;
 
     const isValiableSize = file.size <= this.validationOptions.maxSize;
     const isValiableType = this.validationOptions.mimetypes.includes(

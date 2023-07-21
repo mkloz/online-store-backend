@@ -17,10 +17,10 @@ export class ArticleDiscription {
   characteristic: string;
 
   @ApiPropertyOptional({ example: 4.77 })
-  rating: number;
+  rating: number | null;
 
   @ApiProperty({ example: true })
-  inStock: boolean;
+  inStock: boolean | null;
 
   @ApiProperty({ example: 199 })
   price: number;
@@ -46,7 +46,7 @@ export class Article extends ArticleDiscription implements IArticle {
   @ApiPropertyOptional({ type: () => [FileDiscription] })
   images?: File[];
   @ApiPropertyOptional({ type: () => SaleDiscription })
-  sale?: Sale;
+  sale?: Sale | null;
   @ApiPropertyOptional({ type: () => [ReviewDiscription] })
   reviews?: Review[];
   @ApiPropertyOptional({ type: () => [CategoryDiscription] })

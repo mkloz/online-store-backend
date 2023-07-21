@@ -79,23 +79,23 @@ export const onlineStoreConfig = registerAs<IStore>('onlineStore', () => {
 
   return {
     env: env.NODE_ENV as Env,
-    port: +env.PORT ?? 3000,
-    backendUrl: env.BACKEND_URL,
-    frontendUrl: env.FRONTEND_URL,
+    port: +(env.PORT || 3000),
+    backendUrl: env.BACKEND_URL || '',
+    frontendUrl: env.FRONTEND_URL || '',
     jwt: {
       accessToken: {
-        secret: env.JWT_ACCESS_TOKEN_SECRET ?? randomUUID(),
-        time: env.JWT_ACCESS_TOKEN_TIME,
+        secret: env.JWT_ACCESS_TOKEN_SECRET || randomUUID(),
+        time: env.JWT_ACCESS_TOKEN_TIME || '',
       },
       refreshToken: {
-        secret: env.JWT_REFRESH_TOKEN_SECRET ?? randomUUID(),
-        time: env.JWT_REFRESH_TOKEN_TIME,
+        secret: env.JWT_REFRESH_TOKEN_SECRET || randomUUID(),
+        time: env.JWT_REFRESH_TOKEN_TIME || '',
       },
     },
     admin: {
-      name: env.ADMIN_NAME,
-      email: env.ADMIN_EMAIL,
-      password: env.ADMIN_PASSWORD,
+      name: env.ADMIN_NAME || '',
+      email: env.ADMIN_EMAIL || '',
+      password: env.ADMIN_PASSWORD || '',
     },
   };
 });

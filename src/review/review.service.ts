@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { PrismaService } from 'src/db/prisma.service';
@@ -18,6 +18,10 @@ export class ReviewService {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
   }
 
+  static reviewNotExistException = new UnprocessableEntityException(
+    'Review not exist',
+  );
+
   public async create(
     authorId: number,
     { article, ...createReviewDto }: CreateReviewDto,
@@ -31,7 +35,9 @@ export class ReviewService {
       include: { article: true, author: true },
     });
 
-    return rew ? new Review(rew) : null;
+    if (!rew) throw ReviewService.reviewNotExistException;
+
+    return new Review(rew);
   }
 
   public async findAll(opt: PaginationOptionsDto): Promise<Paginated<Review>> {
@@ -56,7 +62,9 @@ export class ReviewService {
       include: { article: true, author: true },
     });
 
-    return rew ? new Review(rew) : null;
+    if (!rew) throw ReviewService.reviewNotExistException;
+
+    return new Review(rew);
   }
 
   public async update(id: number, dto: UpdateReviewDto): Promise<Review> {
@@ -66,7 +74,9 @@ export class ReviewService {
       include: { article: true, author: true },
     });
 
-    return rew ? new Review(rew) : null;
+    if (!rew) throw ReviewService.reviewNotExistException;
+
+    return new Review(rew);
   }
 
   public async remove(id: number): Promise<Review> {
@@ -74,6 +84,8 @@ export class ReviewService {
       where: { id },
     });
 
-    return rew ? new Review(rew) : null;
+    if (!rew) throw ReviewService.reviewNotExistException;
+
+    return new Review(rew);
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
@@ -19,11 +23,16 @@ export class CartItemService {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
   }
 
+  static cartItemNotExistException = new UnprocessableEntityException(
+    'Item not exist',
+  );
   async decrement(user: JwtPayload, dto: CreateCartItemDto): Promise<CartItem> {
     const userFromDB = await this.prisma.user.findUnique({
       where: { id: user.id },
       include: { cartItems: true },
     });
+    if (!userFromDB) throw CartItemService.cartItemNotExistException;
+
     const cartItem = userFromDB.cartItems?.find(
       (el) => el.articleId === dto.article,
     );
@@ -52,8 +61,9 @@ export class CartItemService {
       },
       include: { user: true, article: true },
     });
+    if (!item) throw CartItemService.cartItemNotExistException;
 
-    return item ? new CartItem(item) : null;
+    return new CartItem(item);
   }
 
   async add(user: JwtPayload, dto: CreateCartItemDto) {
@@ -61,6 +71,8 @@ export class CartItemService {
       where: { id: user.id },
       include: { cartItems: true },
     });
+    if (!userFromDB) throw CartItemService.cartItemNotExistException;
+
     const cartItem = userFromDB.cartItems?.find(
       (el) => el.articleId === dto.article,
     );
@@ -70,8 +82,7 @@ export class CartItemService {
         quantity: cartItem.quantity + dto.quantity,
       });
     }
-
-    return this.create(user, dto);
+    return await this.create(user, dto);
   }
 
   async findAll(
@@ -100,7 +111,9 @@ export class CartItemService {
       include: { user: true, article: true },
     });
 
-    return item ? new CartItem(item) : null;
+    if (!item) throw CartItemService.cartItemNotExistException;
+
+    return new CartItem(item);
   }
 
   public async update(id: number, dto: UpdateCartItemDto) {
@@ -110,12 +123,16 @@ export class CartItemService {
       include: { user: true, article: true },
     });
 
-    return item ? new CartItem(item) : null;
+    if (!item) throw CartItemService.cartItemNotExistException;
+
+    return new CartItem(item);
   }
 
   public async remove(id: number): Promise<CartItem> {
     const item = await this.prisma.cartItem.delete({ where: { id } });
 
-    return item ? new CartItem(item) : null;
+    if (!item) throw CartItemService.cartItemNotExistException;
+
+    return new CartItem(item);
   }
 }

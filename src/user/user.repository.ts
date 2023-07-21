@@ -5,6 +5,7 @@ import { PrismaService } from 'src/db/prisma.service';
 import { Prisma, Provider, Role } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
+import { Nullable } from 'src/common/common.interface';
 
 export const SALT_ROUNDS = 10;
 
@@ -69,12 +70,12 @@ export class UserRepository {
     });
   }
 
-  public getByUniqueInput(
+  public async getByUniqueInput(
     value: Prisma.UserWhereUniqueInput & { provider?: Provider } & {
       verified?: boolean;
     },
-  ): Promise<User> {
-    return this.prisma.user.findUnique({
+  ): Promise<Nullable<User>> {
+    return await this.prisma.user.findUnique({
       where: value,
       include: { reviews: true, favorites: true },
     });
@@ -83,7 +84,7 @@ export class UserRepository {
   public async updateById(
     id: number,
     { favorites, ...dto }: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<Nullable<User>> {
     return this.prisma.user.update({
       where: { id },
       include: { reviews: true, favorites: true },
@@ -94,8 +95,8 @@ export class UserRepository {
     });
   }
 
-  public deleteById(id: number): Promise<User> {
-    return this.prisma.user.delete({
+  public async deleteById(id: number): Promise<Nullable<User>> {
+    return await this.prisma.user.delete({
       where: { id },
       include: { reviews: true, favorites: true },
     });

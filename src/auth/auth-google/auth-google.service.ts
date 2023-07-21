@@ -29,8 +29,8 @@ export class AuthGoogleService {
 
     return {
       id: data.sub,
-      email: data.email,
-      name: data.given_name,
+      email: data.email || 'email@mail.com',
+      name: data.given_name || 'User',
     };
   }
 }

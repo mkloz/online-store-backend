@@ -44,19 +44,19 @@ export const authConfig = registerAs<IAuth>('auth', () => {
     mail: {
       jwt: {
         verification: {
-          time: env.MAIL_VERIFICATION_TOKEN_TIME,
+          time: env.MAIL_VERIFICATION_TOKEN_TIME || '',
           secret: env.MAIL_VERIFICATION_TOKEN_SECRET ?? randomUUID(),
         },
         resetPass: {
-          time: env.MAIL_RESET_PASS_TOKEN_TIME,
+          time: env.MAIL_RESET_PASS_TOKEN_TIME || '',
           secret: env.MAIL_RESET_PASS_TOKEN_SECRET ?? randomUUID(),
         },
       },
     },
     google: {
-      clientId: env.AUTH_GOOGLE_APP_ID,
-      clientSecret: env.AUTH_GOOGLE_APP_SECRET,
-      callbackURL: env.AUTH_GOOGLE_CALLBACK,
+      clientId: env.AUTH_GOOGLE_APP_ID || '',
+      clientSecret: env.AUTH_GOOGLE_APP_SECRET || '',
+      callbackURL: env.AUTH_GOOGLE_CALLBACK || '',
     },
   };
 });

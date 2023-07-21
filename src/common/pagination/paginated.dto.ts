@@ -20,10 +20,10 @@ class PaginationLinks {
   first: string;
 
   @ApiProperty({ example: 'http://localhost:3000/api/people?page=2&limit=4' })
-  previous: string;
+  previous: string | null;
 
   @ApiProperty({ example: 'http://localhost:3000/api/people?page=4&limit=4' })
-  next: string;
+  next: string | null;
 
   @ApiProperty({ example: 'http://localhost:3000/api/people?page=21&limit=4' })
   last: string;

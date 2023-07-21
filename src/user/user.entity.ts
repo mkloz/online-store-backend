@@ -29,6 +29,7 @@ export class UserDiscription {
   @ApiProperty({ default: Provider.EMAIL })
   provider: Provider;
 }
+
 export class User extends UserDiscription implements Omit<IUser, 'password'> {
   @ApiPropertyOptional({ type: () => [ReviewDiscription] })
   reviews?: Review[];
@@ -37,7 +38,7 @@ export class User extends UserDiscription implements Omit<IUser, 'password'> {
   favorites?: Article[];
 
   @Exclude()
-  password?: string;
+  password?: string | null;
 
   constructor(partial: Partial<User>) {
     super();

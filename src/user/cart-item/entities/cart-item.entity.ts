@@ -15,15 +15,15 @@ export class CartItemDiscription {
 }
 export class CartItem extends CartItemDiscription implements ICartItem {
   @ApiPropertyOptional({ type: () => ArticleDiscription })
-  article?: Article;
+  article?: Article | null;
 
   @ApiPropertyOptional({ type: () => UserDiscription })
-  user?: User;
+  user?: User | null;
 
   @Exclude()
-  userId: number;
+  userId: number | null;
   @Exclude()
-  articleId: number;
+  articleId: number | null;
   @Exclude()
   createdAt: Date;
   @Exclude()

@@ -34,6 +34,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { ApiArticleIncrement } from './docs/api-article-increment.decorator';
 import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
+import { Paginated } from 'src/common/pagination/paginated.dto';
 
 @ApiArticle()
 @Controller('articles')
@@ -56,19 +57,19 @@ export class ArticleController {
 
   @Post('/increment')
   @ApiArticleIncrement()
-  incrementViews(@Query(ArticleExistPipe) { id }: IDDto) {
+  incrementViews(@Query(ArticleExistPipe) { id }: IDDto): Promise<Article> {
     return this.articleService.incrementViews(id);
   }
 
   @Get()
   @ApiArticleGetMany()
-  findAll(@Query() pag: PaginationOptionsDto) {
+  findAll(@Query() pag: PaginationOptionsDto): Promise<Paginated<Article>> {
     return this.articleService.findAll(pag);
   }
 
   @Get(':id')
   @ApiArticleGetOne()
-  findOne(@Param() { id }: IDDto) {
+  findOne(@Param() { id }: IDDto): Promise<Article> {
     return this.articleService.findOne(id);
   }
 
@@ -81,7 +82,7 @@ export class ArticleController {
     @Param(ArticleExistPipe) { id }: IDDto,
     @Body()
     updateArticleDto: UpdateArticleDto,
-  ) {
+  ): Promise<Article> {
     return this.articleService.update(id, updateArticleDto);
   }
 
@@ -90,7 +91,7 @@ export class ArticleController {
   @UseGuards(RoleAuthGuard)
   @SerializeOptions({ groups: [Role.ADMIN] })
   @Roles(Role.ADMIN)
-  remove(@Param(ArticleExistPipe) { id }: IDDto) {
+  remove(@Param(ArticleExistPipe) { id }: IDDto): Promise<Article> {
     return this.articleService.remove(id);
   }
 }

@@ -7,7 +7,7 @@ const { env } = process;
 export class AWSVariables {
   @IsString()
   @IsNotEmpty()
-  AWS_S3_REGION;
+  AWS_S3_REGION: string;
 
   @IsString()
   @IsNotEmpty()
@@ -27,10 +27,10 @@ export const awsConfig = registerAs<IAWS>('aws', () => {
 
   return {
     s3: {
-      region: env.AWS_S3_REGION,
-      keyId: env.AWS_S3_ACCESS_KEY_ID,
-      secretKey: env.AWS_S3_SECRET_ACCESS_KEY,
-      bucketName: env.AWS_PUBLIC_BUCKET_NAME,
+      region: env.AWS_S3_REGION || '',
+      keyId: env.AWS_S3_ACCESS_KEY_ID || '',
+      secretKey: env.AWS_S3_SECRET_ACCESS_KEY || '',
+      bucketName: env.AWS_PUBLIC_BUCKET_NAME || '',
     },
   };
 });

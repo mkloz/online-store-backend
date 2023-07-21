@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString, Max, MaxLength, Min } from 'class-validator';
 import { ArticleExist } from 'src/article/validators/article-exist.validator';
 

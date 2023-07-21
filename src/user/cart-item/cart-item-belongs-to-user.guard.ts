@@ -23,11 +23,15 @@ export class CartItemBelongsToUserGuard extends AuthGuard {
     const res = await super.canActivate(context);
     if (!res) return false;
     const request = context.switchToHttp().getRequest<Request>();
-    const item = this.isUserWithId(request['user'])
+
+    if (!('user' in request)) {
+      return false;
+    }
+    const item = this.isUserWithId(request.user)
       ? await this.prisma.cartItem.findFirst({
           where: {
             id: +request.params['id'],
-            user: { id: request['user'].id },
+            user: { id: request.user.id },
           },
         })
       : null;
@@ -37,7 +41,7 @@ export class CartItemBelongsToUserGuard extends AuthGuard {
   }
   private isUserWithId(user: unknown): user is { id: number } {
     return (
-      user &&
+      !!user &&
       typeof user === 'object' &&
       'id' in user &&
       typeof user.id === 'number'

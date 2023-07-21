@@ -36,7 +36,7 @@ export class MeAuthGuard extends AuthGuard {
   private extractIDFromRequest(req: Request): number | undefined {
     let id: number | undefined = undefined;
     if (req.method === 'GET') {
-      id = +req.params.id ?? +req.query.id ?? undefined;
+      id = +(req.params.id ?? req.query.id) || undefined;
     } else if (req.method !== 'GET') {
       if ('id' in req.body && typeof req.body.id === 'number') {
         id = req.body.id;

@@ -36,15 +36,20 @@ export class ApiConfigService {
   }
 
   public get<T extends FieldKeyType<IConfig>>(key: T): FieldType<IConfig, T> {
-    return this.cs.get(key, {
+    const varbl = this.cs.get(key, {
       infer: true,
     });
+    if (!varbl) throw new Error('Variables not defited');
+    return varbl;
   }
 
   public getAWS(): IAWS {
-    return this.cs.get('aws', {
+    const varbl = this.cs.get('aws', {
       infer: true,
     });
+    if (!varbl) throw new Error('Variables not defited');
+
+    return varbl;
   }
 
   public getOnlineStore(): IStore {

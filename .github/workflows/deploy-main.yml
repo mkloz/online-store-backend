@@ -27,7 +27,9 @@ jobs:
       - name: Build ts to js
         run: npm run build
       - name: Migrate
-        run: npm run migration:run:prod
+        run: |
+          npm run migration:run:prod
+          seed:run
       - name: Test
         run: |
           npm run format

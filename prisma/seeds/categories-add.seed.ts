@@ -20,5 +20,5 @@ export async function createCategories(prisma: PrismaClient): Promise<Ok> {
       }),
     ),
   );
-  return { ok: true };
+  return new Ok();
 }

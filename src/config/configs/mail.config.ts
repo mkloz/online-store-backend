@@ -49,16 +49,16 @@ export const mailConfig = registerAs<IMail>('mail', () => {
   ConfigValidator.validate(env, MailVariables);
 
   return {
-    host: env.MAIL_HOST,
-    port: +env.MAIL_PORT ?? 465,
+    host: env.MAIL_HOST || '',
+    port: +(env.MAIL_PORT || 465),
     secure: !!env.MAIL_SECURE ?? true,
     auth: {
-      user: env.MAIL_AUTH_USER,
-      pass: env.MAIL_AUTH_PASS,
+      user: env.MAIL_AUTH_USER || '',
+      pass: env.MAIL_AUTH_PASS || '',
     },
     from: {
-      name: env.MAIL_FROM_NAME,
-      address: env.MAIL_FROM_ADDRESS ?? env.MAIL_AUTH_USER,
+      name: env.MAIL_FROM_NAME || '',
+      address: env.MAIL_FROM_ADDRESS ?? (env.MAIL_AUTH_USER || ''),
     },
   };
 });

@@ -23,23 +23,23 @@ export class ReviewDiscription {
 
 export class Review extends ReviewDiscription implements IReview {
   @ApiPropertyOptional({ type: () => ArticleDiscription })
-  article?: Article;
+  article?: Article | null;
 
   @ApiPropertyOptional({ type: () => UserDiscription })
-  author?: User;
+  author?: User | null;
 
   @Exclude()
-  articleId: number;
+  articleId: number | null;
   @Exclude()
-  authorId: number;
+  authorId: number | null;
 
   constructor(partial: Partial<Review>) {
     super();
     Object.assign(this, partial);
-    if (this.article) {
+    if (partial.article) {
       this.article = new Article(partial.article);
     }
-    if (this.author) {
+    if (partial.author) {
       this.author = new User(partial.author);
     }
   }

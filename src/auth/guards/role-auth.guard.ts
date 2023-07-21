@@ -31,9 +31,12 @@ export class RoleAuthGuard extends AuthGuard {
       return true;
     }
 
-    const user: unknown = ctx.switchToHttp().getRequest<Request>()['user'];
-
-    if (JwtPayloadValidator.validate(user) && roles.includes(user?.role)) {
+    const req = ctx.switchToHttp().getRequest<Request>();
+    if (!('user' in req)) return false;
+    if (
+      JwtPayloadValidator.validate(req.user) &&
+      roles.includes(req.user?.role)
+    ) {
       return true;
     }
 

@@ -7,7 +7,7 @@ export class CreateCartItemDto {
   @IsPositive()
   @IsOptional()
   @ApiProperty({ example: 1, default: 1 })
-  quantity?: number = 1;
+  quantity = 1;
 
   @IsInt()
   @ArticleExist()

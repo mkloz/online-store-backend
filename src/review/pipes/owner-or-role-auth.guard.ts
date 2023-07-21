@@ -28,14 +28,14 @@ export class OwnerOrRoleAuthGuard extends RoleAuthGuard {
     const request = context.switchToHttp().getRequest<Request>();
     const id = this.extractIDFromRequest(request);
 
-    if (!id) {
+    if (!id || !('user' in request)) {
       return false;
     }
 
-    if (this.isUserWithId(request['user'])) {
+    if (this.isUserWithId(request.user)) {
       if (
         await this.prisma.review.findFirst({
-          where: { id, authorId: request['user'].id },
+          where: { id, authorId: request.user.id },
         })
       ) {
         return true;
@@ -48,7 +48,7 @@ export class OwnerOrRoleAuthGuard extends RoleAuthGuard {
   private extractIDFromRequest(req: Request): number | undefined {
     let id: number | undefined = undefined;
 
-    id = +req.params.id ?? +req.query.id ?? undefined;
+    id = +(req.params.id ?? req.query.id) || undefined;
 
     if ('id' in req.body && typeof req.body.id === 'number') {
       id = req.body.id;
@@ -58,7 +58,7 @@ export class OwnerOrRoleAuthGuard extends RoleAuthGuard {
   }
   private isUserWithId(user: unknown): user is { id: number } {
     return (
-      user &&
+      !!user &&
       typeof user === 'object' &&
       'id' in user &&
       typeof user.id === 'number'

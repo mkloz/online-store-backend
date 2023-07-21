@@ -11,3 +11,5 @@ export interface URL {
 export interface Ok {
   ok: true;
 }
+export type Nullable<T> = T | null;
+export type FakeNullable<T> = T | null;

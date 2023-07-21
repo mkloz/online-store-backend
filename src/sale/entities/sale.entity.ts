@@ -22,10 +22,10 @@ export class SaleDiscription {
 
 export class Sale extends SaleDiscription implements ISale {
   @ApiPropertyOptional({ type: () => ArticleDiscription })
-  article?: Article;
+  article?: Article | null;
 
   @Exclude()
-  articleId: number;
+  articleId: number | null;
   @Exclude()
   createdAt: Date;
   @Exclude()
@@ -34,7 +34,7 @@ export class Sale extends SaleDiscription implements ISale {
   constructor(partial: Partial<Sale>) {
     super();
     Object.assign(this, partial);
-    if (this.article) {
+    if (partial.article) {
       this.article = new Article(partial.article);
     }
   }

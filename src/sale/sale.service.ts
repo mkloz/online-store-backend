@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import { PrismaService } from 'src/db/prisma.service';
@@ -19,7 +19,14 @@ export class SaleService {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
   }
 
-  public async create({ article, ...createSaleDto }: CreateSaleDto) {
+  static saleNotExistException = new UnprocessableEntityException(
+    'Sale not exist',
+  );
+
+  public async create({
+    article,
+    ...createSaleDto
+  }: CreateSaleDto): Promise<Sale> {
     const sale = await this.prisma.sale.create({
       data: {
         ...createSaleDto,
@@ -28,7 +35,9 @@ export class SaleService {
       include: { article: true },
     });
 
-    return sale ? new Sale(sale) : null;
+    if (!sale) throw SaleService.saleNotExistException;
+
+    return new Sale(sale);
   }
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Sale>> {
@@ -53,7 +62,9 @@ export class SaleService {
       include: { article: true },
     });
 
-    return sale ? new Sale(sale) : null;
+    if (!sale) throw SaleService.saleNotExistException;
+
+    return new Sale(sale);
   }
 
   public async update(id: number, dto: UpdateSaleDto): Promise<Sale> {
@@ -63,12 +74,16 @@ export class SaleService {
       include: { article: true },
     });
 
-    return sale ? new Sale(sale) : null;
+    if (!sale) throw SaleService.saleNotExistException;
+
+    return new Sale(sale);
   }
 
   public async remove(id: number): Promise<Sale> {
     const sale = await this.prisma.sale.delete({ where: { id } });
 
-    return sale ? new Sale(sale) : null;
+    if (!sale) throw SaleService.saleNotExistException;
+
+    return new Sale(sale);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { PrismaService } from 'src/db/prisma.service';
@@ -17,11 +17,18 @@ export class ArticleService {
   ) {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
   }
+  static articleNotExistException = new UnprocessableEntityException(
+    'Article does not exist',
+  );
 
   async incrementViews(id: number): Promise<Article> {
-    const { views } = await this.prisma.article.findUnique({ where: { id } });
+    const article = await this.prisma.article.findUnique({ where: { id } });
 
-    return this.update(id, { views: views + 1 });
+    if (!article) throw ArticleService.articleNotExistException;
+    const updated = await this.update(id, { views: article.views + 1 });
+    if (!updated) throw ArticleService.articleNotExistException;
+
+    return updated;
   }
 
   async create({
@@ -37,7 +44,9 @@ export class ArticleService {
       },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
-    return article ? new Article(article) : null;
+    if (!article) throw ArticleService.articleNotExistException;
+
+    return new Article(article);
   }
 
   async findAll(opt: PaginationOptionsDto): Promise<Paginated<Article>> {
@@ -66,7 +75,9 @@ export class ArticleService {
       where: { id },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
-    return art ? new Article(art) : null;
+    if (!art) throw ArticleService.articleNotExistException;
+
+    return new Article(art);
   }
 
   async update(
@@ -82,15 +93,18 @@ export class ArticleService {
       },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
-    return updated ? new Article(updated) : null;
+    if (!updated) throw ArticleService.articleNotExistException;
+
+    return new Article(updated);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<Article> {
     const art = await this.prisma.article.delete({
       where: { id },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
+    if (!art) throw ArticleService.articleNotExistException;
 
-    return art ? new Article(art) : null;
+    return new Article(art);
   }
 }

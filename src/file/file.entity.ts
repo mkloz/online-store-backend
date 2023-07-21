@@ -21,10 +21,10 @@ export class FileDiscription {
 
 export class File extends FileDiscription implements IFile {
   @ApiPropertyOptional({ type: () => ArticleDiscription })
-  article?: Article;
+  article?: Article | null;
 
   @Exclude()
-  articleId: number;
+  articleId: number | null;
   @Exclude()
   createdAt: Date;
   @Exclude()

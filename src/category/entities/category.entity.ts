@@ -14,7 +14,8 @@ export class CategoryDiscription {
 
 export class Category extends CategoryDiscription implements ICategory {
   @ApiProperty({ type: () => [ArticleDiscription] })
-  articles?: ArticleDiscription[];
+  articles?: Article[];
+
   constructor(partial: Partial<Category>) {
     super();
     Object.assign(this, partial);

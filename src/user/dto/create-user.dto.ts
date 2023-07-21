@@ -9,7 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { ArticleExist } from 'src/article/validators/article-exist.validator';
-import { ReviewExist } from 'src/review/validators/review-exist.validator';
+
 export class CreateUserDto {
   @IsString()
   @MaxLength(255)

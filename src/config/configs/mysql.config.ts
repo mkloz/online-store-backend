@@ -43,11 +43,11 @@ export const mySqlConfig = registerAs<IMySql>('mysql', () => {
   ConfigValidator.validate(env, MySqlVariables);
 
   return {
-    url: env.DATABASE_URL,
-    port: +env.DB_PORT,
-    host: env.DB_HOST,
-    password: env.DB_PASS,
-    user: env.DB_USER,
-    databaseName: env.DB_NAME,
+    url: env.DATABASE_URL || '',
+    port: +(env.DB_PORT || -1),
+    host: env.DB_HOST || '',
+    password: env.DB_PASS || '',
+    user: env.DB_USER || '',
+    databaseName: env.DB_NAME || '',
   };
 });

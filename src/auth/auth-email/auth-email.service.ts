@@ -72,12 +72,12 @@ export class AuthEmailService {
     );
 
     if (user) {
-      if (bcrypt.compareSync(password, user.password)) {
+      if (bcrypt.compareSync(password, String(user.password))) {
         return { id: user.id, email: user.email, role: user.role };
       }
     }
 
-    return null;
+    throw new UnprocessableEntityException('Invalid data');
   }
 
   public async login(username: string, password: string): Promise<TokensDto> {
@@ -102,7 +102,7 @@ export class AuthEmailService {
 
       await this.userService.verifyByEmail(payload.email);
 
-      return { ok: true };
+      return new Ok();
     } catch (error) {
       throw AuthEmailService.invalidTokenException;
     }
@@ -124,7 +124,7 @@ export class AuthEmailService {
         Provider.EMAIL,
       );
 
-      return { ok: true };
+      return new Ok();
     } catch (error) {
       throw AuthEmailService.invalidTokenException;
     }
@@ -139,7 +139,7 @@ export class AuthEmailService {
 
     await this.mailService.sendPassReset(email, token);
 
-    return { ok: true };
+    return new Ok();
   }
 
   async sendVerification(email: string): Promise<Ok> {
@@ -151,20 +151,20 @@ export class AuthEmailService {
 
     await this.mailService.sendVerification(email, token);
 
-    return { ok: true };
+    return new Ok();
   }
 
   public async register(dto: EmailRegisterDto): Promise<Ok> {
     await this.userService.add(dto);
     await this.sendVerification(dto.email);
 
-    return { ok: true };
+    return new Ok();
   }
   public async createAdmin(dto: EmailRegisterDto): Promise<Ok> {
     const admin = await this.userService.createAdmin(dto);
 
     if (!admin.isEmailConfirmed) await this.sendVerification(dto.email);
 
-    return { ok: true };
+    return new Ok();
   }
 }

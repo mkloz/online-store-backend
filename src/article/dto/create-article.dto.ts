@@ -1,9 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Decimal } from '@prisma/client/runtime/library';
 import {
   IsArray,
   IsBoolean,
-  IsDecimal,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -13,8 +11,6 @@ import {
 } from 'class-validator';
 import { CategoryExist } from 'src/category/validators/category-exist.validator';
 import { FileExist } from 'src/file/validators/file-exist.validator';
-import { ReviewExist } from 'src/review/validators/review-exist.validator';
-import { SaleExist } from 'src/sale/validators/sale-exist.validator';
 
 export class CreateArticleDto {
   @IsString()
