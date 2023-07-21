@@ -5,7 +5,7 @@ on:
     branches: ['main']
 
 jobs:
-  build:
+  deploy:
     runs-on: citywheels-server
     environment: prod
     strategy:
@@ -26,27 +26,12 @@ jobs:
         run: npm ci
       - name: Build ts to js
         run: npm run build
-
-  migrate:
-    runs-on: self-hosted
-    needs: [build]
-    steps:
       - name: Migrate
         run: npm run migration:run:prod
-
-  test:
-    runs-on: citywheels-server
-    needs: [migrate]
-    steps:
       - name: Test
         run: |
           npm run format
           npm run lint
           npm run test
-
-  deploy:
-    runs-on: citywheels-server
-    needs: [test]
-    steps:
       - name: Restart PM2
         run: pm2 restart OnlineStore
