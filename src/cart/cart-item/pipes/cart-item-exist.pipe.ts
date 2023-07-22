@@ -10,7 +10,7 @@ export class CartItemExistPipe implements PipeTransform {
     const name = await this.prisma.cartItem.findUnique({
       where: { id: value.id },
     });
-    if (name) throw new BadRequestException('Item does not exist');
+    if (!name) throw new BadRequestException('Item does not exist');
 
     return value;
   }

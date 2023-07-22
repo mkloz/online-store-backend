@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Ok {
+export class Done {
   @ApiProperty()
-  ok: boolean;
+  done: boolean;
 
   constructor(value = true) {
-    this.ok = value;
+    this.done = value;
   }
 }

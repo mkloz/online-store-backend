@@ -10,7 +10,6 @@ export class MailerService {
 
   constructor(private readonly cs: ApiConfigService) {
     const mail = this.cs.getMail();
-
     this.transporter = createTransport(
       {
         host: mail.host,

@@ -16,7 +16,7 @@ import { TokensDto } from '../dto/tokens.dto';
 import { ApiEmailRegister } from './docs/api-email-register.decorator';
 import { ApiEmailLogin } from './docs/api-email-login.decorator';
 import { ApiEmail } from './docs/api-email.decorator';
-import { Ok } from 'src/common/dto/ok.dto';
+import { Done } from 'src/common/dto/done.dto';
 import { ApiEmailConfirm } from './docs/api-email-confirm.decorator';
 import { ApiEmailSendConfirmation } from './docs/api-email-send-confirmation.decorator';
 import { ApiEmailPasswortReset } from './docs/api-email-passwort-reset.decorator';
@@ -46,7 +46,7 @@ export class AuthEmailController {
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
   @ApiEmailRegister()
-  async register(@Body(UserNotExistPipe) dto: EmailRegisterDto): Promise<Ok> {
+  async register(@Body(UserNotExistPipe) dto: EmailRegisterDto): Promise<Done> {
     return this.emailService.register(dto);
   }
 
@@ -55,14 +55,14 @@ export class AuthEmailController {
   @UseGuards(RoleAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiAdminCreate()
-  createAdmin(@Body() dto: EmailRegisterDto): Promise<Ok> {
+  createAdmin(@Body() dto: EmailRegisterDto): Promise<Done> {
     return this.emailService.createAdmin(dto);
   }
 
   @Post('/confirm')
   @ApiEmailConfirm()
   @HttpCode(HttpStatus.OK)
-  verify(@Query() { token }: EmailTokenDto): Promise<Ok> {
+  verify(@Query() { token }: EmailTokenDto): Promise<Done> {
     return this.emailService.verify(token);
   }
 
@@ -71,7 +71,7 @@ export class AuthEmailController {
   @ApiEmailSendConfirmation()
   async sendVerification(
     @Query(UserExistPipe) { email }: EmailDto,
-  ): Promise<Ok> {
+  ): Promise<Done> {
     return this.emailService.sendVerification(email);
   }
 
@@ -80,14 +80,14 @@ export class AuthEmailController {
   @ApiEmailSendConfirmation()
   async sendPasswordReset(
     @Query(UserExistPipe) { email }: EmailDto,
-  ): Promise<Ok> {
+  ): Promise<Done> {
     return this.emailService.forgotPass(email);
   }
 
   @Post('/reset/password')
   @HttpCode(HttpStatus.OK)
   @ApiEmailPasswortReset()
-  resetPassword(@Body() dto: EmailPasswordResetDto): Promise<Ok> {
+  resetPassword(@Body() dto: EmailPasswordResetDto): Promise<Done> {
     return this.emailService.resetPassword(dto.password, dto.token);
   }
 }

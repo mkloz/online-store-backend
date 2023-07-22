@@ -37,7 +37,7 @@ export class UserRepository {
     throw new UnprocessableEntityException('Incorect provider');
   }
 
-  public async add({
+  public async create({
     password,
     favorites,
     ...dto
@@ -51,7 +51,7 @@ export class UserRepository {
         role: Role.USER,
         favorites: this.prisma.connectArrayIfDefined(favorites),
       },
-      include: { reviews: true, favorites: true },
+      include: { reviews: true, favorites: true, cart: true },
     });
   }
 
@@ -64,20 +64,22 @@ export class UserRepository {
       update: { role: Role.ADMIN },
       create: {
         ...dto,
+        isEmailConfirmed: true,
         favorites: this.prisma.connectArrayIfDefined(favorites),
+        role: Role.ADMIN,
       },
-      include: { reviews: true, favorites: true },
+      include: { reviews: true, favorites: true, cart: true },
     });
   }
 
   public async getByUniqueInput(
     value: Prisma.UserWhereUniqueInput & { provider?: Provider } & {
-      verified?: boolean;
+      isEmailConfirmed?: boolean;
     },
   ): Promise<Nullable<User>> {
-    return await this.prisma.user.findUnique({
+    return await this.prisma.user.findFirst({
       where: value,
-      include: { reviews: true, favorites: true },
+      include: { reviews: true, favorites: true, cart: true },
     });
   }
 
@@ -87,7 +89,7 @@ export class UserRepository {
   ): Promise<Nullable<User>> {
     return this.prisma.user.update({
       where: { id },
-      include: { reviews: true, favorites: true },
+      include: { reviews: true, favorites: true, cart: true },
       data: {
         ...dto,
         favorites: this.prisma.setArrayIfDefined(favorites),
@@ -98,7 +100,7 @@ export class UserRepository {
   public async deleteById(id: number): Promise<Nullable<User>> {
     return await this.prisma.user.delete({
       where: { id },
-      include: { reviews: true, favorites: true },
+      include: { reviews: true, favorites: true, cart: true },
     });
   }
 }

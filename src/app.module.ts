@@ -8,18 +8,20 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { MailModule } from './mail/mail.module';
 import { ApiConfigModule } from './config/api-config.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
     ApiConfigModule,
     FileModule,
-    AuthModule,
     ArticleModule,
-    SaleModule,
     ReviewModule,
-    CategoryModule,
     UserModule,
     MailModule,
+    CartModule,
+    SaleModule,
+    CategoryModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

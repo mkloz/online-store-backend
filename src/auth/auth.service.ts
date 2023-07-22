@@ -32,7 +32,7 @@ export class AuthService {
     let user = await this.userService.getByEmail(socialData.email);
 
     if (!user) {
-      user = await this.userService.add({
+      user = await this.userService.create({
         email: socialData.email,
         name: socialData.name,
       });

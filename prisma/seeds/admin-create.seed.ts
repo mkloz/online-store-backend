@@ -1,11 +1,14 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Provider, Role } from '@prisma/client';
 import * as dotenv from 'dotenv';
-import { Ok } from 'src/common/dto/ok.dto';
+import { CartService } from 'src/cart/cart.service';
+import { Done } from 'src/common/dto/done.dto';
+import { PrismaService } from 'src/db/prisma.service';
+import { UserRepository } from 'src/user/user.repository';
 import { UserService } from 'src/user/user.service';
 
 dotenv.config();
 
-export async function createAdmin(prisma: PrismaClient): Promise<Ok> {
+export async function createAdmin(prisma: PrismaClient): Promise<Done> {
   const admin = {
     name: process.env.ADMIN_NAME || '',
     email: process.env.ADMIN_EMAIL || '',
@@ -15,12 +18,11 @@ export async function createAdmin(prisma: PrismaClient): Promise<Ok> {
     if (!key) throw new Error('Provide env variables!');
   }
   admin.password = await UserService.hashPassword(admin.password);
+  const prismaService = new PrismaService();
+  await new UserService(
+    new UserRepository(prismaService),
+    new CartService(prismaService),
+  ).createAdmin({ ...admin, provider: Provider.EMAIL });
 
-  await prisma.user.upsert({
-    where: { email: admin.email },
-    update: { role: Role.ADMIN },
-    create: { role: Role.ADMIN, isEmailConfirmed: true, ...admin },
-  });
-
-  return new Ok();
+  return new Done();
 }

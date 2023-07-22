@@ -7,6 +7,7 @@ import {
   Article,
   ArticleDiscription,
 } from 'src/article/entities/article.entity';
+import { Cart, CartDiscription } from 'src/cart/entities/cart.entity';
 export class UserDiscription {
   @ApiProperty({ example: 1 })
   id: number;
@@ -37,15 +38,20 @@ export class User extends UserDiscription implements Omit<IUser, 'password'> {
   @ApiPropertyOptional({ type: () => [ArticleDiscription] })
   favorites?: Article[];
 
+  @ApiPropertyOptional({ type: () => CartDiscription })
+  cart?: Cart | null;
+
   @Exclude()
   password?: string | null;
 
   constructor(partial: Partial<User>) {
     super();
     Object.assign(this, partial);
+
     if (partial.reviews?.length)
       this.reviews = partial.reviews.map((el) => new Review(el));
     if (partial.favorites?.length)
       this.favorites = partial.favorites.map((el) => new Article(el));
+    if (partial.cart) this.cart = new Cart(partial.cart);
   }
 }

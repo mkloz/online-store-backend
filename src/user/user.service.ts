@@ -5,12 +5,16 @@ import * as bcrypt from 'bcryptjs';
 import { Provider } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
-import { Ok } from 'src/common/dto/ok.dto';
+import { Done } from 'src/common/dto/done.dto';
+import { CartService } from 'src/cart/cart.service';
 export const SALT_ROUNDS = 10;
 
 @Injectable()
 export class UserService {
-  constructor(private readonly repo: UserRepository) {}
+  constructor(
+    private readonly repo: UserRepository,
+    private readonly cartService: CartService,
+  ) {}
   static userNotExistException = new UnprocessableEntityException(
     'User not exist',
   );
@@ -19,33 +23,34 @@ export class UserService {
     return bcrypt.hash(password, SALT_ROUNDS);
   }
 
-  public async verifyByID(id: number): Promise<Ok> {
+  public async verifyByID(id: number): Promise<Done> {
     await this.repo.verifyByUniqueInput({ id });
 
-    return new Ok();
+    return new Done();
   }
 
-  public async verifyByEmail(email: string): Promise<Ok> {
+  public async verifyByEmail(email: string): Promise<Done> {
     await this.repo.verifyByUniqueInput({ email });
 
-    return new Ok();
+    return new Done();
   }
 
   public async changePassword(
     id: number,
     password: string,
     provider: Provider,
-  ): Promise<Ok> {
+  ): Promise<Done> {
     await this.repo.changePassword(id, password, provider);
-    return new Ok();
+    return new Done();
   }
 
-  public async add(
+  public async create(
     dto: CreateUserDto & { provider?: Provider },
   ): Promise<User> {
-    const user = await this.repo.add(dto);
+    const user = await this.repo.create(dto);
 
     if (!user) throw UserService.userNotExistException;
+    await this.cartService.create(user.id);
 
     return new User(user);
   }
@@ -56,6 +61,7 @@ export class UserService {
     const user = await this.repo.createAdmin(dto);
 
     if (!user) throw UserService.userNotExistException;
+    await this.cartService.create(user.id);
 
     return new User(user);
   }
@@ -86,7 +92,7 @@ export class UserService {
     const user = await this.repo.getByUniqueInput({
       email,
       provider,
-      verified: true,
+      isEmailConfirmed: true,
     });
 
     if (!user) throw UserService.userNotExistException;
@@ -101,7 +107,7 @@ export class UserService {
     const user = await this.repo.getByUniqueInput({
       email,
       provider,
-      verified: false,
+      isEmailConfirmed: false,
     });
 
     if (!user) throw UserService.userNotExistException;

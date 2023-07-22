@@ -7,6 +7,7 @@ import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.d
 import { Paginated } from 'src/common/pagination/paginated.dto';
 import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
 import { ApiConfigService } from 'src/config/api-config.service';
+import { CartService } from 'src/cart/cart.service';
 
 @Injectable()
 export class ArticleService {
@@ -14,6 +15,7 @@ export class ArticleService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cs: ApiConfigService,
+    private readonly cartService: CartService,
   ) {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
   }
@@ -99,11 +101,18 @@ export class ArticleService {
   }
 
   async remove(id: number): Promise<Article> {
+    const relatedCarts = await this.cartService.findMany({
+      cartItems: { some: { articleId: id } },
+    });
+
     const art = await this.prisma.article.delete({
       where: { id },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
+
     if (!art) throw ArticleService.articleNotExistException;
+
+    relatedCarts.forEach((el) => this.cartService.recalculateTotalPrice(el.id));
 
     return new Article(art);
   }

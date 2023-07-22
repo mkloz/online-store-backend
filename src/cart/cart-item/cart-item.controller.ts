@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { User as UserPayload } from '../user.decorator';
+import { User as UserPayload } from '../../user/user.decorator';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { IDDto } from 'src/common/dto/id.dto';
@@ -27,15 +27,15 @@ import {
   ApiCartItemGetMany,
   ApiCartItemGetOne,
 } from './docs';
-import { ApiUser } from '../docs';
+import { ApiCart } from '../docs/api-cart.decorator';
 
-@ApiUser()
-@Controller('user/me/cart')
+@ApiCart()
+@Controller('carts/my/items')
 @UseInterceptors(ClassSerializerInterceptor)
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
-  @Post('add')
+  @Post('increment')
   @UseGuards(AuthGuard)
   @ApiCartItemAdd()
   cartAdd(

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { Ok } from 'src/common/dto/ok.dto';
+import { Done } from 'src/common/dto/done.dto';
 
-export async function createCategories(prisma: PrismaClient): Promise<Ok> {
+export async function createCategories(prisma: PrismaClient): Promise<Done> {
   const categoriesNames = [
     'bicycle',
     'gyroboard',
@@ -20,5 +20,5 @@ export async function createCategories(prisma: PrismaClient): Promise<Ok> {
       }),
     ),
   );
-  return new Ok();
+  return new Done();
 }

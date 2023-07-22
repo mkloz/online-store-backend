@@ -13,10 +13,10 @@ class Seeder {
   constructor(private readonly prisma: PrismaClient) {}
 
   async start(): Promise<Done> {
-    (await createAdmin(this.prisma)).ok
+    (await createAdmin(this.prisma)).done
       ? Logger.log('Admin was created ✔️', 'Seeder')
       : Logger.log('Admin wasn`t created ❌', 'Seeder');
-    (await createCategories(this.prisma)).ok
+    (await createCategories(this.prisma)).done
       ? Logger.log('Categories were created ✔️', 'Seeder')
       : Logger.log('Categories weren`t created ❌', 'Seeder');
 

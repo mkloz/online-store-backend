@@ -31,7 +31,7 @@ export class CartItemBelongsToUserGuard extends AuthGuard {
       ? await this.prisma.cartItem.findFirst({
           where: {
             id: +request.params['id'],
-            user: { id: request.user.id },
+            cart: { userId: request.user.id },
           },
         })
       : null;

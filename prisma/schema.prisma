@@ -91,29 +91,42 @@ enum Provider {
 }
 
 model User {
-  id               Int        @id() @default(autoincrement())
-  name             String     @map("name") @db.Char(255)
-  password         String?    @db.Char(255)
-  email            String     @unique() @db.Char(255)
-  isEmailConfirmed Boolean    @default(false) @map("is_email_confirmed")
-  provider         Provider   @default(EMAIL)
-  role             Role       @default(USER)
+  id               Int       @id() @default(autoincrement())
+  name             String    @map("name") @db.Char(255)
+  password         String?   @db.Char(255)
+  email            String    @unique() @db.Char(255)
+  isEmailConfirmed Boolean   @default(false) @map("is_email_confirmed")
+  provider         Provider  @default(EMAIL)
+  role             Role      @default(USER)
   reviews          Review[]
-  cartItems        CartItem[]
-  favorites        Article[]  @relation(name: "_user_favorites")
+  cart             Cart?
+  favorites        Article[] @relation(name: "_user_favorites")
 
   @@map("user")
 }
 
 model CartItem {
-  id        Int      @id() @default(autoincrement())
-  quantity  Int      @default(1)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  articleId Int?     @map("article_id")
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId    Int?     @map("user_id")
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id            Int      @id() @default(autoincrement())
+  quantity      Int      @default(1)
+  subtotalPrice Float?   @map("subtotal_price")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+  articleId     Int?     @map("article_id")
+  article       Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cartId        Int?     @map("cart_id")
+  cart          Cart?    @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("cart_item")
+}
+
+model Cart {
+  id         Int        @id() @default(autoincrement())
+  totalPrice Float?     @map("total_price")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at")
+  userId     Int?       @unique() @map("user_id")
+  user       User?      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cartItems  CartItem[]
+
+  @@map("cart")
 }

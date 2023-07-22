@@ -15,7 +15,7 @@ import { UserService } from 'src/user/user.service';
 import { IAuth } from 'src/config/config.interface';
 import { EmailTokenPayloadValidator } from './jwt/email-token-payload.validator';
 import { Provider } from '@prisma/client';
-import { Ok } from 'src/common/dto/ok.dto';
+import { Done } from 'src/common/dto/done.dto';
 import { CreateJwtPayload } from '../dto/jwt-payload.dto';
 import { JwtService } from '@nestjs/jwt';
 import { EmailCreateVerificationTokenPayload } from './jwt/email-verification-token-payload.dto';
@@ -90,7 +90,7 @@ export class AuthEmailService {
     return this.authService.generateTokens(user);
   }
 
-  async verify(token: string): Promise<Ok> {
+  async verify(token: string): Promise<Done> {
     try {
       const payload = this.jwtService.verify(token, {
         secret: this.auth.mail.jwt.verification.secret,
@@ -102,13 +102,13 @@ export class AuthEmailService {
 
       await this.userService.verifyByEmail(payload.email);
 
-      return new Ok();
+      return new Done();
     } catch (error) {
       throw AuthEmailService.invalidTokenException;
     }
   }
 
-  async resetPassword(password: string, token: string): Promise<Ok> {
+  async resetPassword(password: string, token: string): Promise<Done> {
     try {
       const payload = this.jwtService.verify(token, {
         secret: this.auth.mail.jwt.resetPass.secret,
@@ -124,13 +124,13 @@ export class AuthEmailService {
         Provider.EMAIL,
       );
 
-      return new Ok();
+      return new Done();
     } catch (error) {
       throw AuthEmailService.invalidTokenException;
     }
   }
 
-  async forgotPass(email: string): Promise<Ok> {
+  async forgotPass(email: string): Promise<Done> {
     const user = await this.userService.getByEmail(email);
     const token = this.generateEmailResetPassToken({
       id: user.id,
@@ -139,10 +139,10 @@ export class AuthEmailService {
 
     await this.mailService.sendPassReset(email, token);
 
-    return new Ok();
+    return new Done();
   }
 
-  async sendVerification(email: string): Promise<Ok> {
+  async sendVerification(email: string): Promise<Done> {
     const user = await this.userService.getByEmail(email);
     const token = this.generateEmailVerificationToken({
       id: user.id,
@@ -151,20 +151,20 @@ export class AuthEmailService {
 
     await this.mailService.sendVerification(email, token);
 
-    return new Ok();
+    return new Done();
   }
 
-  public async register(dto: EmailRegisterDto): Promise<Ok> {
-    await this.userService.add(dto);
+  public async register(dto: EmailRegisterDto): Promise<Done> {
+    await this.userService.create(dto);
     await this.sendVerification(dto.email);
 
-    return new Ok();
+    return new Done();
   }
-  public async createAdmin(dto: EmailRegisterDto): Promise<Ok> {
+  public async createAdmin(dto: EmailRegisterDto): Promise<Done> {
     const admin = await this.userService.createAdmin(dto);
 
     if (!admin.isEmailConfirmed) await this.sendVerification(dto.email);
 
-    return new Ok();
+    return new Done();
   }
 }

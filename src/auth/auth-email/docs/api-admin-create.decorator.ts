@@ -7,11 +7,11 @@ import {
 } from '@nestjs/swagger';
 import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
 import { EmailRegisterDto } from '../dto/email-register.dto';
-import { Ok } from 'src/common/dto/ok.dto';
+import { Done } from 'src/common/dto/done.dto';
 
 export const ApiAdminCreate = () =>
   applyDecorators(
-    ApiResponseData(Ok),
+    ApiResponseData(Done),
     ApiCreatedResponse(),
     ApiBearerAuth(),
     ApiOperation({ summary: 'Creates new admin(set role ADMIN if exist)' }),
