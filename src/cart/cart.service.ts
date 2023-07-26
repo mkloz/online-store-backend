@@ -2,14 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@db/prisma.service';
 import { Cart } from './entities/cart.entity';
 import { Prisma } from '@prisma/client';
-import { Done } from '@shared/dto/done.dto';
+import { ArticleService } from '@article/article.service';
 
 @Injectable()
 export class CartService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly articleService: ArticleService,
+  ) {}
   static cartNotExistException = new NotFoundException('Cart not found');
 
-  async recalculateTotalPrice(cartId: number): Promise<Done> {
+  async calculateTotalPrice(cartId: number): Promise<number> {
     const cart = await this.prisma.cart.findUnique({
       where: { id: cartId },
       include: { cartItems: true },
@@ -19,22 +22,21 @@ export class CartService {
       throw CartService.cartNotExistException;
     }
 
-    await this.prisma.cart.update({
-      where: { id: cartId },
-      data: {
-        totalPrice: cart.cartItems.reduce(
-          (total, item) => total + (item.subtotalPrice || 0),
-          0,
-        ),
-      },
-    });
+    let totalPrice = 0;
 
-    return new Done();
+    for (const item of cart.cartItems || []) {
+      const actualPrice = await this.articleService.getArticleActualPrice(
+        item.articleId,
+      );
+      totalPrice += actualPrice * item.quantity;
+    }
+
+    return totalPrice;
   }
 
   async create(userId: number): Promise<Cart> {
     const cart = await this.prisma.cart.create({
-      data: { user: { connect: { id: userId } }, totalPrice: 0 },
+      data: { user: { connect: { id: userId } } },
     });
     if (!cart) throw CartService.cartNotExistException;
 
@@ -44,27 +46,39 @@ export class CartService {
   async findOne(input: Prisma.CartWhereUniqueInput): Promise<Cart> {
     const cart = await this.prisma.cart.findUnique({
       where: input,
+      include: { cartItems: true },
     });
     if (!cart) throw CartService.cartNotExistException;
 
-    return new Cart(cart);
-  }
+    if (cart.cartItems) {
+      cart.cartItems = await Promise.all(
+        cart.cartItems.map(async (item) => ({
+          ...item,
+          subtotalPrice: item.articleId
+            ? (await this.articleService.getArticleActualPrice(
+                item.articleId,
+              )) * item.quantity
+            : null,
+        })),
+      );
+    }
 
-  async findMany(input: Prisma.CartWhereInput): Promise<Cart[]> {
-    const cart = await this.prisma.cart.findMany({
-      where: input,
+    return new Cart({
+      ...cart,
+      totalPrice: await this.calculateTotalPrice(cart.id),
     });
-    if (!cart.length) throw CartService.cartNotExistException;
-
-    return cart.map((el) => new Cart(el));
   }
+
   async clearByUniqueInput(input: Prisma.CartWhereUniqueInput) {
     const cart = await this.prisma.cart.update({
       where: input,
-      data: { cartItems: { set: [] }, totalPrice: 0 },
+      data: { cartItems: { set: [] } },
     });
     if (!cart) throw CartService.cartNotExistException;
 
-    return new Cart(cart);
+    return new Cart({
+      ...cart,
+      totalPrice: await this.calculateTotalPrice(cart.id),
+    });
   }
 }

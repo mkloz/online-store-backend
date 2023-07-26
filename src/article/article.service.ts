@@ -5,7 +5,6 @@ import { PrismaService } from '@db/prisma.service';
 import { Article } from './entities/article.entity';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
-import { CartService } from '@cart/cart.service';
 import { PaginationOptionsDto, Paginated } from '@shared/pagination';
 
 @Injectable()
@@ -14,7 +13,6 @@ export class ArticleService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cs: ApiConfigService,
-    private readonly cartService: CartService,
   ) {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
   }
@@ -100,10 +98,6 @@ export class ArticleService {
   }
 
   async remove(id: number): Promise<Article> {
-    const relatedCarts = await this.cartService.findMany({
-      cartItems: { some: { articleId: id } },
-    });
-
     const art = await this.prisma.article.delete({
       where: { id },
       include: { images: true, sale: true, reviews: true, categories: true },
@@ -111,8 +105,18 @@ export class ArticleService {
 
     if (!art) throw ArticleService.articleNotExistException;
 
-    relatedCarts.forEach((el) => this.cartService.recalculateTotalPrice(el.id));
-
     return new Article(art);
+  }
+
+  async getArticleActualPrice(id?: number | null) {
+    if (!id) throw ArticleService.articleNotExistException;
+
+    const article = await this.prisma.article.findUnique({
+      where: { id },
+      include: { sale: true },
+    });
+    if (!article) throw ArticleService.articleNotExistException;
+
+    return article.sale?.newPrise ?? article.price;
   }
 }

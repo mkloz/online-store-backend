@@ -3,17 +3,17 @@ import { Exclude } from 'class-transformer';
 import { Article, ArticleDiscription } from '@article/entities/article.entity';
 import { CartItem as ICartItem } from '@prisma/client';
 import { Cart, CartDiscription } from '@cart/entities/cart.entity';
+
 export class CartItemDiscription {
   @ApiProperty({ example: 1 })
   id: number;
 
   @ApiProperty({ example: 1, default: 1 })
   quantity: number;
-
-  @ApiProperty({ example: 9.98 })
-  subtotalPrice: number | null;
 }
 export class CartItem extends CartItemDiscription implements ICartItem {
+  @ApiProperty({ example: 9.98 })
+  subtotalPrice?: number | null;
   @ApiPropertyOptional({ type: () => ArticleDiscription })
   article?: Article | null;
 
@@ -31,6 +31,7 @@ export class CartItem extends CartItemDiscription implements ICartItem {
 
   constructor(partial: Partial<CartItem>) {
     super();
+
     Object.assign(this, partial);
 
     if (this.article) {

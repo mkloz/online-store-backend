@@ -1,4 +1,10 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
 import { JwtPayloadDto } from '@shared/dto';
 import { User } from '@user/user.decorator';
@@ -8,6 +14,7 @@ import { ApiCartGetMy } from './docs/api-car-get-my.decorator';
 
 @ApiCart()
 @Controller('carts')
+@UseInterceptors(ClassSerializerInterceptor)
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
