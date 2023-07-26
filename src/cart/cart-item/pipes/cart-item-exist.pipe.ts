@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
-import { IDDto } from 'src/common/dto/id.dto';
-import { PrismaService } from 'src/db/prisma.service';
+import { IDDto } from '@shared/dto/id.dto';
+import { PrismaService } from '@db/prisma.service';
 
 @Injectable()
 export class CartItemExistPipe implements PipeTransform {

@@ -9,14 +9,14 @@ import {
 } from '@nestjs/common';
 import { AuthEmailService } from './auth-email.service';
 import { EmailLoginDto } from './dto/email-login.dto';
-import { UserNotExistPipe } from 'src/user/pipes/user-not-exist.pipe';
+import { UserNotExistPipe } from '@user/pipes/user-not-exist.pipe';
 import { EmailRegisterDto } from './dto/email-register.dto';
-import { UserExistPipe } from 'src/user/pipes/user-exist.pipe';
+import { UserExistPipe } from '@user/pipes/user-exist.pipe';
 import { TokensDto } from '../dto/tokens.dto';
 import { ApiEmailRegister } from './docs/api-email-register.decorator';
 import { ApiEmailLogin } from './docs/api-email-login.decorator';
 import { ApiEmail } from './docs/api-email.decorator';
-import { Done } from 'src/common/dto/done.dto';
+import { Done } from '@shared/dto/done.dto';
 import { ApiEmailConfirm } from './docs/api-email-confirm.decorator';
 import { ApiEmailSendConfirmation } from './docs/api-email-send-confirmation.decorator';
 import { ApiEmailPasswortReset } from './docs/api-email-passwort-reset.decorator';
@@ -24,9 +24,9 @@ import { ApiEmailPasswortReset } from './docs/api-email-passwort-reset.decorator
 import { EmailPasswordResetDto } from './dto/email-password-reset.dto';
 import { EmailTokenDto } from './dto/email-token.dto';
 import { EmailDto } from './dto/email.dto';
-import { RoleAuthGuard } from '../guards/role-auth.guard';
+import { RoleAuthGuard } from '@shared/guards';
 import { Role } from '@prisma/client';
-import { Roles } from '../decorators/roles.decorator';
+import { Roles } from '../../shared/decorators/roles.decorator';
 import { ApiAdminCreate } from './docs/api-admin-create.decorator';
 
 @ApiEmail()

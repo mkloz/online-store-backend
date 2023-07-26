@@ -6,21 +6,21 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { EmailRegisterDto } from './dto/email-register.dto';
-import { UserMailService } from 'src/mail/user-mail.service';
+import { UserMailService } from '@mail/user-mail.service';
 import { TokensDto } from '../dto/tokens.dto';
 import { AuthService } from '../auth.service';
-import { User } from 'src/user/user.entity';
+import { User } from '@user/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { UserService } from 'src/user/user.service';
-import { IAuth } from 'src/config/config.interface';
+import { UserService } from '@user/user.service';
+import { IAuth } from '@config/config.interface';
 import { EmailTokenPayloadValidator } from './jwt/email-token-payload.validator';
 import { Provider } from '@prisma/client';
-import { Done } from 'src/common/dto/done.dto';
-import { CreateJwtPayload } from '../dto/jwt-payload.dto';
+import { Done } from '@shared/dto/done.dto';
+import { CreateJwtPayload } from '../../shared/dto/jwt-payload.dto';
 import { JwtService } from '@nestjs/jwt';
 import { EmailCreateVerificationTokenPayload } from './jwt/email-verification-token-payload.dto';
 import { EmailCreatePassResetTokenPayload } from './jwt/email-pass-reset-token-payload.dto';
-import { ApiConfigService } from 'src/config/api-config.service';
+import { ApiConfigService } from '@config/api-config.service';
 
 @Injectable()
 export class AuthEmailService {

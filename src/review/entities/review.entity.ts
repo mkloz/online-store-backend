@@ -1,10 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  Article,
-  ArticleDiscription,
-} from 'src/article/entities/article.entity';
+import { Article, ArticleDiscription } from '@article/entities/article.entity';
 import { Review as IReview } from '@prisma/client';
-import { User, UserDiscription } from 'src/user/user.entity';
+import { User, UserDiscription } from '@user/user.entity';
 import { Exclude } from 'class-transformer';
 
 export class ReviewDiscription {

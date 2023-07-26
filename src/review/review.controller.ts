@@ -22,17 +22,15 @@ import {
   ApiReviewGetOne,
   ApiReviewUpdate,
 } from './docs';
-import { IDDto } from 'src/common/dto/id.dto';
 import { ReviewExistPipe } from './pipes/review-exist.pipe';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import { Review } from './entities/review.entity';
-import { Paginated } from 'src/common/pagination/paginated.dto';
+import { IDDto, JwtPayloadDto } from '@shared/dto';
+import { PaginationOptionsDto, Paginated } from '@shared/pagination';
 import { Role } from '@prisma/client';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
+import { Roles } from '@shared/decorators';
+import { RoleAuthGuard } from '@shared/guards';
 import { OwnerOrRoleAuthGuard } from './pipes/owner-or-role-auth.guard';
-import { User } from 'src/user/user.decorator';
-import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
+import { User } from '@user/user.decorator';
 
 @ApiReview()
 @Controller('reviews')
@@ -45,7 +43,7 @@ export class ReviewController {
   @ApiReviewCreate()
   @UseGuards(RoleAuthGuard)
   public create(
-    @User() user: JwtPayload,
+    @User() user: JwtPayloadDto,
     @Body() createReviewDto: CreateReviewDto,
   ): Promise<Review> {
     return this.reviewService.create(user.id, createReviewDto);

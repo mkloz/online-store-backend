@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsOptional, IsPositive } from 'class-validator';
-import { ArticleExist } from 'src/article/validators/article-exist.validator';
+import { ArticleExist } from '@shared/validators';
 
 export class CreateCartItemDto {
   @IsInt()

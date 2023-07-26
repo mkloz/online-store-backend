@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
-import { PrismaService } from 'src/db/prisma.service';
+import { PrismaService } from '@db/prisma.service';
 interface Name {
   name: string;
 }

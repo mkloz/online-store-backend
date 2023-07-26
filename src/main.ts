@@ -3,10 +3,10 @@ import { AppModule } from './app.module';
 import * as morgan from 'morgan';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { GlobalResponseInterceptor } from './common/global-response.interceptor';
+import { GlobalResponseInterceptor } from './shared/global/global-response.interceptor';
 import { SwaggerModule } from '@nestjs/swagger';
-import { GlobalExceptionFilter } from './common/global-exception.filter';
-import { createSwapiDocument } from './common/docs/create-swagger-doc';
+import { GlobalExceptionFilter } from './shared/global/global-exception.filter';
+import { createSwapiDocument } from './utils/create-swagger-doc';
 import { ApiConfigService } from './config/api-config.service';
 import { useContainer } from 'class-validator';
 

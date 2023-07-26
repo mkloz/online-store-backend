@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
-import { Done } from 'src/common/dto/done.dto';
+import { ApiResponseData } from '@shared/docs';
+import { Done } from '@shared/dto/done.dto';
 
 export const ApiEmailSendConfirmation = () =>
   applyDecorators(

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Cart as ICart } from '@prisma/client';
 import { Exclude } from 'class-transformer';
-import { User, UserDiscription } from 'src/user/user.entity';
+import { User, UserDiscription } from '@user/user.entity';
 
 export class CartDiscription {
   @ApiProperty({ example: 1 })

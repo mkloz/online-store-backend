@@ -1,13 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Provider, Role } from '@prisma/client';
 import { Exclude } from 'class-transformer';
-import { Review, ReviewDiscription } from 'src/review/entities/review.entity';
+import { Review, ReviewDiscription } from '@review/entities/review.entity';
 import { User as IUser } from '@prisma/client';
-import {
-  Article,
-  ArticleDiscription,
-} from 'src/article/entities/article.entity';
-import { Cart, CartDiscription } from 'src/cart/entities/cart.entity';
+import { Article, ArticleDiscription } from '@article/entities/article.entity';
+import { Cart, CartDiscription } from '@cart/entities/cart.entity';
 export class UserDiscription {
   @ApiProperty({ example: 1 })
   id: number;

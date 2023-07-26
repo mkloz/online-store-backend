@@ -1,11 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import {
-  Article,
-  ArticleDiscription,
-} from 'src/article/entities/article.entity';
+import { Article, ArticleDiscription } from '@article/entities/article.entity';
 import { CartItem as ICartItem } from '@prisma/client';
-import { Cart, CartDiscription } from 'src/cart/entities/cart.entity';
+import { Cart, CartDiscription } from '@cart/entities/cart.entity';
 export class CartItemDiscription {
   @ApiProperty({ example: 1 })
   id: number;

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { Done } from 'src/common/dto/done.dto';
+import { Done } from '@shared/dto';
 
 export async function createCategories(prisma: PrismaClient): Promise<Done> {
   const categoriesNames = [

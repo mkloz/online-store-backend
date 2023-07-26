@@ -1,13 +1,12 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { PrismaService } from 'src/db/prisma.service';
+import { PrismaService } from '@db/prisma.service';
 import { Article } from './entities/article.entity';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { Paginated } from 'src/common/pagination/paginated.dto';
-import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { ApiConfigService } from 'src/config/api-config.service';
-import { CartService } from 'src/cart/cart.service';
+import { IPag, Paginator } from '@shared/pagination';
+import { ApiConfigService } from '@config/api-config.service';
+import { CartService } from '@cart/cart.service';
+import { PaginationOptionsDto, Paginated } from '@shared/pagination';
 
 @Injectable()
 export class ArticleService {

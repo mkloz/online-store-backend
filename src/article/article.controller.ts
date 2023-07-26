@@ -14,12 +14,12 @@ import {
   ClassSerializerInterceptor,
   SerializeOptions,
 } from '@nestjs/common';
+import { IDDto } from '@shared/dto';
+import { PaginationOptionsDto, Paginated } from '@shared/pagination';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article } from './entities/article.entity';
-import { IDDto } from 'src/common/dto/id.dto';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
 import {
   ApiArticle,
   ApiArticleCreate,
@@ -30,12 +30,10 @@ import {
 } from './docs';
 import { ArticleNotExistPipe } from './pipes/article-not-exist.pipe';
 import { ArticleExistPipe } from './pipes/article-exist.pipe';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Roles } from '@shared/decorators';
 import { Role } from '@prisma/client';
 import { ApiArticleIncrement } from './docs/api-article-increment.decorator';
-import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
-import { Paginated } from 'src/common/pagination/paginated.dto';
-
+import { RoleAuthGuard } from '@shared/guards';
 @ApiArticle()
 @Controller('articles')
 @UseInterceptors(ClassSerializerInterceptor)

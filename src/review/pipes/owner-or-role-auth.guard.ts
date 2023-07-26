@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { PrismaService } from 'src/db/prisma.service';
-import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
+import { PrismaService } from '@db/prisma.service';
+import { RoleAuthGuard } from '@shared/guards';
 import { Reflector } from '@nestjs/core';
-import { ApiConfigService } from 'src/config/api-config.service';
+import { ApiConfigService } from '@config/api-config.service';
 
 @Injectable()
 export class OwnerOrRoleAuthGuard extends RoleAuthGuard {

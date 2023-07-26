@@ -9,8 +9,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { CategoryExist } from 'src/category/validators/category-exist.validator';
-import { FileExist } from 'src/file/validators/file-exist.validator';
+import { CategoryExist, FileExist } from '@shared/validators';
 
 export class CreateArticleDto {
   @IsString()

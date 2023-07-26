@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MailerService } from './mailer.service';
-import { ApiConfigModule } from 'src/config/api-config.module';
+import { ApiConfigModule } from '@config/api-config.module';
 
 @Module({
   imports: [ApiConfigModule],

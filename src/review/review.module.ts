@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewController } from './review.controller';
-import { DbModule } from 'src/db/db.module';
-import { ApiConfigModule } from 'src/config/api-config.module';
-import { ReviewExistConstraint } from './validators/review-exist.validator';
+import { DbModule } from '@db/db.module';
+import { ApiConfigModule } from '@config/api-config.module';
+import { ReviewExistConstraint } from '../shared/validators/review-exist.validator';
 
 @Module({
   imports: [ApiConfigModule, DbModule],

@@ -1,7 +1,6 @@
 -- CreateTable
 CREATE TABLE `sale` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `old_prise` INTEGER NOT NULL,
     `new_prise` INTEGER NOT NULL,
     `active_till` DATETIME(3) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

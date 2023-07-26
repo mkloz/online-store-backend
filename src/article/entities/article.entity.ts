@@ -2,10 +2,13 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   Category,
   CategoryDiscription,
-} from 'src/category/entities/category.entity';
-import { File, FileDiscription } from 'src/file/file.entity';
-import { Review, ReviewDiscription } from 'src/review/entities/review.entity';
-import { Sale, SaleDiscription } from 'src/sale/entities/sale.entity';
+} from '@article/category/entities/category.entity';
+import {
+  ArticlePhoto,
+  ArticlePhotoDiscription,
+} from '@article/article-photos/article-photo.entity';
+import { Review, ReviewDiscription } from '@review/entities/review.entity';
+import { Sale, SaleDiscription } from '@article/sale/entities/sale.entity';
 import { Article as IArticle, Role } from '@prisma/client';
 import { Exclude, Expose } from 'class-transformer';
 
@@ -43,8 +46,8 @@ export class ArticleDiscription {
 }
 
 export class Article extends ArticleDiscription implements IArticle {
-  @ApiPropertyOptional({ type: () => [FileDiscription] })
-  images?: File[];
+  @ApiPropertyOptional({ type: () => [ArticlePhotoDiscription] })
+  images?: ArticlePhoto[];
   @ApiPropertyOptional({ type: () => SaleDiscription })
   sale?: Sale | null;
   @ApiPropertyOptional({ type: () => [ReviewDiscription] })
@@ -61,7 +64,7 @@ export class Article extends ArticleDiscription implements IArticle {
     super();
     Object.assign(this, partial);
     if (this.images?.length) {
-      this.images = this.images.map((el) => new File(el));
+      this.images = this.images.map((el) => new ArticlePhoto(el));
     }
     if (this.reviews?.length) {
       this.reviews = this.reviews.map((el) => new Review(el));

@@ -5,8 +5,8 @@ import * as bcrypt from 'bcryptjs';
 import { Provider } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
-import { Done } from 'src/common/dto/done.dto';
-import { CartService } from 'src/cart/cart.service';
+import { Done } from '@shared/dto/done.dto';
+import { CartService } from '@cart/cart.service';
 export const SALT_ROUNDS = 10;
 
 @Injectable()

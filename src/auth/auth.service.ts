@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TokensDto } from './dto/tokens.dto';
-import { JwtPayloadValidator } from './validators/jwt-payload.validator';
-import { IStoreJWT } from 'src/config/config.interface';
-import { CreateJwtPayload } from './dto/jwt-payload.dto';
+import { JwtPayloadValidator } from '../shared/validators/jwt-payload.validator';
+import { IStoreJWT } from '@config/config.interface';
+import { CreateJwtPayload } from '../shared/dto/jwt-payload.dto';
 import { Provider } from '@prisma/client';
 import { SocialInterface } from './interfaces/social.interface';
-import { UserService } from 'src/user/user.service';
-import { ApiConfigService } from 'src/config/api-config.service';
+import { UserService } from '@user/user.service';
+import { ApiConfigService } from '@config/api-config.service';
 
 @Injectable()
 export class AuthService {

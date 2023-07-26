@@ -1,10 +1,10 @@
-import { PrismaClient, Provider, Role } from '@prisma/client';
+import { PrismaClient, Provider } from '@prisma/client';
 import * as dotenv from 'dotenv';
-import { CartService } from 'src/cart/cart.service';
-import { Done } from 'src/common/dto/done.dto';
-import { PrismaService } from 'src/db/prisma.service';
-import { UserRepository } from 'src/user/user.repository';
-import { UserService } from 'src/user/user.service';
+import { CartService } from '@cart/cart.service';
+import { Done } from '@shared/dto';
+import { PrismaService } from '@db/prisma.service';
+import { UserRepository } from '@user/user.repository';
+import { UserService } from '@user/user.service';
 
 dotenv.config();
 

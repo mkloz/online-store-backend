@@ -1,12 +1,11 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { PrismaService } from 'src/db/prisma.service';
+import { PrismaService } from '@db/prisma.service';
 import { Review } from './entities/review.entity';
-import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { Paginated } from 'src/common/pagination/paginated.dto';
-import { ApiConfigService } from 'src/config/api-config.service';
+import { IPag, Paginator } from '@shared/pagination';
+import { ApiConfigService } from '@config/api-config.service';
+import { PaginationOptionsDto, Paginated } from '@shared/pagination';
 
 @Injectable()
 export class ReviewService {

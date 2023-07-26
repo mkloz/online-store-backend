@@ -2,7 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { AuthGoogleLoginDto } from './dto/auth-google-login.dto';
 import { SocialInterface } from '../interfaces/social.interface';
-import { ApiConfigService } from 'src/config/api-config.service';
+import { ApiConfigService } from '@config/api-config.service';
 
 @Injectable()
 export class AuthGoogleService {

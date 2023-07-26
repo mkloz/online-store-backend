@@ -1,11 +1,11 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
-import { PrismaService } from 'src/db/prisma.service';
+import { PrismaService } from '@db/prisma.service';
 import { Prisma, Provider, Role } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { Nullable } from 'src/common/common.interface';
+import { Nullable } from '@shared/types/nullable.type';
 
 export const SALT_ROUNDS = 10;
 

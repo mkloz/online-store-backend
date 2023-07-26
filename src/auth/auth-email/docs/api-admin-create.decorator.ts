@@ -5,9 +5,9 @@ import {
   ApiCreatedResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
+import { ApiResponseData } from '@shared/docs';
 import { EmailRegisterDto } from '../dto/email-register.dto';
-import { Done } from 'src/common/dto/done.dto';
+import { Done } from '@shared/dto/done.dto';
 
 export const ApiAdminCreate = () =>
   applyDecorators(

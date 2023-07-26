@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, PipeTransform } from '@nestjs/common';
-import { ID } from 'src/common/common.interface';
-import { PrismaService } from 'src/db/prisma.service';
+import { ID } from '@shared/types/id.interface';
+import { PrismaService } from '@db/prisma.service';
 
 @Injectable()
 export class ReviewExistPipe implements PipeTransform<ID, Promise<ID>> {

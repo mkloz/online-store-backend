@@ -11,13 +11,13 @@ datasource db {
 }
 
 model Article {
-  id               Int        @id() @default(autoincrement())
-  price            Float      @db.Float()
+  id               Int        @id @default(autoincrement())
+  price            Float      @db.Float
   inStock          Boolean?   @map("in_stock")
   discription      String     @db.VarChar(3000)
   characteristic   String     @db.VarChar(3000)
-  rating           Float?     @db.Float()
-  name             String     @unique() @db.Char(255)
+  rating           Float?     @db.Float
+  name             String     @unique @db.Char(255)
   count            Int        @default(1)
   views            Int        @default(0)
   isPreviouslyUsed Boolean    @default(false) @map("is_previously_used")
@@ -29,12 +29,13 @@ model Article {
   categories       Category[] @relation(name: "_article_category")
   cartItems        CartItem[]
   folovers         User[]     @relation(name: "_user_favorites")
+  // orderItems       OrderItem[]
 
   @@map("article")
 }
 
 model File {
-  id        Int      @id() @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String   @db.Char(255)
   url       String   @db.Char(255)
   createdAt DateTime @default(now()) @map("created_at")
@@ -46,8 +47,7 @@ model File {
 }
 
 model Sale {
-  id         Int      @id() @default(autoincrement())
-  oldPrise   Int      @map("old_prise")
+  id         Int      @id @default(autoincrement())
   newPrise   Int      @map("new_prise")
   activeTill DateTime @map("active_till")
   createdAt  DateTime @default(now()) @map("created_at")
@@ -59,7 +59,7 @@ model Sale {
 }
 
 model Review {
-  id        Int      @id() @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   text      String   @db.VarChar(3000)
   stars     Int
   createdAt DateTime @default(now()) @map("created_at")
@@ -73,8 +73,8 @@ model Review {
 }
 
 model Category {
-  id       Int       @id() @default(autoincrement())
-  name     String    @unique() @db.Char(255)
+  id       Int       @id @default(autoincrement())
+  name     String    @unique @db.Char(255)
   articles Article[] @relation(name: "_article_category")
 
   @@map("category")
@@ -91,22 +91,23 @@ enum Provider {
 }
 
 model User {
-  id               Int       @id() @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   name             String    @map("name") @db.Char(255)
   password         String?   @db.Char(255)
-  email            String    @unique() @db.Char(255)
+  email            String    @unique @db.Char(255)
   isEmailConfirmed Boolean   @default(false) @map("is_email_confirmed")
   provider         Provider  @default(EMAIL)
   role             Role      @default(USER)
   reviews          Review[]
   cart             Cart?
   favorites        Article[] @relation(name: "_user_favorites")
+  // orders           Order[]
 
   @@map("user")
 }
 
 model CartItem {
-  id            Int      @id() @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   quantity      Int      @default(1)
   subtotalPrice Float?   @map("subtotal_price")
   createdAt     DateTime @default(now()) @map("created_at")
@@ -120,13 +121,98 @@ model CartItem {
 }
 
 model Cart {
-  id         Int        @id() @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   totalPrice Float?     @map("total_price")
   createdAt  DateTime   @default(now()) @map("created_at")
   updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at")
-  userId     Int?       @unique() @map("user_id")
+  userId     Int?       @unique @map("user_id")
   user       User?      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   cartItems  CartItem[]
 
   @@map("cart")
 }
+
+// enum OrderStatus {
+//   CREATED
+//   PROCESSED
+//   RECEIVED
+//   CENCELED
+// }
+
+// model OrderItem {
+//   id            Int      @id @default(autoincrement())
+//   quantity      Int      @default(1)
+//   subtotalPrice Float?   @map("subtotal_price")
+//   createdAt     DateTime @default(now()) @map("created_at")
+//   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+//   articleId     Int?     @map("article_id")
+//   article       Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//   orderId       Int?     @map("order_id")
+//   order         Order?   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+//   @@map("order_item")
+// }
+
+// model Address {
+//   id       Int        @id @default(autoincrement())
+//   street   String     @db.VarChar(3000)
+//   city     String     @db.VarChar(3000)
+//   country  String     @db.VarChar(3000)
+//   postCode String     @map("post_code") @db.Char(40)
+//   Delivery Delivery[]
+
+//   @@map("address")
+// }
+
+// model Cancel {
+//   id              Int     @id @default(autoincrement())
+//   reason          String  @map("reason") @db.VarChar(3000)
+//   isMoneyReturned Boolean @map("is_money_returned")
+//   amountReturned  Float?  @default(0) @map("amount_returned")
+//   order           Order   @relation(fields: [orderId], references: [id])
+//   orderId         Int     @unique
+
+//   @@map("cancel")
+// }
+
+// enum DeliveryStatus {
+//   PENDED
+//   PROCESSED
+//   SENDED
+//   DELIVERED
+//   RECEIVED
+// }
+
+// model Delivery {
+//   id           Int            @id @default(autoincrement())
+//   discription  String         @db.Char(40)
+//   shippingCost Float          @map("shipping_cost")
+//   addition     String?        @db.VarChar(3000)
+//   sendedAt     DateTime?      @map("sended_at")
+//   deliveredAt  DateTime?      @map("delivered_at")
+//   createdAt    DateTime       @default(now()) @map("created_at")
+//   updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at")
+//   orderId      Int            @map("order_id")
+//   order        Order          @relation(fields: [orderId], references: [id])
+//   status       DeliveryStatus
+//   address      Address?       @relation(fields: [addressId], references: [id])
+//   addressId    Int?           @map("address_id")
+
+//   @@map("delivery")
+// }
+
+// model Order {
+//   id          Int         @id @default(autoincrement())
+//   totalPrice  Float?      @map("total_price")
+//   deliveredAt DateTime    @map("delivered_at")
+//   createdAt   DateTime    @default(now()) @map("created_at")
+//   updatedAt   DateTime    @default(now()) @updatedAt @map("updated_at")
+//   userId      Int?        @unique @map("user_id")
+//   status      OrderStatus @default(CREATED)
+//   cancel      Cancel?
+//   user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//   orderItems  OrderItem[]
+//   delivery    Delivery[]
+
+//   @@map("order")
+// }

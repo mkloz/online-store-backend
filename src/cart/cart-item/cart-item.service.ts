@@ -5,13 +5,12 @@ import {
 } from '@nestjs/common';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
-import { PrismaService } from 'src/db/prisma.service';
+import { PrismaService } from '@db/prisma.service';
 import { CartItem } from './entities/cart-item.entity';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { Paginated } from 'src/common/pagination/paginated.dto';
-import { ApiConfigService } from 'src/config/api-config.service';
-import { IDDto } from 'src/common/dto/id.dto';
+import { IPag, Paginator } from '@shared/pagination';
+import { IDDto } from '@shared/dto';
+import { ApiConfigService } from '@config/api-config.service';
+import { PaginationOptionsDto, Paginated } from '@shared/pagination';
 
 @Injectable()
 export class CartItemService {

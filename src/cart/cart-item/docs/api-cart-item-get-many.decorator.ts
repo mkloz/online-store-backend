@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiPaginatedResponse } from 'src/common/docs/paginate-response-api.decorator';
+import { ApiPaginatedResponse } from '@shared/docs';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CartItem } from '../entities/cart-item.entity';
 
