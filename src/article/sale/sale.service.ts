@@ -26,14 +26,12 @@ export class SaleService {
     'Sale not exist',
   );
 
-  public async create({
-    article,
-    ...createSaleDto
-  }: CreateSaleDto): Promise<Sale> {
+  public async create(dto: CreateSaleDto): Promise<Sale> {
     const sale = await this.prisma.sale.create({
       data: {
-        ...createSaleDto,
-        article: { connect: { id: article } },
+        newPrise: dto.newPrise,
+        activeTill: dto.activeTill,
+        articleId: dto.article,
       },
       include: { article: true },
     });

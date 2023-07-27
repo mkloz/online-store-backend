@@ -62,9 +62,9 @@ export class CartItemService {
 
     const item = await this.prisma.cartItem.create({
       data: {
-        ...dto,
-        cart: { connect: { id: cart.id } },
-        article: { connect: { id: dto.article } },
+        quantity: dto.quantity,
+        articleId: dto.article,
+        cartId: id,
       },
       include: { article: true },
     });

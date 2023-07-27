@@ -12,11 +12,12 @@ export async function createAdmin(
 ): Promise<Done> {
   const admin = acs.getOnlineStore().admin;
 
-  for (const key in Object.keys(admin)) {
-    if (!key) throw new Error('Provide env variables!');
-  }
-  admin.password = await UserService.hashPassword(admin.password);
-  await userService.createAdmin({ ...admin, provider: Provider.EMAIL });
+  await userService.createAdmin({
+    name: admin.name,
+    password: admin.password,
+    email: admin.email,
+    provider: Provider.EMAIL,
+  });
 
   return new Done();
 }

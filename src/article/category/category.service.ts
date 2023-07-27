@@ -4,6 +4,7 @@ import { Category } from './entities/category.entity';
 import { PrismaService } from '@db/prisma.service';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CategoryService {
@@ -32,9 +33,9 @@ export class CategoryService {
     return Paginator.paginate(pag, opt);
   }
 
-  async findOne(id: number) {
+  async findOne(value: Prisma.CategoryWhereUniqueInput) {
     const cat = await this.prisma.category.findUnique({
-      where: { id },
+      where: value,
       include: { articles: true },
     });
 

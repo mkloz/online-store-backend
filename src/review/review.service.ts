@@ -21,15 +21,13 @@ export class ReviewService {
     'Review not exist',
   );
 
-  public async create(
-    authorId: number,
-    { article, ...createReviewDto }: CreateReviewDto,
-  ): Promise<Review> {
+  public async create(authorId: number, dto: CreateReviewDto): Promise<Review> {
     const rew = await this.prisma.review.create({
       data: {
-        ...createReviewDto,
-        article: { connect: { id: article } },
-        author: { connect: { id: authorId } },
+        text: dto.text,
+        stars: dto.stars,
+        articleId: dto.article,
+        authorId,
       },
       include: { article: true, author: true },
     });

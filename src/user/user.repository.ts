@@ -37,35 +37,39 @@ export class UserRepository {
     throw new UnprocessableEntityException('Incorect provider');
   }
 
-  public async create({
-    password,
-    favorites,
-    ...dto
-  }: CreateUserDto & { provider?: Provider }): Promise<User> {
+  public async create(
+    dto: CreateUserDto & { provider?: Provider },
+  ): Promise<User> {
     return await this.prisma.user.create({
       data: {
-        ...dto,
-        password: password
-          ? await UserService.hashPassword(password)
+        name: dto.name,
+        email: dto.email,
+        provider: dto.provider,
+        password: dto.password
+          ? await UserService.hashPassword(dto.password)
           : undefined,
         role: Role.USER,
-        favorites: this.prisma.connectArrayIfDefined(favorites),
+        favorites: this.prisma.connectArrayIfDefined(dto.favorites),
       },
       include: { reviews: true, favorites: true, cart: true },
     });
   }
 
-  public createAdmin({
-    favorites,
-    ...dto
-  }: CreateUserDto & { provider?: Provider }): Promise<User> {
+  public async createAdmin(
+    dto: CreateUserDto & { provider?: Provider },
+  ): Promise<User> {
     return this.prisma.user.upsert({
       where: { email: dto.email },
       update: { role: Role.ADMIN },
       create: {
-        ...dto,
+        name: dto.name,
+        email: dto.email,
+        provider: dto.provider,
+        password: dto.password
+          ? await UserService.hashPassword(dto.password)
+          : undefined,
         isEmailConfirmed: true,
-        favorites: this.prisma.connectArrayIfDefined(favorites),
+        favorites: this.prisma.connectArrayIfDefined(dto.favorites),
         role: Role.ADMIN,
       },
       include: { reviews: true, favorites: true, cart: true },
@@ -85,14 +89,14 @@ export class UserRepository {
 
   public async updateById(
     id: number,
-    { favorites, ...dto }: UpdateUserDto,
+    dto: UpdateUserDto,
   ): Promise<Nullable<User>> {
     return this.prisma.user.update({
       where: { id },
       include: { reviews: true, favorites: true, cart: true },
       data: {
-        ...dto,
-        favorites: this.prisma.setArrayIfDefined(favorites),
+        name: dto.name,
+        favorites: this.prisma.setArrayIfDefined(dto.favorites),
       },
     });
   }

@@ -12,6 +12,7 @@ import { IDDto } from '@shared/dto/id.dto';
 import { PaginationOptionsDto } from '@shared/pagination';
 
 import { CategoryExistPipe } from './pipes/category-exist.pipe';
+import { NameDto } from '@shared/dto/name.dto';
 
 @ApiCategory()
 @Controller('categories')
@@ -24,10 +25,9 @@ export class CategoryController {
   findAll(@Query() pag: PaginationOptionsDto) {
     return this.categoryService.findAll(pag);
   }
-
-  @Get(':id')
+  @Get(':name')
   @ApiCategoryGetOne()
-  findOne(@Param(CategoryExistPipe) { id }: IDDto) {
-    return this.categoryService.findOne(id);
+  findOneByName(@Param(CategoryExistPipe) name: NameDto) {
+    return this.categoryService.findOne(name);
   }
 }

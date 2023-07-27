@@ -30,14 +30,16 @@ export class ArticleService {
     return updated;
   }
 
-  async create({
-    categories,
-    ...createArticleDto
-  }: CreateArticleDto): Promise<Article> {
+  async create(dto: CreateArticleDto): Promise<Article> {
     const article = await this.prisma.article.create({
       data: {
-        ...createArticleDto,
-        categories: this.prisma.connectArrayIfDefined(categories),
+        characteristic: dto.characteristic,
+        price: dto.price,
+        discription: dto.discription,
+        name: dto.name,
+        count: dto.count,
+        isPreviouslyUsed: dto.isPreviouslyUsed,
+        categories: this.prisma.connectArrayIfDefined(dto.categories),
       },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
@@ -77,15 +79,18 @@ export class ArticleService {
     return new Article(art);
   }
 
-  async update(
-    id: number,
-    { categories, ...updateArticleDto }: UpdateArticleDto,
-  ): Promise<Article> {
+  async update(id: number, dto: UpdateArticleDto): Promise<Article> {
     const updated = await this.prisma.article.update({
       where: { id },
       data: {
-        ...updateArticleDto,
-        categories: this.prisma.setArrayIfDefined(categories),
+        characteristic: dto.characteristic,
+        price: dto.price,
+        discription: dto.discription,
+        name: dto.name,
+        count: dto.count,
+        isPreviouslyUsed: dto.isPreviouslyUsed,
+        views: dto.views,
+        categories: this.prisma.setArrayIfDefined(dto.categories),
       },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
