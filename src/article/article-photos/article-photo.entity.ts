@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Article, ArticleDiscription } from '@article/entities/article.entity';
-import { File as IFile } from '@prisma/client';
+import { ArticlePhoto as IFile } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 
 export class ArticlePhotoDiscription {
@@ -18,10 +18,10 @@ export class ArticlePhotoDiscription {
 
 export class ArticlePhoto extends ArticlePhotoDiscription implements IFile {
   @ApiPropertyOptional({ type: () => ArticleDiscription })
-  article?: Article | null;
+  article?: Article;
 
   @Exclude()
-  articleId: number | null;
+  articleId: number;
   @Exclude()
   createdAt: Date;
   @Exclude()

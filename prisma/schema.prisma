@@ -11,39 +11,39 @@ datasource db {
 }
 
 model Article {
-  id               Int        @id @default(autoincrement())
-  price            Float      @db.Float
-  inStock          Boolean?   @map("in_stock")
-  discription      String     @db.VarChar(3000)
-  characteristic   String     @db.VarChar(3000)
-  rating           Float?     @db.Float
-  name             String     @unique @db.Char(255)
-  count            Int        @default(1)
-  views            Int        @default(0)
-  isPreviouslyUsed Boolean    @default(false) @map("is_previously_used")
-  createdAt        DateTime   @default(now()) @map("created_at")
-  updatedAt        DateTime   @default(now()) @updatedAt @map("updated_at")
-  images           File[]
+  id               Int            @id @default(autoincrement())
+  price            Float          @db.Float
+  inStock          Boolean?       @map("in_stock")
+  discription      String         @db.VarChar(3000)
+  characteristic   String         @db.VarChar(3000)
+  rating           Float?         @db.Float
+  name             String         @unique @db.Char(255)
+  count            Int            @default(1)
+  views            Int            @default(0)
+  isPreviouslyUsed Boolean        @default(false) @map("is_previously_used")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at")
+  images           ArticlePhoto[]
   sale             Sale?
   reviews          Review[]
-  categories       Category[] @relation(name: "_article_category")
+  categories       Category[]     @relation(name: "_article_category")
   cartItems        CartItem[]
-  folovers         User[]     @relation(name: "_user_favorites")
+  folovers         User[]         @relation(name: "_user_favorites")
   // orderItems       OrderItem[]
 
   @@map("article")
 }
 
-model File {
+model ArticlePhoto {
   id        Int      @id @default(autoincrement())
   name      String   @db.Char(255)
   url       String   @db.Char(255)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  articleId Int?     @map("article_id")
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  articleId Int      @map("article_id")
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@map("file")
+  @@map("article_photo")
 }
 
 model Sale {

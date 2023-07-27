@@ -11,6 +11,7 @@ import {
   ParseFilePipe,
   UseGuards,
   ClassSerializerInterceptor,
+  Body,
 } from '@nestjs/common';
 import { ArticlePhotoService } from './article-photo.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -24,12 +25,13 @@ import { RoleAuthGuard } from '@shared/guards';
 import { Roles } from '@shared/decorators';
 import { Role } from '@prisma/client';
 import { ArticlePhoto } from './article-photo.entity';
+import { ArticlePhotosUploadDto } from './dto/article-photos-upload.dto';
 
 export const ARTICLE_FILES_FIELD = 'files';
-export const FIVE_MEGABYTES = 5000000;
+export const TEN_MEGABYTES = 10e6;
 
 @ApiFile()
-@Controller('files')
+@Controller('article/photos')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ArticlePhotoController {
   public static readonly TYPE_OF_FILES = [
@@ -43,7 +45,7 @@ export class ArticlePhotoController {
     'image/tif',
     'image/bmp',
   ];
-  public static MAX_FILE_SIZE = FIVE_MEGABYTES;
+  public static MAX_FILE_SIZE = TEN_MEGABYTES;
   public static MAX_COUNT_FILES = 10;
 
   public constructor(private readonly fileService: ArticlePhotoService) {}
@@ -70,14 +72,15 @@ export class ArticlePhotoController {
       }),
     )
     files: Express.Multer.File[],
+    @Body() { articleId }: ArticlePhotosUploadDto,
   ): Promise<ArticlePhoto[]> {
-    return this.fileService.add(files);
+    return this.fileService.add(articleId, files);
   }
 
   @Get(':id')
   @ApiGetFile()
-  public get(@Param() dto: IDDto): Promise<ArticlePhoto> {
-    return this.fileService.getFile(dto.id);
+  public get(@Param() { id }: IDDto): Promise<ArticlePhoto> {
+    return this.fileService.getFile(id);
   }
 
   @Delete(':id')

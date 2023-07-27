@@ -31,14 +31,12 @@ export class ArticleService {
   }
 
   async create({
-    images,
     categories,
     ...createArticleDto
   }: CreateArticleDto): Promise<Article> {
     const article = await this.prisma.article.create({
       data: {
         ...createArticleDto,
-        images: this.prisma.connectArrayIfDefined(images),
         categories: this.prisma.connectArrayIfDefined(categories),
       },
       include: { images: true, sale: true, reviews: true, categories: true },
@@ -81,13 +79,12 @@ export class ArticleService {
 
   async update(
     id: number,
-    { images, categories, ...updateArticleDto }: UpdateArticleDto,
+    { categories, ...updateArticleDto }: UpdateArticleDto,
   ): Promise<Article> {
     const updated = await this.prisma.article.update({
       where: { id },
       data: {
         ...updateArticleDto,
-        images: this.prisma.setArrayIfDefined(images),
         categories: this.prisma.setArrayIfDefined(categories),
       },
       include: { images: true, sale: true, reviews: true, categories: true },
@@ -113,7 +110,7 @@ export class ArticleService {
 
     const article = await this.prisma.article.findUnique({
       where: { id },
-      include: { sale: true },
+      include: { sale: { where: { activeTill: { gte: new Date() } } } },
     });
     if (!article) throw ArticleService.articleNotExistException;
 

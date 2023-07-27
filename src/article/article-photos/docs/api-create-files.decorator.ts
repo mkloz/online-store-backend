@@ -7,6 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiResponseDataArray } from '@shared/docs';
 import { ArticlePhoto } from '../article-photo.entity';
+import { ArticlePhotosUploadExtDto } from '../dto/article-photos-upload.dto';
 
 export const ApiCreateFiles = () =>
   applyDecorators(
@@ -16,18 +17,5 @@ export const ApiCreateFiles = () =>
       summary: 'Upload file to AWS and save info in db. [open for: ADMIN]',
     }),
     ApiResponseDataArray(ArticlePhoto, HttpStatus.CREATED),
-    ApiBody({
-      schema: {
-        type: 'object',
-        properties: {
-          files: {
-            type: 'array',
-            items: {
-              type: 'file',
-              format: 'binary',
-            },
-          },
-        },
-      },
-    }),
+    ApiBody({ type: ArticlePhotosUploadExtDto }),
   );
