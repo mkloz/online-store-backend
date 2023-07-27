@@ -10,6 +10,7 @@ import {
 } from '@shared/pagination';
 import { Sale } from './entities/sale.entity';
 import { ApiConfigService } from '@config/api-config.service';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 
 @Injectable()
 export class SaleService {
@@ -51,7 +52,7 @@ export class SaleService {
         })
       ).map((el) => new Sale(el)),
       count: await this.prisma.sale.count(),
-      route: `${this.backendUrl}/api/sales`,
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.SALES}`,
     };
 
     return Paginator.paginate(pag, opt);

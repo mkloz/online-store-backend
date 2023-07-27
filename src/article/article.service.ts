@@ -6,6 +6,12 @@ import { Article } from './entities/article.entity';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
 import { PaginationOptionsDto, Paginated } from '@shared/pagination';
+import { FilterOptionsDto } from './dto/filter-options.dto';
+import { SortArticleDto } from './dto/sort-article.dto';
+import { SearchArticleDto } from './dto/search-article.dto';
+import { Prisma } from '@prisma/client';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
+import { Helper } from '@utils/helpers/helper';
 
 @Injectable()
 export class ArticleService {
@@ -47,28 +53,6 @@ export class ArticleService {
 
     return new Article(article);
   }
-
-  async findAll(opt: PaginationOptionsDto): Promise<Paginated<Article>> {
-    const pag: IPag<Article> = {
-      data: (
-        await this.prisma.article.findMany({
-          take: opt.limit,
-          skip: opt.limit * (opt.page - 1),
-          include: {
-            images: true,
-            sale: true,
-            reviews: true,
-            categories: true,
-          },
-        })
-      ).map((el) => new Article(el)),
-      count: await this.prisma.article.count(),
-      route: `${this.backendUrl}/api/articles`,
-    };
-
-    return Paginator.paginate(pag, opt);
-  }
-
   async findOne(id: number): Promise<Article> {
     const art = await this.prisma.article.findUnique({
       where: { id },
@@ -120,5 +104,113 @@ export class ArticleService {
     if (!article) throw ArticleService.articleNotExistException;
 
     return article.sale?.newPrise ?? article.price;
+  }
+
+  private getPriceFilterCondition(
+    filters: FilterOptionsDto,
+  ): Prisma.ArticleWhereInput {
+    return {
+      OR: [
+        {
+          AND: [
+            { price: { gte: filters.minPrice ?? 0 } },
+            { price: { lte: filters.maxPrice ?? Number.MAX_SAFE_INTEGER } },
+          ],
+        },
+        {
+          sale: {
+            newPrise: {
+              gte: filters.minPrice ?? 0,
+              lte: filters.maxPrice ?? Number.MAX_SAFE_INTEGER,
+            },
+          },
+        },
+      ],
+    };
+  }
+
+  private getSearchFilterCondition(
+    search: SearchArticleDto,
+  ): Prisma.ArticleWhereInput {
+    const keyword = search.search?.trim() ?? '';
+    if (!keyword) return {};
+
+    return {
+      OR: [
+        { name: { contains: keyword } },
+        { discription: { contains: keyword } },
+        { characteristic: { contains: keyword } },
+      ],
+    };
+  }
+
+  private getFindManyWhereQuery(
+    filters: FilterOptionsDto,
+    search: SearchArticleDto,
+  ): Prisma.ArticleWhereInput {
+    const priceFilter = this.getPriceFilterCondition(filters);
+    const searchFilter = this.getSearchFilterCondition(search);
+
+    return {
+      AND: [
+        priceFilter,
+        { categories: { some: { name: filters.category } } },
+        searchFilter,
+      ],
+    };
+  }
+  private getFindManyPrismaOpt(
+    pagOpt: PaginationOptionsDto,
+    sorts: SortArticleDto,
+    filters: FilterOptionsDto,
+    search: SearchArticleDto,
+  ) {
+    return {
+      take: pagOpt.limit,
+      skip: pagOpt.limit * (pagOpt.page - 1),
+      include: {
+        images: true,
+        sale: true,
+        reviews: true,
+        categories: true,
+      },
+      where: this.getFindManyWhereQuery(filters, search),
+      orderBy: {
+        price: sorts.price ?? undefined,
+      },
+    };
+  }
+
+  async findMany(
+    pagOpt: PaginationOptionsDto,
+    sorts: SortArticleDto = {},
+    filters: FilterOptionsDto = {},
+    search: SearchArticleDto = {},
+  ): Promise<Paginated<Article>> {
+    console.dir(filters);
+    console.dir(search);
+    console.dir(sorts);
+    const pag: IPag<Article> = {
+      data: (
+        await this.prisma.article.findMany(
+          this.getFindManyPrismaOpt(pagOpt, sorts, filters, search),
+        )
+      ).map((el) => new Article(el)),
+      count: await this.prisma.article.count({
+        where: this.getFindManyWhereQuery(filters, search),
+      }),
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.ARTICLES}`,
+    };
+    return Paginator.paginate(
+      pag,
+      pagOpt,
+      Helper.queryDtoToQuery({
+        price: sorts.price,
+        category: filters.category,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        search: search.search,
+      }),
+    );
   }
 }

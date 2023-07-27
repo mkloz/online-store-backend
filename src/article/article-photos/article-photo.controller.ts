@@ -26,12 +26,13 @@ import { Roles } from '@shared/decorators';
 import { Role } from '@prisma/client';
 import { ArticlePhoto } from './article-photo.entity';
 import { ArticlePhotosUploadDto } from './dto/article-photos-upload.dto';
+import { Prefix } from '@utils/prefix.enum';
 
 export const ARTICLE_FILES_FIELD = 'files';
 export const TEN_MEGABYTES = 10e6;
 
 @ApiFile()
-@Controller('article/photos')
+@Controller(Prefix.ARTICLE_PHOTOS)
 @UseInterceptors(ClassSerializerInterceptor)
 export class ArticlePhotoController {
   public static readonly TYPE_OF_FILES = [

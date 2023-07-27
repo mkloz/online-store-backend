@@ -5,6 +5,7 @@ import { PrismaService } from '@db/prisma.service';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
 import { Prisma } from '@prisma/client';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 
 @Injectable()
 export class CategoryService {
@@ -23,11 +24,10 @@ export class CategoryService {
         await this.prisma.category.findMany({
           take: opt.limit,
           skip: opt.limit * (opt.page - 1),
-          include: { articles: true },
         })
       ).map((el) => new Category(el)),
       count: await this.prisma.category.count(),
-      route: `${this.backendUrl}/api/categories`,
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.CATEGORIES}`,
     };
 
     return Paginator.paginate(pag, opt);
@@ -36,7 +36,6 @@ export class CategoryService {
   async findOne(value: Prisma.CategoryWhereUniqueInput) {
     const cat = await this.prisma.category.findUnique({
       where: value,
-      include: { articles: true },
     });
 
     return cat ? new Category(cat) : null;

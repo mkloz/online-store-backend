@@ -31,9 +31,10 @@ import { Roles } from '@shared/decorators';
 import { RoleAuthGuard } from '@shared/guards';
 import { OwnerOrRoleAuthGuard } from './pipes/owner-or-role-auth.guard';
 import { User } from '@user/user.decorator';
+import { Prefix } from '@utils/prefix.enum';
 
 @ApiReview()
-@Controller('reviews')
+@Controller(Prefix.REVIEWS)
 @UseInterceptors(ClassSerializerInterceptor)
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}

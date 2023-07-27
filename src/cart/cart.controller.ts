@@ -11,9 +11,10 @@ import { User } from '@user/user.decorator';
 import { AuthGuard } from '@shared/guards';
 import { ApiCart } from './docs/api-cart.decorator';
 import { ApiCartGetMy } from './docs/api-car-get-my.decorator';
+import { Prefix } from '@utils/prefix.enum';
 
 @ApiCart()
-@Controller('carts')
+@Controller(Prefix.CART)
 @UseInterceptors(ClassSerializerInterceptor)
 export class CartController {
   constructor(private readonly cartService: CartService) {}

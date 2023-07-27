@@ -6,6 +6,7 @@ import { Review } from './entities/review.entity';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
 import { PaginationOptionsDto, Paginated } from '@shared/pagination';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 
 @Injectable()
 export class ReviewService {
@@ -47,7 +48,7 @@ export class ReviewService {
         })
       ).map((el) => new Review(el)),
       count: await this.prisma.review.count(),
-      route: `${this.backendUrl}/api/reviews`,
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.REVIEWS}`,
     };
 
     return Paginator.paginate(pag, opt);
