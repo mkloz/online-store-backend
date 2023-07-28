@@ -4,7 +4,7 @@ import { createCategories } from './categories-add.seed';
 import { AppModule } from '@app/app.module';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { UserService } from '@user/user.service';
+import { UserService } from '@user/services/user.service';
 import { PrismaService } from '@db/prisma.service';
 import { ApiConfigService } from '@config/api-config.service';
 

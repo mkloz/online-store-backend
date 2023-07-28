@@ -6,12 +6,12 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { EmailRegisterDto } from './dto/email-register.dto';
-import { UserMailService } from '@mail/user-mail.service';
+import { UserMailService } from '@user/services/user-mail.service';
 import { TokensDto } from '../dto/tokens.dto';
 import { AuthService } from '../auth.service';
 import { User } from '@user/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { UserService } from '@user/user.service';
+import { UserService } from '@user/services/user.service';
 import { IAuth } from '@config/config.interface';
 import { EmailTokenPayloadValidator } from './jwt/email-token-payload.validator';
 import { Provider } from '@prisma/client';

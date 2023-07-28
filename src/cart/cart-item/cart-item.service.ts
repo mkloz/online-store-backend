@@ -12,6 +12,7 @@ import { IDDto } from '@shared/dto';
 import { ApiConfigService } from '@config/api-config.service';
 import { PaginationOptionsDto, Paginated } from '@shared/pagination';
 import { ArticleService } from '@article/article.service';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 
 @Injectable()
 export class CartItemService {
@@ -121,7 +122,7 @@ export class CartItemService {
         }),
       ),
       count: await this.prisma.category.count(),
-      route: `${this.backendUrl}/api/users/me/cart`,
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.CART_ITEMS}`,
     };
 
     return Paginator.paginate(pag, opt);

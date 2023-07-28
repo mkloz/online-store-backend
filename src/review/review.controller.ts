@@ -31,9 +31,13 @@ import { Roles } from '@shared/decorators';
 import { RoleAuthGuard } from '@shared/guards';
 import { OwnerOrRoleAuthGuard } from './pipes/owner-or-role-auth.guard';
 import { User } from '@user/user.decorator';
+import { Prefix } from '@utils/prefix.enum';
+import { SortReviewDto } from './dto/sort-review.dto';
+import { IntersectionType } from 'typescript';
+import { FindManyDto } from './dto/find-many.dto';
 
 @ApiReview()
-@Controller('reviews')
+@Controller(Prefix.REVIEWS)
 @UseInterceptors(ClassSerializerInterceptor)
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
@@ -51,9 +55,7 @@ export class ReviewController {
 
   @Get()
   @ApiReviewGetMany()
-  public findAll(
-    @Query() pag: PaginationOptionsDto,
-  ): Promise<Paginated<Review>> {
+  public findAll(@Query() pag: FindManyDto): Promise<Paginated<Review>> {
     return this.reviewService.findAll(pag);
   }
 

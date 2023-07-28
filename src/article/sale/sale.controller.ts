@@ -13,7 +13,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
 } from '@nestjs/common';
-import { SaleService } from './sale.service';
+import { SaleService } from './services/sale.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
 import {
@@ -30,9 +30,10 @@ import { SaleExistPipe } from './pipes/sale-exist.pipe';
 import { Roles } from '@shared/decorators';
 import { Role } from '@prisma/client';
 import { RoleAuthGuard } from '@shared/guards';
+import { Prefix } from '@utils/prefix.enum';
 
 @ApiSale()
-@Controller('sales')
+@Controller(Prefix.SALES)
 @UseInterceptors(ClassSerializerInterceptor)
 export class SaleController {
   constructor(private readonly saleService: SaleService) {}

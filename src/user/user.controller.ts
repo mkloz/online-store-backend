@@ -9,7 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from './services/user.service';
 import { User as UserPayload } from './user.decorator';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -27,9 +27,10 @@ import {
   ApiUserMeUpdate,
 } from './docs';
 import { UserExistPipe } from './pipes/user-exist.pipe';
+import { Prefix } from '@utils/prefix.enum';
 
 @ApiUser()
-@Controller('users')
+@Controller(Prefix.USERS)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}

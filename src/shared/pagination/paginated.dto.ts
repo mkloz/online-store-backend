@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { DEFAULT_ITEMS_LIMIT } from './default-pag-value.pipe';
+import { DEFAULT_ITEMS_LIMIT } from './pagination-options.dto';
 
 class PaginationMeta {
   @ApiProperty({ example: 1 })

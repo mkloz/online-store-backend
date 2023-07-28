@@ -30,9 +30,10 @@ import {
   ApiCartItemGetOne,
 } from './docs';
 import { ApiCart } from '../docs/api-cart.decorator';
+import { Prefix } from '@utils/prefix.enum';
 
 @ApiCart()
-@Controller('carts/my/items')
+@Controller(Prefix.CART_ITEMS)
 @UseInterceptors(ClassSerializerInterceptor)
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}

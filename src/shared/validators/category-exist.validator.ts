@@ -12,12 +12,20 @@ import { PrismaService } from '@db/prisma.service';
 export class CategoryExistConstraint implements ValidatorConstraintInterface {
   constructor(private readonly prisma: PrismaService) {}
 
-  async validate(id: unknown): Promise<boolean> {
-    if (!id || typeof id !== 'number') {
-      return false;
+  async validate(value: unknown): Promise<boolean> {
+    if (value) {
+      if (typeof value === 'number') {
+        return !!(await this.prisma.category.findUnique({
+          where: { id: value },
+        }));
+      } else if (typeof value === 'string') {
+        return !!(await this.prisma.category.findUnique({
+          where: { name: value },
+        }));
+      }
     }
 
-    return !!(await this.prisma.category.findUnique({ where: { id } }));
+    return false;
   }
 
   defaultMessage() {

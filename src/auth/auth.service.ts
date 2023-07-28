@@ -10,7 +10,7 @@ import { IStoreJWT } from '@config/config.interface';
 import { CreateJwtPayload } from '../shared/dto/jwt-payload.dto';
 import { Provider } from '@prisma/client';
 import { SocialInterface } from './interfaces/social.interface';
-import { UserService } from '@user/user.service';
+import { UserService } from '@user/services/user.service';
 import { ApiConfigService } from '@config/api-config.service';
 
 @Injectable()

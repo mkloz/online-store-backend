@@ -3,9 +3,10 @@ import { ArticleModule } from './article/article.module';
 import { ReviewModule } from './review/review.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { MailModule } from './mail/mail.module';
 import { ApiConfigModule } from './config/api-config.module';
 import { CartModule } from './cart/cart.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -13,9 +14,10 @@ import { CartModule } from './cart/cart.module';
     ArticleModule,
     ReviewModule,
     UserModule,
-    MailModule,
+    MailerModule,
     CartModule,
     AuthModule,
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}

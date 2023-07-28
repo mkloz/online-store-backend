@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "paths": {
-      "@mail/*": ["src/mail/*"],
+      "@mailer/*": ["src/mailer/*"],
+      "@aws/*": ["src/aws/*"],
       "@article/*": ["src/article/*"],
       "@auth/*": ["src/auth/*"],
       "@config/*": ["src/config/*"],

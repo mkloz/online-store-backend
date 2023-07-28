@@ -11,9 +11,7 @@ export interface Data<T> {
 }
 
 @Injectable()
-export class GlobalResponseInterceptor<T>
-  implements NestInterceptor<T, Data<T>>
-{
+export class DataResponseInterceptor<T> implements NestInterceptor<T, Data<T>> {
   intercept(context: ExecutionContext, next: CallHandler): Observable<Data<T>> {
     return next.handle().pipe(map((data) => ({ data })));
   }

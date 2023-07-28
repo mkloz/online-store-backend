@@ -15,7 +15,7 @@ import {
   SerializeOptions,
 } from '@nestjs/common';
 import { IDDto } from '@shared/dto';
-import { PaginationOptionsDto, Paginated } from '@shared/pagination';
+import { Paginated } from '@shared/pagination';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -34,8 +34,11 @@ import { Roles } from '@shared/decorators';
 import { Role } from '@prisma/client';
 import { ApiArticleIncrement } from './docs/api-article-increment.decorator';
 import { RoleAuthGuard } from '@shared/guards';
+import { Prefix } from '@utils/prefix.enum';
+import { FindManyArticlesDto } from './dto/find-many.dto';
+
 @ApiArticle()
-@Controller('articles')
+@Controller(Prefix.ARTICLES)
 @UseInterceptors(ClassSerializerInterceptor)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
@@ -61,8 +64,8 @@ export class ArticleController {
 
   @Get()
   @ApiArticleGetMany()
-  findAll(@Query() pag: PaginationOptionsDto): Promise<Paginated<Article>> {
-    return this.articleService.findAll(pag);
+  findAll(@Query() query: FindManyArticlesDto): Promise<Paginated<Article>> {
+    return this.articleService.findMany(query);
   }
 
   @Get(':id')

@@ -28,9 +28,10 @@ import { RoleAuthGuard } from '@shared/guards';
 import { Role } from '@prisma/client';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { ApiAdminCreate } from './docs/api-admin-create.decorator';
+import { Prefix } from '@utils/prefix.enum';
 
 @ApiEmail()
-@Controller('auth/email')
+@Controller(Prefix.AUTH_EMAIL)
 export class AuthEmailController {
   constructor(private readonly emailService: AuthEmailService) {}
 
