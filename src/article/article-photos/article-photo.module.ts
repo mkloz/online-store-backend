@@ -3,7 +3,7 @@ import { ArticlePhotoService } from './article-photo.service';
 import { ArticlePhotoController } from './article-photo.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { DbModule } from '@db/db.module';
-import { AWSModule } from '@shared/aws/aws.module';
+import { AWSModule } from '@aws/aws.module';
 import { ApiConfigModule } from '@config/api-config.module';
 
 @Module({

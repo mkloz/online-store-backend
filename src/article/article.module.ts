@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { ArticleController } from './article.controller';
 import { DbModule } from '@db/db.module';
-import { MailModule } from '@mail/mail.module';
 import { ApiConfigModule } from '@config/api-config.module';
 import { ArticleExistConstraint } from '@shared/validators';
 import { SaleModule } from './sale/sale.module';
@@ -12,7 +11,6 @@ import { CategoryModule } from './category/category.module';
 @Module({
   imports: [
     DbModule,
-    MailModule,
     SaleModule,
     ArticlePhotoModule,
     CategoryModule,

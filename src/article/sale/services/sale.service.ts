@@ -1,6 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { CreateSaleDto } from './dto/create-sale.dto';
-import { UpdateSaleDto } from './dto/update-sale.dto';
+import { CreateSaleDto } from '../dto/create-sale.dto';
+import { UpdateSaleDto } from '../dto/update-sale.dto';
 import { PrismaService } from '@db/prisma.service';
 import {
   IPag,
@@ -8,7 +8,7 @@ import {
   PaginationOptionsDto,
   Paginator,
 } from '@shared/pagination';
-import { Sale } from './entities/sale.entity';
+import { Sale } from '../entities/sale.entity';
 import { ApiConfigService } from '@config/api-config.service';
 import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 

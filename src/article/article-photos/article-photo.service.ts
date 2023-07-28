@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ArticlePhoto } from './article-photo.entity';
-import { ArticlePhotoS3Service } from '@shared/aws/s3/article-photo.service';
+import { ArticlePhotoS3Service } from '@aws/s3/article-photo.service';
 import { PrismaService } from '@db/prisma.service';
 
 @Injectable()

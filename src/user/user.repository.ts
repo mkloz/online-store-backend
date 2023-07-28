@@ -4,7 +4,7 @@ import { User } from './user.entity';
 import { PrismaService } from '@db/prisma.service';
 import { Prisma, Provider, Role } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserService } from './user.service';
+import { UserService } from './services/user.service';
 import { Nullable } from '@shared/types/nullable.type';
 
 export const SALT_ROUNDS = 10;

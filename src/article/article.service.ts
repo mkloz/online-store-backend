@@ -5,13 +5,13 @@ import { PrismaService } from '@db/prisma.service';
 import { Article } from './entities/article.entity';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
-import { PaginationOptionsDto, Paginated } from '@shared/pagination';
+import { Paginated } from '@shared/pagination';
 import { FilterOptionsDto } from './dto/filter-options.dto';
-import { SortArticleDto } from './dto/sort-article.dto';
 import { SearchArticleDto } from './dto/search-article.dto';
 import { Prisma } from '@prisma/client';
 import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 import { Helper } from '@utils/helpers/helper';
+import { FindManyArticlesDto } from './dto/find-many.dto';
 
 @Injectable()
 export class ArticleService {
@@ -154,62 +154,65 @@ export class ArticleService {
     return {
       AND: [
         priceFilter,
-        { categories: { some: { name: filters.category } } },
+        {
+          categories: filters.category
+            ? { some: { name: filters.category } }
+            : undefined,
+        },
         searchFilter,
       ],
     };
   }
-  private getFindManyPrismaOpt(
-    pagOpt: PaginationOptionsDto,
-    sorts: SortArticleDto,
-    filters: FilterOptionsDto,
-    search: SearchArticleDto,
-  ) {
+  private getFindManyPrismaOpt(query: FindManyArticlesDto) {
     return {
-      take: pagOpt.limit,
-      skip: pagOpt.limit * (pagOpt.page - 1),
+      take: query.limit,
+      skip: query.limit * (query.page - 1),
       include: {
         images: true,
         sale: true,
         reviews: true,
         categories: true,
       },
-      where: this.getFindManyWhereQuery(filters, search),
+      where: this.getFindManyWhereQuery(
+        {
+          category: query.category,
+          maxPrice: query.maxPrice,
+          minPrice: query.minPrice,
+        },
+        { search: query.search },
+      ),
       orderBy: {
-        price: sorts.price ?? undefined,
+        price: query.price ?? undefined,
       },
     };
   }
 
-  async findMany(
-    pagOpt: PaginationOptionsDto,
-    sorts: SortArticleDto = {},
-    filters: FilterOptionsDto = {},
-    search: SearchArticleDto = {},
-  ): Promise<Paginated<Article>> {
-    console.dir(filters);
-    console.dir(search);
-    console.dir(sorts);
+  async findMany(query: FindManyArticlesDto): Promise<Paginated<Article>> {
     const pag: IPag<Article> = {
       data: (
-        await this.prisma.article.findMany(
-          this.getFindManyPrismaOpt(pagOpt, sorts, filters, search),
-        )
+        await this.prisma.article.findMany(this.getFindManyPrismaOpt(query))
       ).map((el) => new Article(el)),
       count: await this.prisma.article.count({
-        where: this.getFindManyWhereQuery(filters, search),
+        where: this.getFindManyWhereQuery(
+          {
+            category: query.category,
+            maxPrice: query.maxPrice,
+            minPrice: query.minPrice,
+          },
+          { search: query.search },
+        ),
       }),
       route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.ARTICLES}`,
     };
     return Paginator.paginate(
       pag,
-      pagOpt,
+      { page: query.page, limit: query.limit },
       Helper.queryDtoToQuery({
-        price: sorts.price,
-        category: filters.category,
-        minPrice: filters.minPrice,
-        maxPrice: filters.maxPrice,
-        search: search.search,
+        price: query.price,
+        category: query.category,
+        minPrice: query.minPrice,
+        maxPrice: query.maxPrice,
+        search: query.search,
       }),
     );
   }

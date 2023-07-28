@@ -14,8 +14,10 @@ export class Paginator {
   ): Paginated<TData> {
     const pageCount = (pag.count / opt.limit + 1) | 0;
 
-    extraQuery = `${extraQuery ? `&${extraQuery}` : ''}`;
-    console.log(extraQuery);
+    extraQuery = `${
+      extraQuery ? `&${extraQuery.trim().replace(/^(\?|\&)/, '')}` : ''
+    }`;
+
     return {
       items: pag.data,
       links: {

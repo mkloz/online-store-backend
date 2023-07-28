@@ -1,7 +1,7 @@
 import { Provider } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import { Done } from '@shared/dto';
-import { UserService } from '@user/user.service';
+import { UserService } from '@user/services/user.service';
 import { ApiConfigService } from '@config/api-config.service';
 
 dotenv.config();

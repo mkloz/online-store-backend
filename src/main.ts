@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import * as morgan from 'morgan';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { GlobalResponseInterceptor } from './shared/global/global-response.interceptor';
+import { DataResponseInterceptor } from './shared/global/data-response.interceptor';
 import { SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './shared/global/global-exception.filter';
 import { SwaggerCreator } from './utils/create-swagger-doc';
@@ -27,12 +27,16 @@ async function bootstrap() {
     .useGlobalPipes(
       new ValidationPipe({ transform: true, validateCustomDecorators: true }),
     )
-    .useGlobalInterceptors(new GlobalResponseInterceptor());
+    .useGlobalInterceptors(new DataResponseInterceptor());
 
   const port = cs.getPort();
 
   if (cs.isDevelopment()) {
-    SwaggerModule.setup('/api/docs', app, SwaggerCreator.createDocument(app));
+    SwaggerModule.setup(
+      `/${GLOBAL_PREFIX}/docs`,
+      app,
+      SwaggerCreator.createDocument(app),
+    );
   } else {
     app.useGlobalFilters(new GlobalExceptionFilter(cs));
   }
