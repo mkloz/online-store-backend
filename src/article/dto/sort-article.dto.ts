@@ -14,4 +14,11 @@ export class SortArticleDto {
     enum: SortOrder,
   })
   price?: SortOrder;
+  @IsEnum(SortOrder)
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: SortOrder.ASC,
+    enum: SortOrder,
+  })
+  rating?: SortOrder;
 }

@@ -181,9 +181,10 @@ export class ArticleService {
         },
         { search: query.search },
       ),
-      orderBy: {
-        price: query.price ?? undefined,
-      },
+      orderBy: [
+        { rating: query.rating ?? undefined },
+        { price: query.price ?? undefined },
+      ],
     };
   }
 
@@ -209,6 +210,7 @@ export class ArticleService {
       { page: query.page, limit: query.limit },
       Helper.queryDtoToQuery({
         price: query.price,
+        rating: query.rating,
         category: query.category,
         minPrice: query.minPrice,
         maxPrice: query.maxPrice,
