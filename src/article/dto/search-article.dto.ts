@@ -4,6 +4,6 @@ import { IsOptional, IsString } from 'class-validator';
 export class SearchArticleDto {
   @IsString()
   @IsOptional()
-  @ApiPropertyOptional({ example: 'Name' })
+  @ApiPropertyOptional()
   search?: string;
 }

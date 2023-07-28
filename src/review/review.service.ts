@@ -5,8 +5,9 @@ import { PrismaService } from '@db/prisma.service';
 import { Review } from './entities/review.entity';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
-import { PaginationOptionsDto, Paginated } from '@shared/pagination';
+import { Paginated } from '@shared/pagination';
 import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
+import { FindManyDto } from './dto/find-many.dto';
 
 @Injectable()
 export class ReviewService {
@@ -38,13 +39,14 @@ export class ReviewService {
     return new Review(rew);
   }
 
-  public async findAll(opt: PaginationOptionsDto): Promise<Paginated<Review>> {
+  public async findAll(opt: FindManyDto): Promise<Paginated<Review>> {
     const pag: IPag<Review> = {
       data: (
         await this.prisma.review.findMany({
           take: opt.limit,
           skip: opt.limit * (opt.page - 1),
           include: { article: true, author: true },
+          orderBy: { stars: opt.stars },
         })
       ).map((el) => new Review(el)),
       count: await this.prisma.review.count(),

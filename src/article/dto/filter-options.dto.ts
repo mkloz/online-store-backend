@@ -6,7 +6,7 @@ import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 export class FilterOptionsDto {
   @IsString()
   @IsOptional()
-  @ApiPropertyOptional({ example: 'bicycle' })
+  @ApiPropertyOptional()
   @CategoryExist()
   category?: string;
 
@@ -14,12 +14,12 @@ export class FilterOptionsDto {
   @Min(0)
   @IsOptional()
   @Type(() => Number)
-  @ApiPropertyOptional({ example: 0, type: Number })
+  @ApiPropertyOptional()
   minPrice?: number;
 
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  @ApiPropertyOptional({ example: 0, type: Number })
+  @ApiPropertyOptional()
   maxPrice?: number;
 }
