@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  IntersectionType,
+} from '@nestjs/swagger';
 import { Article, ArticleDiscription } from '@article/entities/article.entity';
 import { ArticlePhoto as IFile } from '@prisma/client';
 import { Exclude } from 'class-transformer';
@@ -14,19 +18,25 @@ export class ArticlePhotoDiscription {
     example: 'https://host:port/c2c572fc-2075-4f58-afc8-575cbbfe6223',
   })
   url: string;
-}
-
-export class ArticlePhoto extends ArticlePhotoDiscription implements IFile {
-  @ApiPropertyOptional({ type: () => ArticleDiscription })
-  article?: Article;
 
   @Exclude()
   articleId: number;
+
   @Exclude()
   createdAt: Date;
+
   @Exclude()
   updatedAt: Date;
+}
+export class ArticlePhotoRelation {
+  @ApiPropertyOptional({ type: () => ArticleDiscription })
+  article?: Article;
+}
 
+export class ArticlePhoto
+  extends IntersectionType(ArticlePhotoRelation, ArticlePhotoDiscription)
+  implements IFile
+{
   constructor(partial: Partial<ArticlePhoto>) {
     super();
     Object.assign(this, partial);

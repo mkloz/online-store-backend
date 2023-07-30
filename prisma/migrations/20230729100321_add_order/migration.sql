@@ -2,11 +2,11 @@
 CREATE TABLE `order_item` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `quantity` INTEGER NOT NULL DEFAULT 1,
-    `subtotal_price` FLOAT NULL,
+    `subtotal_price` FLOAT NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `article_id` INTEGER NULL,
-    `order_id` INTEGER NULL,
+    `order_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -54,7 +54,7 @@ CREATE TABLE `delivery` (
 -- CreateTable
 CREATE TABLE `order` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `total_price` FLOAT NULL,
+    `total_price` FLOAT NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `user_id` INTEGER NULL,

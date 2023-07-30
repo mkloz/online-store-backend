@@ -4,40 +4,56 @@ import { User, UserDiscription } from '@user/user.entity';
 import { OrderItem } from './order-item.entity';
 import { Delivery, DeliveryDicription } from './delivery.entity';
 import { Order as IOrder } from '@prisma/client';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  IntersectionType,
+} from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Address, AddressDicription } from './address.entity';
 export class OrderDiscription {
   @ApiProperty({ example: 1 })
   id: number;
 
-  @ApiProperty({ example: 233.6 })
-  totalPrice: number | null;
-
   @ApiProperty({ enum: OrderStatus })
   status: OrderStatus;
-}
 
-export class Order extends OrderDiscription implements IOrder {
   @Exclude()
   createdAt: Date;
+
   @Exclude()
   updatedAt: Date;
+
   @Exclude()
   userId: number | null;
+
   @Exclude()
   addressId: number;
+}
 
+export class OrderRelation {
   @ApiPropertyOptional({ type: () => AddressDicription })
   address?: Address;
-  @ApiPropertyOptional({ type: () => CancelDiscription })
+
+  @ApiPropertyOptional({ type: () => CancelDiscription, nullable: true })
   cancel?: Cancel | null;
-  @ApiPropertyOptional({ type: () => UserDiscription })
-  user?: User;
-  @ApiPropertyOptional({ type: () => DeliveryDicription })
+
+  @ApiPropertyOptional({ type: () => UserDiscription, nullable: true })
+  user?: User | null;
+
+  @ApiPropertyOptional({ type: () => DeliveryDicription, nullable: true })
   delivery?: Delivery | null;
-  @ApiPropertyOptional({ type: () => [OrderItem] })
+
+  @ApiPropertyOptional({ type: () => OrderItem, isArray: true })
   orderItems?: OrderItem[];
+}
+
+export class Order
+  extends IntersectionType(OrderDiscription, OrderRelation)
+  implements IOrder
+{
+  @ApiProperty({ example: 233.6 })
+  totalPrice: number;
 
   constructor(partial: Partial<Order>) {
     super();

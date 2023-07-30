@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  IntersectionType,
+} from '@nestjs/swagger';
 import {
   Category,
   CategoryDiscription,
@@ -19,7 +23,7 @@ export class ArticleDiscription {
   @ApiProperty({ example: '18 kmph\n120 km max distance' })
   characteristic: string;
 
-  @ApiPropertyOptional({ example: 4.77 })
+  @ApiPropertyOptional({ example: 4.77, nullable: true })
   rating: number | null;
 
   @ApiProperty({ example: true })
@@ -43,23 +47,27 @@ export class ArticleDiscription {
 
   @ApiProperty({ example: false })
   isPreviouslyUsed: boolean;
-}
-
-export class Article extends ArticleDiscription implements IArticle {
-  @ApiPropertyOptional({ type: () => [ArticlePhotoDiscription] })
-  images?: ArticlePhoto[];
-  @ApiPropertyOptional({ type: () => SaleDiscription })
-  sale?: Sale | null;
-  @ApiPropertyOptional({ type: () => [ReviewDiscription] })
-  reviews?: Review[];
-  @ApiPropertyOptional({ type: () => [CategoryDiscription] })
-  categories?: Category[];
 
   @Exclude()
   createdAt: Date;
+
   @Exclude()
   updatedAt: Date;
-
+}
+export class ArticleRelation {
+  @ApiPropertyOptional({ type: () => ArticlePhotoDiscription, isArray: true })
+  images?: ArticlePhoto[];
+  @ApiPropertyOptional({ type: () => SaleDiscription, nullable: true })
+  sale?: Sale | null;
+  @ApiPropertyOptional({ type: () => ReviewDiscription, isArray: true })
+  reviews?: Review[];
+  @ApiPropertyOptional({ type: () => CategoryDiscription, isArray: true })
+  categories?: Category[];
+}
+export class Article
+  extends IntersectionType(ArticleDiscription, ArticleRelation)
+  implements IArticle
+{
   constructor(partial: Partial<Article>) {
     super();
     Object.assign(this, partial);

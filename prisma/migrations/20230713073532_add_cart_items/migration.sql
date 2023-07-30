@@ -4,7 +4,7 @@ CREATE TABLE `cart_item` (
     `quantity` INTEGER NOT NULL DEFAULT 1,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `article_id` INTEGER NULL,
+    `article_id` INTEGER NOT NULL,
     `user_id` INTEGER NULL,
 
     PRIMARY KEY (`id`)

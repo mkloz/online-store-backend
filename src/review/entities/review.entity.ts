@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  IntersectionType,
+} from '@nestjs/swagger';
 import { Article, ArticleDiscription } from '@article/entities/article.entity';
 import { Review as IReview } from '@prisma/client';
 import { User, UserDiscription } from '@user/user.entity';
@@ -10,26 +14,35 @@ export class ReviewDiscription {
 
   @ApiProperty({ example: 'Not bad' })
   text: string;
+
   @ApiProperty({ example: 5 })
   stars: number;
+
   @ApiProperty()
   createdAt: Date;
+
   @ApiProperty()
   updatedAt: Date;
+
+  @Exclude()
+  articleId: number;
+
+  @Exclude()
+  authorId: number;
 }
 
-export class Review extends ReviewDiscription implements IReview {
+export class ReviewRelation {
   @ApiPropertyOptional({ type: () => ArticleDiscription })
-  article?: Article | null;
+  article?: Article;
 
   @ApiPropertyOptional({ type: () => UserDiscription })
-  author?: User | null;
+  author?: User;
+}
 
-  @Exclude()
-  articleId: number | null;
-  @Exclude()
-  authorId: number | null;
-
+export class Review
+  extends IntersectionType(ReviewDiscription, ReviewRelation)
+  implements IReview
+{
   constructor(partial: Partial<Review>) {
     super();
     Object.assign(this, partial);

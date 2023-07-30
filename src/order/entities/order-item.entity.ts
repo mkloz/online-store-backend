@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  IntersectionType,
+} from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { Article, ArticleDiscription } from '@article/entities/article.entity';
 import { OrderItem as IOrderItem } from '@prisma/client';
@@ -10,24 +14,34 @@ export class OrderItemDiscription {
 
   @ApiProperty({ example: 1, default: 1 })
   quantity: number;
+
+  @Exclude()
+  orderId: number;
+
+  @Exclude()
+  articleId: number | null;
+
+  @Exclude()
+  createdAt: Date;
+
+  @Exclude()
+  updatedAt: Date;
 }
-export class OrderItem extends OrderItemDiscription implements IOrderItem {
-  @ApiProperty({ example: 9.98 })
-  subtotalPrice: number | null;
-  @ApiPropertyOptional({ type: () => ArticleDiscription })
+
+export class OrderItemRelation {
+  @ApiPropertyOptional({ type: () => ArticleDiscription, nullable: true })
   article?: Article | null;
 
   // @ApiPropertyOptional({ type: () => OrderDiscription })
-  order?: Order | null;
+  order?: Order;
+}
 
-  @Exclude()
-  orderId: number | null;
-  @Exclude()
-  articleId: number | null;
-  @Exclude()
-  createdAt: Date;
-  @Exclude()
-  updatedAt: Date;
+export class OrderItem
+  extends IntersectionType(OrderItemDiscription, OrderItemRelation)
+  implements IOrderItem
+{
+  @ApiProperty({ example: 9.98 })
+  subtotalPrice: number;
 
   constructor(partial: Partial<OrderItem>) {
     super();

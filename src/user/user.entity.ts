@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  IntersectionType,
+} from '@nestjs/swagger';
 import { Provider, Role } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 import { Review, ReviewDiscription } from '@review/entities/review.entity';
@@ -26,21 +30,25 @@ export class UserDiscription {
 
   @ApiProperty({ default: Provider.EMAIL })
   provider: Provider;
-}
-
-export class User extends UserDiscription implements Omit<IUser, 'password'> {
-  @ApiPropertyOptional({ type: () => [ReviewDiscription] })
-  reviews?: Review[];
-
-  @ApiPropertyOptional({ type: () => [ArticleDiscription] })
-  favorites?: Article[];
-
-  @ApiPropertyOptional({ type: () => CartDiscription })
-  cart?: Cart | null;
 
   @Exclude()
-  password?: string | null;
+  password: string | null;
+}
 
+export class UserRelation {
+  @ApiPropertyOptional({ type: () => ReviewDiscription, isArray: true })
+  reviews?: Review[];
+
+  @ApiPropertyOptional({ type: () => ArticleDiscription, isArray: true })
+  favorites?: Article[];
+
+  @ApiPropertyOptional({ type: () => CartDiscription, nullable: true })
+  cart?: Cart | null;
+}
+export class User
+  extends IntersectionType(UserDiscription, UserRelation)
+  implements IUser
+{
   constructor(partial: Partial<User>) {
     super();
     Object.assign(this, partial);

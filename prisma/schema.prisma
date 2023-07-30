@@ -59,8 +59,8 @@ model Sale {
   activeTill DateTime @map("active_till")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
-  articleId  Int?     @unique @map("article_id")
-  article    Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  articleId  Int      @unique @map("article_id")
+  article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("sale")
 }
@@ -71,10 +71,10 @@ model Review {
   stars     Int
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  articleId Int?     @map("article_id")
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  authorId  Int?     @map("author_id")
-  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  articleId Int      @map("article_id")
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId  Int      @map("author_id")
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("review")
 }
@@ -118,10 +118,10 @@ model CartItem {
   quantity  Int      @default(1)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  articleId Int?     @map("article_id")
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  cartId    Int?     @map("cart_id")
-  cart      Cart?    @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  articleId Int      @map("article_id")
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cartId    Int      @map("cart_id")
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("cart_item")
 }
@@ -130,8 +130,8 @@ model Cart {
   id        Int        @id @default(autoincrement())
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @default(now()) @updatedAt @map("updated_at")
-  userId    Int?       @unique @map("user_id")
-  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    Int        @unique @map("user_id")
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   cartItems CartItem[]
 
   @@map("cart")
@@ -149,13 +149,13 @@ enum OrderStatus {
 model OrderItem {
   id            Int      @id @default(autoincrement())
   quantity      Int      @default(1)
-  subtotalPrice Float?   @map("subtotal_price") @db.Float
+  subtotalPrice Float    @map("subtotal_price") @db.Float
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
   articleId     Int?     @map("article_id")
   article       Article? @relation(fields: [articleId], references: [id], onDelete: SetNull, onUpdate: SetNull)
-  orderId       Int?     @map("order_id")
-  order         Order?   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  orderId       Int      @map("order_id")
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("order_item")
 }
@@ -210,7 +210,7 @@ model Delivery {
 
 model Order {
   id         Int         @id @default(autoincrement())
-  totalPrice Float?      @map("total_price") @db.Float
+  totalPrice Float       @map("total_price") @db.Float
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at")
   userId     Int?        @map("user_id")

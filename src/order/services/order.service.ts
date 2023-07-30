@@ -76,18 +76,14 @@ export class OrderService {
     });
   }
 
-  private getOrderItemsCreateMany(cartItems: CartItem[] | undefined):
-    | {
-        createMany: Prisma.OrderItemCreateManyArgs;
-      }
-    | undefined {
+  private getOrderItemsCreateMany(cartItems: CartItem[] | undefined) {
     if (!cartItems?.length) return undefined;
 
     return {
       createMany: {
         data: cartItems.map((el) => ({
           quantity: el.quantity,
-          subtotalPrice: el.subtotalPrice,
+          subtotalPrice: el.subtotalPrice || 0,
           articleId: el.articleId,
         })),
       },

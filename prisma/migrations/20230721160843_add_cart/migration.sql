@@ -9,14 +9,14 @@ ALTER TABLE `cart_item` DROP FOREIGN KEY `cart_item_user_id_fkey`;
 
 -- AlterTable
 ALTER TABLE `cart_item` DROP COLUMN `user_id`,
-    ADD COLUMN `cart_id` INTEGER NULL;
+    ADD COLUMN `cart_id` INTEGER NOT NULL;
 
 -- CreateTable
 CREATE TABLE `cart` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `user_id` INTEGER NULL,
+    `user_id` INTEGER NOT NULL,
 
     UNIQUE INDEX `cart_user_id_key`(`user_id`),
     PRIMARY KEY (`id`)

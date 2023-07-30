@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  IntersectionType,
+} from '@nestjs/swagger';
 import { Cart as ICart } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 import { User, UserDiscription } from '@user/user.entity';
@@ -10,22 +14,30 @@ import {
 export class CartDiscription {
   @ApiProperty({ example: 1 })
   id: number;
-  @ApiProperty()
-  totalPrice?: number | null;
-}
 
-export class Cart extends CartDiscription implements ICart {
-  @ApiPropertyOptional({ type: () => UserDiscription })
-  user?: User | null;
-
-  @ApiPropertyOptional({ type: () => [CartItemDiscription] })
-  cartItems?: CartItem[];
   @Exclude()
-  userId: number | null;
+  userId: number;
+
   @Exclude()
   createdAt: Date;
+
   @Exclude()
   updatedAt: Date;
+}
+export class CartRelation {
+  @ApiPropertyOptional({ type: () => UserDiscription })
+  user?: User;
+
+  @ApiPropertyOptional({ type: () => CartItemDiscription, isArray: true })
+  cartItems?: CartItem[];
+}
+
+export class Cart
+  extends IntersectionType(CartDiscription, CartRelation)
+  implements ICart
+{
+  @ApiProperty()
+  totalPrice?: number;
 
   constructor(partial: Partial<Cart>) {
     super();
