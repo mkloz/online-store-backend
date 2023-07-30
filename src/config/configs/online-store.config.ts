@@ -37,6 +37,7 @@ export class OnlineStoreVariables {
   JWT_ACCESS_TOKEN_SECRET?: string;
 
   @IsString()
+  @IsOptional()
   @IsNotEmpty()
   JWT_ACCESS_TOKEN_TIME: string;
 
@@ -46,6 +47,7 @@ export class OnlineStoreVariables {
   JWT_REFRESH_TOKEN_SECRET?: string;
 
   @IsString()
+  @IsOptional()
   @IsNotEmpty()
   JWT_REFRESH_TOKEN_TIME: string;
 
@@ -85,11 +87,11 @@ export const onlineStoreConfig = registerAs<IStore>('onlineStore', () => {
     jwt: {
       accessToken: {
         secret: env.JWT_ACCESS_TOKEN_SECRET || randomUUID(),
-        time: env.JWT_ACCESS_TOKEN_TIME || '',
+        time: env.JWT_ACCESS_TOKEN_TIME || '15m',
       },
       refreshToken: {
         secret: env.JWT_REFRESH_TOKEN_SECRET || randomUUID(),
-        time: env.JWT_REFRESH_TOKEN_TIME || '',
+        time: env.JWT_REFRESH_TOKEN_TIME || '7d',
       },
     },
     admin: {

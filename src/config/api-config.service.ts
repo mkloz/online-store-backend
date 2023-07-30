@@ -39,17 +39,12 @@ export class ApiConfigService {
     const varbl = this.cs.get(key, {
       infer: true,
     });
-    if (!varbl) throw new Error('Variables not defited');
+    if (!varbl) throw new Error('Variables not defined');
     return varbl;
   }
 
   public getAWS(): IAWS {
-    const varbl = this.cs.get('aws', {
-      infer: true,
-    });
-    if (!varbl) throw new Error('Variables not defited');
-
-    return varbl;
+    return this.get('aws');
   }
 
   public getOnlineStore(): IStore {
@@ -65,6 +60,6 @@ export class ApiConfigService {
   }
 
   public getDB(): IMySql {
-    return this.get('mySql');
+    return this.get('mysql');
   }
 }
