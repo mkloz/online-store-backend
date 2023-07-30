@@ -8,6 +8,7 @@ const { env } = process;
 export class AuthVariables {
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   MAIL_VERIFICATION_TOKEN_TIME: string;
 
   @IsString()
@@ -16,6 +17,7 @@ export class AuthVariables {
   MAIL_VERIFICATION_TOKEN_SECRET?: string;
 
   @IsString()
+  @IsOptional()
   @IsNotEmpty()
   MAIL_RESET_PASS_TOKEN_TIME: string;
 
@@ -44,11 +46,11 @@ export const authConfig = registerAs<IAuth>('auth', () => {
     mail: {
       jwt: {
         verification: {
-          time: env.MAIL_VERIFICATION_TOKEN_TIME || '',
+          time: env.MAIL_VERIFICATION_TOKEN_TIME || '20m',
           secret: env.MAIL_VERIFICATION_TOKEN_SECRET ?? randomUUID(),
         },
         resetPass: {
-          time: env.MAIL_RESET_PASS_TOKEN_TIME || '',
+          time: env.MAIL_RESET_PASS_TOKEN_TIME || '10m',
           secret: env.MAIL_RESET_PASS_TOKEN_SECRET ?? randomUUID(),
         },
       },

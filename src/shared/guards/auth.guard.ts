@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadValidator } from '../validators';
 import { ApiConfigService } from '@config/api-config.service';
 import { IStoreJWT } from '@config/config.interface';
-import { extractTokenFromHeader } from '@utils/extract-bearer-token';
+import { Extractor } from '@utils/extractors';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = extractTokenFromHeader(request);
+    const token = Extractor.extractBearerToken(request);
 
     if (!token) {
       throw AuthGuard.unauthorizedException;
