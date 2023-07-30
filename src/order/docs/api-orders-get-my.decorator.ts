@@ -1,13 +1,13 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ApiResponseData } from '@shared/docs';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { Cart } from '../cart.entity';
+import { Order } from '../entities/order.entity';
 
-export const ApiCartGetMy = () =>
+export const ApiOrdersGetMy = () =>
   applyDecorators(
-    ApiResponseData(Cart, HttpStatus.OK),
+    ApiResponseData(Order, HttpStatus.OK),
     ApiBearerAuth(),
     ApiOperation({
-      summary: 'Return a cart of current user. [open for: ME]',
+      summary: 'Return a orders of current user. [open for: ME]',
     }),
   );

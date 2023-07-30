@@ -1,8 +1,15 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
+}
+
+// generator dbml {
+//   provider = "prisma-dbml-generator"
+// }
+
+generator prismaClassGenerator {
+  provider = "prisma-class-generator"
+  output   = "./generated"
+  dryRun   = false
 }
 
 datasource db {
@@ -29,7 +36,7 @@ model Article {
   categories       Category[]     @relation(name: "_article_category")
   cartItems        CartItem[]
   folovers         User[]         @relation(name: "_user_favorites")
-  // orderItems       OrderItem[]
+  orderItems       OrderItem[]
 
   @@map("article")
 }
@@ -101,7 +108,7 @@ model User {
   reviews          Review[]
   cart             Cart?
   favorites        Article[] @relation(name: "_user_favorites")
-  // orders           Order[]
+  orders           Order[]
 
   @@map("user")
 }
@@ -130,87 +137,90 @@ model Cart {
   @@map("cart")
 }
 
-// enum OrderStatus {
-//   CREATED
-//   PROCESSED
-//   RECEIVED
-//   CENCELED
-// }
+enum OrderStatus {
+  CENCELED
+  CREATED
+  PROCESSED
+  SENDED
+  DELIVERED
+  RECEIVED
+}
 
-// model OrderItem {
-//   id            Int      @id @default(autoincrement())
-//   quantity      Int      @default(1)
-//   subtotalPrice Float?   @map("subtotal_price")
-//   createdAt     DateTime @default(now()) @map("created_at")
-//   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
-//   articleId     Int?     @map("article_id")
-//   article       Article? @relation(fields: [articleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   orderId       Int?     @map("order_id")
-//   order         Order?   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+model OrderItem {
+  id            Int      @id @default(autoincrement())
+  quantity      Int      @default(1)
+  subtotalPrice Float?   @map("subtotal_price") @db.Float
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+  articleId     Int?     @map("article_id")
+  article       Article? @relation(fields: [articleId], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  orderId       Int?     @map("order_id")
+  order         Order?   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-//   @@map("order_item")
-// }
+  @@map("order_item")
+}
 
-// model Address {
-//   id       Int        @id @default(autoincrement())
-//   street   String     @db.VarChar(3000)
-//   city     String     @db.VarChar(3000)
-//   country  String     @db.VarChar(3000)
-//   postCode String     @map("post_code") @db.Char(40)
-//   Delivery Delivery[]
+model Address {
+  id        Int      @id @default(autoincrement())
+  street    String   @db.VarChar(3000)
+  city      String   @db.VarChar(3000)
+  country   String   @db.VarChar(3000)
+  postCode  String   @map("post_code") @db.Char(40)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  order     Order[]
 
-//   @@map("address")
-// }
+  @@map("address")
+}
 
-// model Cancel {
-//   id              Int     @id @default(autoincrement())
-//   reason          String  @map("reason") @db.VarChar(3000)
-//   isMoneyReturned Boolean @map("is_money_returned")
-//   amountReturned  Float?  @default(0) @map("amount_returned")
-//   order           Order   @relation(fields: [orderId], references: [id])
-//   orderId         Int     @unique
+model Cancel {
+  id        Int      @id @default(autoincrement())
+  reason    String   @map("reason") @db.VarChar(3000)
+  // isMoneyReturned Boolean  @map("is_money_returned")
+  // amountReturned  Float?   @default(0) @map("amount_returned") @db.Float
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   Int      @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-//   @@map("cancel")
-// }
+  @@map("cancel")
+}
 
-// enum DeliveryStatus {
-//   PENDED
-//   PROCESSED
-//   SENDED
-//   DELIVERED
-//   RECEIVED
-// }
+enum DeliveryStatus {
+  PENDED
+  PROCESSED
+  SENDED
+  DELIVERED
+  RECEIVED
+}
 
-// model Delivery {
-//   id           Int            @id @default(autoincrement())
-//   discription  String         @db.Char(40)
-//   shippingCost Float          @map("shipping_cost")
-//   addition     String?        @db.VarChar(3000)
-//   sendedAt     DateTime?      @map("sended_at")
-//   deliveredAt  DateTime?      @map("delivered_at")
-//   createdAt    DateTime       @default(now()) @map("created_at")
-//   updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at")
-//   orderId      Int            @map("order_id")
-//   order        Order          @relation(fields: [orderId], references: [id])
-//   status       DeliveryStatus
-//   address      Address?       @relation(fields: [addressId], references: [id])
-//   addressId    Int?           @map("address_id")
+model Delivery {
+  id           Int       @id @default(autoincrement())
+  shippingCost Float     @map("shipping_cost") @db.Float
+  addition     String?   @db.VarChar(3000)
+  sendedAt     DateTime? @map("sended_at")
+  deliveredAt  DateTime? @map("delivered_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at")
+  orderId      Int       @unique @map("order_id")
+  order        Order     @relation(fields: [orderId], references: [id])
 
-//   @@map("delivery")
-// }
+  @@map("delivery")
+}
 
-// model Order {
-//   id          Int         @id @default(autoincrement())
-//   totalPrice  Float?      @map("total_price")
-//   deliveredAt DateTime    @map("delivered_at")
-//   createdAt   DateTime    @default(now()) @map("created_at")
-//   updatedAt   DateTime    @default(now()) @updatedAt @map("updated_at")
-//   userId      Int?        @unique @map("user_id")
-//   status      OrderStatus @default(CREATED)
-//   cancel      Cancel?
-//   user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   orderItems  OrderItem[]
-//   delivery    Delivery[]
+model Order {
+  id         Int         @id @default(autoincrement())
+  totalPrice Float?      @map("total_price") @db.Float
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at")
+  userId     Int?        @map("user_id")
+  status     OrderStatus @default(CREATED)
+  address    Address     @relation(fields: [addressId], references: [id])
+  addressId  Int         @map("address_id")
+  cancel     Cancel?
+  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: SetNull)
+  orderItems OrderItem[]
+  delivery   Delivery?
 
-//   @@map("order")
-// }
+  @@map("order")
+}

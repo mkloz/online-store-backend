@@ -5,22 +5,22 @@ import {
   UnprocessableEntityException,
   forwardRef,
 } from '@nestjs/common';
-import { EmailRegisterDto } from './dto/email-register.dto';
-import { UserMailService } from '@user/services/user-mail.service';
-import { TokensDto } from '../dto/tokens.dto';
-import { AuthService } from '../auth.service';
+import { EmailRegisterDto } from '../dto/email-register.dto';
+import { TokensDto } from '../../dto/tokens.dto';
+import { AuthService } from '../../auth.service';
 import { User } from '@user/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from '@user/services/user.service';
 import { IAuth } from '@config/config.interface';
-import { EmailTokenPayloadValidator } from './jwt/email-token-payload.validator';
+import { EmailTokenPayloadValidator } from '../jwt/email-token-payload.validator';
 import { Provider } from '@prisma/client';
 import { Done } from '@shared/dto/done.dto';
-import { CreateJwtPayload } from '../../shared/dto/jwt-payload.dto';
+import { CreateJwtPayload } from '../../../shared/dto/jwt-payload.dto';
 import { JwtService } from '@nestjs/jwt';
-import { EmailCreateVerificationTokenPayload } from './jwt/email-verification-token-payload.dto';
-import { EmailCreatePassResetTokenPayload } from './jwt/email-pass-reset-token-payload.dto';
+import { EmailCreateVerificationTokenPayload } from '../jwt/email-verification-token-payload.dto';
+import { EmailCreatePassResetTokenPayload } from '../jwt/email-pass-reset-token-payload.dto';
 import { ApiConfigService } from '@config/api-config.service';
+import { AuthMailService } from './auth-mail.service';
 
 @Injectable()
 export class AuthEmailService {
@@ -29,7 +29,7 @@ export class AuthEmailService {
   constructor(
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
-    private readonly mailService: UserMailService,
+    private readonly mailService: AuthMailService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly cs: ApiConfigService,

@@ -10,5 +10,6 @@ export enum Prefix {
   CART_ITEMS = 'carts/my/items',
   REVIEWS = 'reviews',
   USERS = 'users',
+  ORDERS = 'orders',
 }
 export const GLOBAL_PREFIX = 'api';

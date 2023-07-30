@@ -4,7 +4,7 @@ import { Exclude } from 'class-transformer';
 import { Review, ReviewDiscription } from '@review/entities/review.entity';
 import { User as IUser } from '@prisma/client';
 import { Article, ArticleDiscription } from '@article/entities/article.entity';
-import { Cart, CartDiscription } from '@cart/entities/cart.entity';
+import { Cart, CartDiscription } from '@cart/cart.entity';
 export class UserDiscription {
   @ApiProperty({ example: 1 })
   id: number;

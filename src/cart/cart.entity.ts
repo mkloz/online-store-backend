@@ -5,7 +5,7 @@ import { User, UserDiscription } from '@user/user.entity';
 import {
   CartItem,
   CartItemDiscription,
-} from '@cart/cart-item/entities/cart-item.entity';
+} from '@cart/cart-item/cart-item.entity';
 
 export class CartDiscription {
   @ApiProperty({ example: 1 })

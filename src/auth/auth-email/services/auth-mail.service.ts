@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { MailerService } from '../../mailer/mailer.service';
+import { MailerService } from '@mailer/mailer.service';
 import { ApiConfigService } from '@config/api-config.service';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 
 @Injectable()
-export class UserMailService {
+export class AuthMailService {
   private readonly backendUrl: string;
 
   constructor(
@@ -17,7 +18,7 @@ export class UserMailService {
     await this.mailer.sendMail({
       to: email,
       subject: 'Verification of email',
-      text: `${this.backendUrl}/api/auth/email/verify?token=${token}`,
+      text: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.AUTH_EMAIL}/verify?token=${token}`,
     });
     return;
   }
@@ -26,7 +27,7 @@ export class UserMailService {
     await this.mailer.sendMail({
       to: email,
       subject: 'Confirmation of email',
-      text: `${this.backendUrl}/api/auth/email/reset/password?token=${token}`,
+      text: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.AUTH_EMAIL}/reset/password?token=${token}`,
     });
     return;
   }

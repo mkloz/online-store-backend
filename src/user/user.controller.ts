@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './services/user.service';
-import { User as UserPayload } from './user.decorator';
+import { User as UserPayload } from '../shared/decorators/user.decorator';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard, RoleAuthGuard } from '@shared/guards';
