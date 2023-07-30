@@ -1,7 +1,7 @@
 import { HttpStatus, applyDecorators } from '@nestjs/common';
 import { ApiResponseData } from '@shared/docs';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { CartItem } from '../entities/cart-item.entity';
+import { CartItem } from '../cart-item.entity';
 
 export const ApiCartItemAdd = () =>
   applyDecorators(

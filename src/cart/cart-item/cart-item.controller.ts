@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { User as UserPayload } from '@user/user.decorator';
+import { User as UserPayload } from '@shared/decorators';
 import {
   IDDto,
   JwtPayloadDto,
@@ -20,7 +20,7 @@ import {
 import { AuthGuard } from '@shared/guards';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemService } from './cart-item.service';
-import { CartItem } from './entities/cart-item.entity';
+import { CartItem } from './cart-item.entity';
 import { CartItemExistPipe } from './pipes/cart-item-exist.pipe';
 import { CartItemBelongsToUserGuard } from './cart-item-belongs-to-user.guard';
 import {

@@ -7,7 +7,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { AuthEmailService } from './auth-email.service';
+import { AuthEmailService } from './services/auth-email.service';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { UserNotExistPipe } from '@user/pipes/user-not-exist.pipe';
 import { EmailRegisterDto } from './dto/email-register.dto';

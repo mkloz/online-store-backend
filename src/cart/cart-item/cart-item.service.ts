@@ -6,7 +6,7 @@ import {
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { PrismaService } from '@db/prisma.service';
-import { CartItem } from './entities/cart-item.entity';
+import { CartItem } from './cart-item.entity';
 import { IPag, Paginator } from '@shared/pagination';
 import { IDDto } from '@shared/dto';
 import { ApiConfigService } from '@config/api-config.service';
