@@ -1,13 +1,17 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { PrismaService } from 'src/db/prisma.service';
+import { PrismaService } from '@db/prisma.service';
 import { Article } from './entities/article.entity';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { Paginated } from 'src/common/pagination/paginated.dto';
-import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { ApiConfigService } from 'src/config/api-config.service';
-import { CartService } from 'src/cart/cart.service';
+import { IPag, Paginator } from '@shared/pagination';
+import { ApiConfigService } from '@config/api-config.service';
+import { Paginated } from '@shared/pagination';
+import { FilterOptionsDto } from './dto/filter-options.dto';
+import { SearchArticleDto } from './dto/search-article.dto';
+import { Prisma } from '@prisma/client';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
+import { Helper } from '@utils/helpers/helper';
+import { FindManyArticlesDto } from './dto/find-many.dto';
 
 @Injectable()
 export class ArticleService {
@@ -15,7 +19,6 @@ export class ArticleService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cs: ApiConfigService,
-    private readonly cartService: CartService,
   ) {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
   }
@@ -33,16 +36,16 @@ export class ArticleService {
     return updated;
   }
 
-  async create({
-    images,
-    categories,
-    ...createArticleDto
-  }: CreateArticleDto): Promise<Article> {
+  async create(dto: CreateArticleDto): Promise<Article> {
     const article = await this.prisma.article.create({
       data: {
-        ...createArticleDto,
-        images: this.prisma.connectArrayIfDefined(images),
-        categories: this.prisma.connectArrayIfDefined(categories),
+        characteristic: dto.characteristic,
+        price: dto.price,
+        discription: dto.discription,
+        name: dto.name,
+        count: dto.count,
+        isPreviouslyUsed: dto.isPreviouslyUsed,
+        categories: this.prisma.connectArrayIfDefined(dto.categories),
       },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
@@ -50,28 +53,6 @@ export class ArticleService {
 
     return new Article(article);
   }
-
-  async findAll(opt: PaginationOptionsDto): Promise<Paginated<Article>> {
-    const pag: IPag<Article> = {
-      data: (
-        await this.prisma.article.findMany({
-          take: opt.limit,
-          skip: opt.limit * (opt.page - 1),
-          include: {
-            images: true,
-            sale: true,
-            reviews: true,
-            categories: true,
-          },
-        })
-      ).map((el) => new Article(el)),
-      count: await this.prisma.article.count(),
-      route: `${this.backendUrl}/api/articles`,
-    };
-
-    return Paginator.paginate(pag, opt);
-  }
-
   async findOne(id: number): Promise<Article> {
     const art = await this.prisma.article.findUnique({
       where: { id },
@@ -82,16 +63,18 @@ export class ArticleService {
     return new Article(art);
   }
 
-  async update(
-    id: number,
-    { images, categories, ...updateArticleDto }: UpdateArticleDto,
-  ): Promise<Article> {
+  async update(id: number, dto: UpdateArticleDto): Promise<Article> {
     const updated = await this.prisma.article.update({
       where: { id },
       data: {
-        ...updateArticleDto,
-        images: this.prisma.setArrayIfDefined(images),
-        categories: this.prisma.setArrayIfDefined(categories),
+        characteristic: dto.characteristic,
+        price: dto.price,
+        discription: dto.discription,
+        name: dto.name,
+        count: dto.count,
+        isPreviouslyUsed: dto.isPreviouslyUsed,
+        views: dto.views,
+        categories: this.prisma.setArrayIfDefined(dto.categories),
       },
       include: { images: true, sale: true, reviews: true, categories: true },
     });
@@ -101,10 +84,6 @@ export class ArticleService {
   }
 
   async remove(id: number): Promise<Article> {
-    const relatedCarts = await this.cartService.findMany({
-      cartItems: { some: { articleId: id } },
-    });
-
     const art = await this.prisma.article.delete({
       where: { id },
       include: { images: true, sale: true, reviews: true, categories: true },
@@ -112,8 +91,131 @@ export class ArticleService {
 
     if (!art) throw ArticleService.articleNotExistException;
 
-    relatedCarts.forEach((el) => this.cartService.recalculateTotalPrice(el.id));
-
     return new Article(art);
+  }
+
+  async getArticleActualPrice(id?: number | null) {
+    if (!id) throw ArticleService.articleNotExistException;
+
+    const article = await this.prisma.article.findUnique({
+      where: { id },
+      include: { sale: { where: { activeTill: { gte: new Date() } } } },
+    });
+    if (!article) throw ArticleService.articleNotExistException;
+
+    return article.sale?.newPrise ?? article.price;
+  }
+
+  private getPriceFilterCondition(
+    filters: FilterOptionsDto,
+  ): Prisma.ArticleWhereInput {
+    return {
+      OR: [
+        {
+          AND: [
+            { price: { gte: filters.minPrice ?? 0 } },
+            { price: { lte: filters.maxPrice ?? Number.MAX_SAFE_INTEGER } },
+          ],
+        },
+        {
+          sale: {
+            newPrise: {
+              gte: filters.minPrice ?? 0,
+              lte: filters.maxPrice ?? Number.MAX_SAFE_INTEGER,
+            },
+          },
+        },
+      ],
+    };
+  }
+
+  private getSearchFilterCondition(
+    search: SearchArticleDto,
+  ): Prisma.ArticleWhereInput {
+    const keyword = search.search?.trim() ?? '';
+    if (!keyword) return {};
+
+    return {
+      OR: [
+        { name: { contains: keyword } },
+        { discription: { contains: keyword } },
+        { characteristic: { contains: keyword } },
+      ],
+    };
+  }
+
+  private getFindManyWhereQuery(
+    filters: FilterOptionsDto,
+    search: SearchArticleDto,
+  ): Prisma.ArticleWhereInput {
+    const priceFilter = this.getPriceFilterCondition(filters);
+    const searchFilter = this.getSearchFilterCondition(search);
+
+    return {
+      AND: [
+        priceFilter,
+        {
+          categories: filters.category
+            ? { some: { name: filters.category } }
+            : undefined,
+        },
+        searchFilter,
+      ],
+    };
+  }
+  private getFindManyPrismaOpt(query: FindManyArticlesDto) {
+    return {
+      take: query.limit,
+      skip: query.limit * (query.page - 1),
+      include: {
+        images: true,
+        sale: true,
+        reviews: true,
+        categories: true,
+      },
+      where: this.getFindManyWhereQuery(
+        {
+          category: query.category,
+          maxPrice: query.maxPrice,
+          minPrice: query.minPrice,
+        },
+        { search: query.search },
+      ),
+      orderBy: [
+        { rating: query.rating ?? undefined },
+        { price: query.price ?? undefined },
+      ],
+    };
+  }
+
+  async findMany(query: FindManyArticlesDto): Promise<Paginated<Article>> {
+    const pag: IPag<Article> = {
+      data: (
+        await this.prisma.article.findMany(this.getFindManyPrismaOpt(query))
+      ).map((el) => new Article(el)),
+      count: await this.prisma.article.count({
+        where: this.getFindManyWhereQuery(
+          {
+            category: query.category,
+            maxPrice: query.maxPrice,
+            minPrice: query.minPrice,
+          },
+          { search: query.search },
+        ),
+      }),
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.ARTICLES}`,
+    };
+    return Paginator.paginate(
+      pag,
+      { page: query.page, limit: query.limit },
+      Helper.queryDtoToQuery({
+        price: query.price,
+        rating: query.rating,
+        category: query.category,
+        minPrice: query.minPrice,
+        maxPrice: query.maxPrice,
+        search: query.search,
+      }),
+    );
   }
 }

@@ -10,15 +10,17 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { User as UserPayload } from '../../user/user.decorator';
-import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { IDDto } from 'src/common/dto/id.dto';
+import { User as UserPayload } from '@shared/decorators';
+import {
+  IDDto,
+  JwtPayloadDto,
+  PaginationOptionsDto,
+  Paginated,
+} from '@shared/dto';
+import { AuthGuard } from '@shared/guards';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { CartItemService } from './cart-item.service';
-import { CartItem } from './entities/cart-item.entity';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { Paginated } from 'src/common/pagination/paginated.dto';
+import { CartItem } from './cart-item.entity';
 import { CartItemExistPipe } from './pipes/cart-item-exist.pipe';
 import { CartItemBelongsToUserGuard } from './cart-item-belongs-to-user.guard';
 import {
@@ -28,9 +30,10 @@ import {
   ApiCartItemGetOne,
 } from './docs';
 import { ApiCart } from '../docs/api-cart.decorator';
+import { Prefix } from '@utils/prefix.enum';
 
 @ApiCart()
-@Controller('carts/my/items')
+@Controller(Prefix.CART_ITEMS)
 @UseInterceptors(ClassSerializerInterceptor)
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
@@ -40,7 +43,7 @@ export class CartItemController {
   @ApiCartItemAdd()
   cartAdd(
     @UserPayload()
-    user: JwtPayload,
+    user: JwtPayloadDto,
     @Body() createCartItemDto: CreateCartItemDto,
   ): Promise<CartItem> {
     return this.cartItemService.add(user, createCartItemDto);
@@ -50,7 +53,7 @@ export class CartItemController {
   @ApiCartItemDecrement()
   @UseGuards(AuthGuard)
   cartDecrement(
-    @UserPayload() user: JwtPayload,
+    @UserPayload() user: JwtPayloadDto,
     @Body() createCartItemDto: CreateCartItemDto,
   ): Promise<CartItem> {
     return this.cartItemService.decrement(user, createCartItemDto);
@@ -60,7 +63,7 @@ export class CartItemController {
   @UseGuards(AuthGuard)
   @ApiCartItemGetMany()
   findAll(
-    @UserPayload() user: JwtPayload,
+    @UserPayload() user: JwtPayloadDto,
     @Query() pag: PaginationOptionsDto,
   ): Promise<Paginated<CartItem>> {
     return this.cartItemService.findAll(user, pag);

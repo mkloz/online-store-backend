@@ -1,15 +1,23 @@
 import { Module } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { ArticleController } from './article.controller';
-import { DbModule } from 'src/db/db.module';
-import { MailModule } from 'src/mail/mail.module';
-import { ApiConfigModule } from 'src/config/api-config.module';
-import { ArticleExistConstraint } from './validators/article-exist.validator';
-import { CartModule } from 'src/cart/cart.module';
+import { DbModule } from '@db/db.module';
+import { ApiConfigModule } from '@config/api-config.module';
+import { ArticleExistConstraint } from '@shared/validators';
+import { SaleModule } from './sale/sale.module';
+import { ArticlePhotoModule } from './article-photos/article-photo.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
-  imports: [DbModule, MailModule, ApiConfigModule, CartModule],
+  imports: [
+    DbModule,
+    SaleModule,
+    ArticlePhotoModule,
+    CategoryModule,
+    ApiConfigModule,
+  ],
   controllers: [ArticleController],
   providers: [ArticleService, ArticleExistConstraint],
+  exports: [ArticleService],
 })
 export class ArticleModule {}

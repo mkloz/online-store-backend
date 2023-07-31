@@ -3,12 +3,13 @@ import { AppModule } from './app.module';
 import * as morgan from 'morgan';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { GlobalResponseInterceptor } from './common/global-response.interceptor';
+import { DataResponseInterceptor } from './shared/global/data-response.interceptor';
 import { SwaggerModule } from '@nestjs/swagger';
-import { GlobalExceptionFilter } from './common/global-exception.filter';
-import { createSwapiDocument } from './common/docs/create-swagger-doc';
+import { GlobalExceptionFilter } from './shared/global/global-exception.filter';
+import { SwaggerCreator } from './utils/create-swagger-doc';
 import { ApiConfigService } from './config/api-config.service';
 import { useContainer } from 'class-validator';
+import { GLOBAL_PREFIX } from '@utils/prefix.enum';
 
 function getMorganCfg(): string {
   return ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] - :response-time ms';
@@ -22,16 +23,20 @@ async function bootstrap() {
 
   app
     .use(morgan(getMorganCfg()))
-    .setGlobalPrefix('api', { exclude: ['/'] })
+    .setGlobalPrefix(GLOBAL_PREFIX, { exclude: ['/'] })
     .useGlobalPipes(
       new ValidationPipe({ transform: true, validateCustomDecorators: true }),
     )
-    .useGlobalInterceptors(new GlobalResponseInterceptor());
+    .useGlobalInterceptors(new DataResponseInterceptor());
 
   const port = cs.getPort();
 
   if (cs.isDevelopment()) {
-    SwaggerModule.setup('/api/docs', app, createSwapiDocument(app));
+    SwaggerModule.setup(
+      `/${GLOBAL_PREFIX}/docs`,
+      app,
+      SwaggerCreator.createDocument(app),
+    );
   } else {
     app.useGlobalFilters(new GlobalExceptionFilter(cs));
   }

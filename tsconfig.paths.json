@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@mailer/*": ["src/mailer/*"],
+      "@aws/*": ["src/aws/*"],
+      "@article/*": ["src/article/*"],
+      "@auth/*": ["src/auth/*"],
+      "@config/*": ["src/config/*"],
+      "@db/*": ["src/db/*"],
+      "@review/*": ["src/review/*"],
+      "@cart/*": ["src/cart/*"],
+      "@user/*": ["src/user/*"],
+      "@utils/*": ["src/utils/*"],
+      "@shared/*": ["src/shared/*"],
+      "@app/*": ["src/*"]
+    }
+  }
+}

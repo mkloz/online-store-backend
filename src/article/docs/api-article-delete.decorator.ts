@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
+import { ApiResponseData } from '@shared/docs';
 import { Article } from '../entities/article.entity';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 

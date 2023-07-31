@@ -4,8 +4,9 @@ import { AuthService } from './auth.service';
 import { RefreshDto } from './dto/refresh.dto';
 import { ApiRefresh } from './docs/api-refresh.decorator';
 import { ApiAuth } from './docs/api-auth.decorator';
+import { Prefix } from '@utils/prefix.enum';
 
-@Controller('auth')
+@Controller(Prefix.AUTH)
 @ApiAuth()
 export class AuthController {
   constructor(private readonly authServise: AuthService) {}

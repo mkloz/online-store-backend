@@ -1,19 +1,26 @@
-import { PrismaClient } from '@prisma/client';
 import { createAdmin } from './admin-create.seed';
 import { Logger } from '@nestjs/common';
 import { createCategories } from './categories-add.seed';
-
-const prismaClient = new PrismaClient();
+import { AppModule } from '@app/app.module';
+import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { UserService } from '@user/services/user.service';
+import { PrismaService } from '@db/prisma.service';
+import { ApiConfigService } from '@config/api-config.service';
 
 interface Done {
   done: boolean;
 }
 
 class Seeder {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+    private readonly acs: ApiConfigService,
+  ) {}
 
   async start(): Promise<Done> {
-    (await createAdmin(this.prisma)).done
+    (await createAdmin(this.userService, this.acs)).done
       ? Logger.log('Admin was created ✔️', 'Seeder')
       : Logger.log('Admin wasn`t created ❌', 'Seeder');
     (await createCategories(this.prisma)).done
@@ -24,13 +31,23 @@ class Seeder {
   }
 }
 
-new Seeder(prismaClient)
-  .start()
-  .then(async () => {
-    await prismaClient.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prismaClient.$disconnect();
-    process.exit(1);
-  });
+async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const prismaService = app.get(PrismaService);
+  const userService = app.get(UserService);
+  const acs = app.get(ApiConfigService);
+
+  new Seeder(prismaService, userService, acs)
+    .start()
+    .then(async () => {
+      app.close();
+    })
+    .catch(async (e) => {
+      console.error(e);
+      await prismaService.$disconnect();
+      app.close();
+      process.exit(1);
+    });
+}
+
+bootstrap();

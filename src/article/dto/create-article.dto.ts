@@ -9,8 +9,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { CategoryExist } from 'src/category/validators/category-exist.validator';
-import { FileExist } from 'src/file/validators/file-exist.validator';
+import { CategoryExist } from '@shared/validators';
 
 export class CreateArticleDto {
   @IsString()
@@ -47,13 +46,6 @@ export class CreateArticleDto {
   @IsOptional()
   @ApiPropertyOptional({ example: false })
   isPreviouslyUsed?: boolean;
-
-  @IsOptional()
-  @IsInt({ each: true })
-  @FileExist({ each: true })
-  @IsArray()
-  @ApiPropertyOptional({ example: [1, 2, 3] })
-  images?: number[];
 
   @IsOptional()
   @IsInt({ each: true })

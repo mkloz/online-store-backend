@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { TokensDto } from '../dto/tokens.dto';
 import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
+import { ApiResponseData } from '@shared/docs';
 import { RefreshDto } from '../dto/refresh.dto';
 
 export const ApiRefresh = () =>

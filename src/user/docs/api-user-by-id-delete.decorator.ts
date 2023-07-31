@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
+import { ApiResponseData } from '@shared/docs';
 import { User } from '../user.entity';
 
 export const ApiUserByIdDelete = () =>

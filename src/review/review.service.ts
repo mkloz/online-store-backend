@@ -1,12 +1,13 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { PrismaService } from 'src/db/prisma.service';
+import { PrismaService } from '@db/prisma.service';
 import { Review } from './entities/review.entity';
-import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { Paginated } from 'src/common/pagination/paginated.dto';
-import { ApiConfigService } from 'src/config/api-config.service';
+import { IPag, Paginator } from '@shared/pagination';
+import { ApiConfigService } from '@config/api-config.service';
+import { Paginated } from '@shared/pagination';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
+import { FindManyDto } from './dto/find-many.dto';
 
 @Injectable()
 export class ReviewService {
@@ -22,15 +23,13 @@ export class ReviewService {
     'Review not exist',
   );
 
-  public async create(
-    authorId: number,
-    { article, ...createReviewDto }: CreateReviewDto,
-  ): Promise<Review> {
+  public async create(authorId: number, dto: CreateReviewDto): Promise<Review> {
     const rew = await this.prisma.review.create({
       data: {
-        ...createReviewDto,
-        article: { connect: { id: article } },
-        author: { connect: { id: authorId } },
+        text: dto.text,
+        stars: dto.stars,
+        articleId: dto.article,
+        authorId,
       },
       include: { article: true, author: true },
     });
@@ -40,17 +39,18 @@ export class ReviewService {
     return new Review(rew);
   }
 
-  public async findAll(opt: PaginationOptionsDto): Promise<Paginated<Review>> {
+  public async findAll(opt: FindManyDto): Promise<Paginated<Review>> {
     const pag: IPag<Review> = {
       data: (
         await this.prisma.review.findMany({
           take: opt.limit,
           skip: opt.limit * (opt.page - 1),
           include: { article: true, author: true },
+          orderBy: { stars: opt.stars },
         })
       ).map((el) => new Review(el)),
       count: await this.prisma.review.count(),
-      route: `${this.backendUrl}/api/reviews`,
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.REVIEWS}`,
     };
 
     return Paginator.paginate(pag, opt);

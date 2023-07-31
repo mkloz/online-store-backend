@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { DbModule } from 'src/db/db.module';
+import { UserService } from './services/user.service';
+import { DbModule } from '@db/db.module';
 import { UserController } from './user.controller';
-import { ApiConfigModule } from 'src/config/api-config.module';
-import { UserExistConstraint } from './validators/user-exist.validator';
+import { ApiConfigModule } from '@config/api-config.module';
+import { UserExistConstraint } from '../shared/validators/user-exist.validator';
 import { UserRepository } from './user.repository';
-import { CartModule } from 'src/cart/cart.module';
+import { CartModule } from '@cart/cart.module';
 
 @Module({
   imports: [ApiConfigModule, DbModule, CartModule],

@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBody, ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
-import { TokensDto } from 'src/auth/dto/tokens.dto';
-import { ApiResponseData } from 'src/common/docs/data-response-api.decorator';
+import { TokensDto } from '@auth/dto/tokens.dto';
+import { ApiResponseData } from '@shared/docs';
 import { EmailRegisterDto } from '../dto/email-register.dto';
 
 export const ApiEmailRegister = () =>

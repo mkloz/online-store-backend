@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiPaginatedResponse } from 'src/common/docs/paginate-response-api.decorator';
+import { ApiPaginatedResponse } from '@shared/docs';
 import { ApiOperation } from '@nestjs/swagger';
 import { Review } from '../entities/review.entity';
 

@@ -6,7 +6,7 @@ export enum Env {
 }
 
 export interface IConfig {
-  mySql: IMySql;
+  mysql: IMySql;
   aws: IAWS;
   onlineStore: IStore;
   mail: IMail;

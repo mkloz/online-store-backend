@@ -5,13 +5,14 @@ import {
 } from '@nestjs/common';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
-import { PrismaService } from 'src/db/prisma.service';
-import { CartItem } from './entities/cart-item.entity';
-import { PaginationOptionsDto } from 'src/common/pagination/pagination-options.dto';
-import { IPag, Paginator } from 'src/common/pagination/paginator.sevice';
-import { Paginated } from 'src/common/pagination/paginated.dto';
-import { ApiConfigService } from 'src/config/api-config.service';
-import { IDDto } from 'src/common/dto/id.dto';
+import { PrismaService } from '@db/prisma.service';
+import { CartItem } from './cart-item.entity';
+import { IPag, Paginator } from '@shared/pagination';
+import { IDDto } from '@shared/dto';
+import { ApiConfigService } from '@config/api-config.service';
+import { PaginationOptionsDto, Paginated } from '@shared/pagination';
+import { ArticleService } from '@article/article.service';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 
 @Injectable()
 export class CartItemService {
@@ -19,6 +20,7 @@ export class CartItemService {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly articleService: ArticleService,
     private readonly cs: ApiConfigService,
   ) {
     this.backendUrl = this.cs.getOnlineStore().backendUrl;
@@ -27,6 +29,7 @@ export class CartItemService {
   static cartItemNotExistException = new UnprocessableEntityException(
     'Item not exist',
   );
+
   async decrement(user: IDDto, dto: CreateCartItemDto): Promise<CartItem> {
     const userFromDB = await this.prisma.user.findUnique({
       where: { id: user.id },
@@ -60,15 +63,19 @@ export class CartItemService {
 
     const item = await this.prisma.cartItem.create({
       data: {
-        ...dto,
-        cart: { connect: { id: cart.id } },
-        article: { connect: { id: dto.article } },
+        quantity: dto.quantity,
+        articleId: dto.article,
+        cartId: id,
       },
       include: { article: true },
     });
     if (!item) throw CartItemService.cartItemNotExistException;
 
-    return new CartItem(item);
+    const subtotalPrice =
+      (await this.articleService.getArticleActualPrice(item.articleId)) *
+      item.quantity;
+
+    return new CartItem({ ...item, subtotalPrice });
   }
 
   async add(user: IDDto, dto: CreateCartItemDto) {
@@ -98,16 +105,24 @@ export class CartItemService {
     });
     if (!cart) throw new NotFoundException('Cart not found');
     const pag: IPag<CartItem> = {
-      data: (
-        await this.prisma.cartItem.findMany({
-          where: { cartId: cart.id },
-          take: opt.limit,
-          skip: opt.limit * (opt.page - 1),
-          include: { article: true },
-        })
-      ).map((el) => new CartItem(el)),
+      data: await Promise.all(
+        (
+          await this.prisma.cartItem.findMany({
+            where: { cartId: cart.id },
+            take: opt.limit,
+            skip: opt.limit * (opt.page - 1),
+            include: { article: true },
+          })
+        ).map(async (el) => {
+          const subtotalPrice =
+            (await this.articleService.getArticleActualPrice(el.articleId)) *
+            el.quantity;
+
+          return new CartItem({ ...el, subtotalPrice });
+        }),
+      ),
       count: await this.prisma.category.count(),
-      route: `${this.backendUrl}/api/users/me/cart`,
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.CART_ITEMS}`,
     };
 
     return Paginator.paginate(pag, opt);
@@ -121,7 +136,10 @@ export class CartItemService {
 
     if (!item) throw CartItemService.cartItemNotExistException;
 
-    return new CartItem(item);
+    const subtotalPrice =
+      (await this.articleService.getArticleActualPrice(item.articleId)) *
+      item.quantity;
+    return new CartItem({ ...item, subtotalPrice });
   }
 
   public async update(id: number, dto: UpdateCartItemDto) {
@@ -132,15 +150,21 @@ export class CartItemService {
     });
 
     if (!item) throw CartItemService.cartItemNotExistException;
+    const subtotalPrice =
+      (await this.articleService.getArticleActualPrice(item.articleId)) *
+      item.quantity;
 
-    return new CartItem(item);
+    return new CartItem({ ...item, subtotalPrice });
   }
 
   public async remove(id: number): Promise<CartItem> {
     const item = await this.prisma.cartItem.delete({ where: { id } });
 
     if (!item) throw CartItemService.cartItemNotExistException;
+    const subtotalPrice =
+      (await this.articleService.getArticleActualPrice(item.articleId)) *
+      item.quantity;
 
-    return new CartItem(item);
+    return new CartItem({ ...item, subtotalPrice });
   }
 }

@@ -9,15 +9,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { User as UserPayload } from './user.decorator';
-import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
+import { UserService } from './services/user.service';
+import { User as UserPayload } from '../shared/decorators/user.decorator';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { RoleAuthGuard } from 'src/auth/guards/role-auth.guard';
-import { IDDto } from 'src/common/dto/id.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthGuard, RoleAuthGuard } from '@shared/guards';
+import { IDDto, JwtPayloadDto } from '@shared/dto';
+import { Roles } from '@shared/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import {
   ApiUser,
@@ -29,16 +27,17 @@ import {
   ApiUserMeUpdate,
 } from './docs';
 import { UserExistPipe } from './pipes/user-exist.pipe';
+import { Prefix } from '@utils/prefix.enum';
 
 @ApiUser()
-@Controller('users')
+@Controller(Prefix.USERS)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get('me')
   @UseGuards(AuthGuard)
   @ApiUserMe()
-  getMe(@UserPayload() user: JwtPayload): Promise<User> {
+  getMe(@UserPayload() user: JwtPayloadDto): Promise<User> {
     return this.userService.getById(user.id);
   }
 
@@ -54,7 +53,7 @@ export class UserController {
   @UseGuards(AuthGuard)
   @ApiUserMeUpdate()
   updateMe(
-    @UserPayload() user: JwtPayload,
+    @UserPayload() user: JwtPayloadDto,
     @Body() dto: UpdateUserDto,
   ): Promise<User> {
     return this.userService.updateById(user.id, dto);
@@ -73,7 +72,7 @@ export class UserController {
   @Delete('me')
   @UseGuards(AuthGuard)
   @ApiUserMeDelete()
-  deleteMe(@UserPayload() user: JwtPayload): Promise<User> {
+  deleteMe(@UserPayload() user: JwtPayloadDto): Promise<User> {
     return this.userService.deleteById(user.id);
   }
 

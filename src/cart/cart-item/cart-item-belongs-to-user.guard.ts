@@ -4,10 +4,10 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { PrismaService } from 'src/db/prisma.service';
+import { AuthGuard } from '@shared/guards';
+import { PrismaService } from '@db/prisma.service';
 import { Request } from 'express';
-import { ApiConfigService } from 'src/config/api-config.service';
+import { ApiConfigService } from '@config/api-config.service';
 
 @Injectable()
 export class CartItemBelongsToUserGuard extends AuthGuard {
