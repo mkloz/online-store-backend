@@ -1,7 +1,9 @@
 import { ApiConfigService } from '@config/api-config.service';
 import { Injectable } from '@nestjs/common';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import mysqldump, { ConnectionOptions } from 'mysqldump';
 import { join } from 'path';
+import { gzipSync } from 'zlib';
 
 export const PATH_TO_BACKUPS = join(process.cwd(), 'prisma', 'backups');
 
@@ -27,6 +29,8 @@ export class BackupService {
   }
 
   async downloadSchema() {
+    this.createPath();
+
     await mysqldump({
       connection: this.connection,
       dump: {
@@ -38,18 +42,23 @@ export class BackupService {
   }
 
   async downloadData() {
-    await mysqldump({
-      connection: this.connection,
-      dump: {
-        schema: false,
-        trigger: false,
-      },
-      compressFile: true,
-      dumpToFile: this.getPath('db-data.sql'),
-    });
+    this.createPath();
+
+    const data = (
+      await mysqldump({
+        connection: this.connection,
+        dump: {
+          schema: false,
+          trigger: false,
+        },
+      })
+    ).dump.data;
+    if (data) writeFileSync(this.getPath('db-data.gz'), gzipSync(data));
   }
 
   async downloadTriggers() {
+    this.createPath();
+
     await mysqldump({
       connection: this.connection,
       dump: {
@@ -59,7 +68,11 @@ export class BackupService {
       dumpToFile: this.getPath('db-triggers.sql'),
     });
   }
-
+  private createPath() {
+    if (!existsSync(PATH_TO_BACKUPS)) {
+      mkdirSync(PATH_TO_BACKUPS, { recursive: true });
+    }
+  }
   private getPath(filename: string): string {
     return join(PATH_TO_BACKUPS, filename);
   }
