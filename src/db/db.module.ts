@@ -15,5 +15,7 @@ export class DbModule implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     await this.backup.downloadSchema();
+    await this.backup.downloadData();
+    await this.backup.downloadTriggers();
   }
 }
