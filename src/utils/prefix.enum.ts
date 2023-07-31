@@ -11,5 +11,6 @@ export enum Prefix {
   REVIEWS = 'reviews',
   USERS = 'users',
   ORDERS = 'orders',
+  HEALTH = 'health',
 }
 export const GLOBAL_PREFIX = 'api';
