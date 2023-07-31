@@ -8,9 +8,11 @@ import { CartModule } from './cart/cart.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MailerModule } from './mailer/mailer.module';
 import { OrderModule } from './order/order.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
+    HealthModule,
     ApiConfigModule,
     ArticleModule,
     ReviewModule,
