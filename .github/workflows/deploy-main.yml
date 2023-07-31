@@ -29,7 +29,6 @@ jobs:
       - name: Migrate
         run: |
           npm run migration:run:prod
-          npm run seed:run
       - name: Test
         run: |
           npm run format
