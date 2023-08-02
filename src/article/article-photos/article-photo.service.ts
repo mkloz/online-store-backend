@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ArticlePhoto } from './article-photo.entity';
 import { ArticlePhotoS3Service } from '@aws/s3/article-photo.service';
 import { PrismaService } from '@db/prisma.service';
+import { IFile } from './file.interface';
 
 @Injectable()
 export class ArticlePhotoService {
@@ -11,10 +12,7 @@ export class ArticlePhotoService {
   ) {}
   static fileNotFound = new NotFoundException('Article photo does not found');
 
-  public async add(
-    id: number,
-    files: Express.Multer.File[],
-  ): Promise<ArticlePhoto[]> {
+  public async add(id: number, files: IFile[]): Promise<ArticlePhoto[]> {
     return Promise.all(
       files.map(async (file) => {
         const data = await this.s3Service.addFile(file);

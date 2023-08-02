@@ -27,6 +27,7 @@ export class OrderMailService {
     orderId: number,
   ): Promise<void> {
     await this.statusRouter[status].call(this, email, orderId);
+
     return;
   }
 

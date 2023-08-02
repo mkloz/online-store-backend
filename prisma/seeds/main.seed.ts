@@ -7,37 +7,60 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { UserService } from '@user/services/user.service';
 import { PrismaService } from '@db/prisma.service';
 import { ApiConfigService } from '@config/api-config.service';
-
-interface Done {
-  done: boolean;
-}
+import { createArticles } from './create-articles.seed';
+import { ArticleService } from '@article/article.service';
+import { ArticlePhotoService } from '@article/article-photos/article-photo.service';
+import { SaleService } from '@article/sale/services/sale.service';
+import { CategoryService } from '@article/category/category.service';
+import { Done } from '@shared/dto';
 
 class Seeder {
+  private logger = new Logger('Seeder');
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
     private readonly acs: ApiConfigService,
+    private readonly articleService: ArticleService,
+    private readonly saleService: SaleService,
+    private readonly categoryService: CategoryService,
+    private readonly articlePhotoService: ArticlePhotoService,
   ) {}
 
   async start(): Promise<Done> {
     (await createAdmin(this.userService, this.acs)).done
-      ? Logger.log('Admin was created ✔️', 'Seeder')
-      : Logger.log('Admin wasn`t created ❌', 'Seeder');
+      ? this.logger.log('Admin was created ✔️')
+      : this.logger.log('Admin wasn`t created ❌');
     (await createCategories(this.prisma)).done
-      ? Logger.log('Categories were created ✔️', 'Seeder')
-      : Logger.log('Categories weren`t created ❌', 'Seeder');
+      ? this.logger.log('Categories were created ✔️')
+      : this.logger.log('Categories weren`t created ❌');
+    (
+      await createArticles(
+        this.articleService,
+        this.saleService,
+        this.categoryService,
+        this.articlePhotoService,
+      )
+    ).done
+      ? this.logger.log('Articles were created ✔️')
+      : this.logger.log('Articles weren`t created ❌');
 
-    return { done: true };
+    return new Done();
   }
 }
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   const prismaService = app.get(PrismaService);
   const userService = app.get(UserService);
   const acs = app.get(ApiConfigService);
+  const art = app.get(ArticleService);
+  const sale = app.get(SaleService);
+  const category = app.get(CategoryService);
+  const file = app.get(ArticlePhotoService);
 
-  new Seeder(prismaService, userService, acs)
+  new Seeder(prismaService, userService, acs, art, sale, category, file)
     .start()
     .then(async () => {
       app.close();
