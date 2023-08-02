@@ -27,6 +27,7 @@ import { Role } from '@prisma/client';
 import { ArticlePhoto } from './article-photo.entity';
 import { ArticlePhotosUploadDto } from './dto/article-photos-upload.dto';
 import { Prefix } from '@utils/prefix.enum';
+import { IFile } from './file.interface';
 
 export const ARTICLE_FILES_FIELD = 'files';
 export const TEN_MEGABYTES = 10e6;
@@ -72,7 +73,7 @@ export class ArticlePhotoController {
         ],
       }),
     )
-    files: Express.Multer.File[],
+    files: IFile[],
     @Body() { articleId }: ArticlePhotosUploadDto,
   ): Promise<ArticlePhoto[]> {
     return this.fileService.add(articleId, files);

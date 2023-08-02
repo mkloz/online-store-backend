@@ -74,6 +74,14 @@ export class OnlineStoreVariables {
     message: 'Missing a special charecters in pasword',
   })
   ADMIN_PASSWORD: string;
+
+  @IsInt()
+  @IsOptional()
+  THROTTLE_TTL: number;
+
+  @IsInt()
+  @IsOptional()
+  THROTTLE_LIMIT: number;
 }
 
 export const onlineStoreConfig = registerAs<IStore>('onlineStore', () => {
@@ -98,6 +106,10 @@ export const onlineStoreConfig = registerAs<IStore>('onlineStore', () => {
       name: env.ADMIN_NAME || '',
       email: env.ADMIN_EMAIL || '',
       password: env.ADMIN_PASSWORD || '',
+    },
+    throttle: {
+      ttl: +(env.THROTTLE_TTL || 50),
+      limit: +(env.THROTTLE_LIMIT || 10),
     },
   };
 });

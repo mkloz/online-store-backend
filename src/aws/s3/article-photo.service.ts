@@ -5,6 +5,7 @@ import { Readable } from 'stream';
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { ApiConfigService } from '@config/api-config.service';
+import { IFile } from '@article/article-photos/file.interface';
 
 export const S3_ARTICLE_PHOTO_DIR = 'article/photos';
 
@@ -19,7 +20,7 @@ export class ArticlePhotoS3Service {
     this.aws = this.cs.getAWS();
   }
 
-  public async addFile(file: Express.Multer.File) {
+  public async addFile(file: IFile) {
     const params = {
       Bucket: this.aws.s3.bucketName,
       Body: Readable.from(file.buffer),

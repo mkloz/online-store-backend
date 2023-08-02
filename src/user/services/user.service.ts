@@ -61,7 +61,8 @@ export class UserService {
     const user = await this.repo.createAdmin(dto);
 
     if (!user) throw UserService.userNotExistException;
-    await this.cartService.create(user.id);
+
+    if (!user.cart) await this.cartService.create(user.id);
 
     return new User(user);
   }

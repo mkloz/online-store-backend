@@ -1,5 +1,4 @@
 import { ApiConfigService } from '@config/api-config.service';
-import { IMySql } from '@config/config.interface';
 import { PrismaService } from '@db/prisma.service';
 import {
   Controller,

@@ -2,7 +2,6 @@ export enum Env {
   DEVELOPMENT = 'development',
   PRODUCTION = 'production',
   TEST = 'test',
-  PROVISION = 'provision',
 }
 
 export interface IConfig {
@@ -45,6 +44,10 @@ export interface IStore {
     name: string;
     email: string;
     password: string;
+  };
+  throttle: {
+    ttl: number;
+    limit: number;
   };
 }
 export interface IMail {
