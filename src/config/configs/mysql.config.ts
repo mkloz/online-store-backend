@@ -1,26 +1,42 @@
 import { registerAs } from '@nestjs/config';
-import { IsString, Matches } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, Max, Min } from 'class-validator';
 import { ConfigValidator } from '../config.validator';
 import { IMySql } from '../config.interface';
-import { Extractor, MYSQL_URL_REGEXP } from '@utils/extractors';
+
 const { env } = process;
 
 export class MySqlVariables {
+  @IsNotEmpty()
+  @IsInt()
+  @Min(0)
+  @Max(65535)
+  DB_PORT: number;
+
+  @IsNotEmpty()
   @IsString()
-  @Matches(MYSQL_URL_REGEXP)
-  DATABASE_URL: string;
+  DB_HOST: string;
+
+  @IsString()
+  @IsNotEmpty()
+  DB_PASS: string;
+
+  @IsString()
+  @IsNotEmpty()
+  DB_USER: string;
+
+  @IsString()
+  @IsNotEmpty()
+  DB_NAME: string;
 }
 
 export const mySqlConfig = registerAs<IMySql>('mysql', () => {
   ConfigValidator.validate(env, MySqlVariables);
 
-  const vars = Extractor.extractDatabaseConfig(env.DATABASE_URL || '');
   return {
-    url: env.DATABASE_URL || '',
-    port: vars.port,
-    host: vars.host,
-    password: vars.password,
-    user: vars.user,
-    databaseName: vars.databaseName,
+    port: Number(env.DB_PORT || 3306),
+    host: env.DB_HOST || 'localhost',
+    password: env.DB_PASS || 'pass',
+    user: env.DB_USER || 'root',
+    databaseName: env.DB_NAME || '',
   };
 });

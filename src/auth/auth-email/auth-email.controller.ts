@@ -29,6 +29,7 @@ import { Role } from '@prisma/client';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { ApiAdminCreate } from './docs/api-admin-create.decorator';
 import { Prefix } from '@utils/prefix.enum';
+import { User } from '@user/user.entity';
 
 @ApiEmail()
 @Controller(Prefix.AUTH_EMAIL)
@@ -47,7 +48,7 @@ export class AuthEmailController {
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
   @ApiEmailRegister()
-  async register(@Body(UserNotExistPipe) dto: EmailRegisterDto): Promise<Done> {
+  async register(@Body(UserNotExistPipe) dto: EmailRegisterDto): Promise<User> {
     return this.emailService.register(dto);
   }
 
@@ -56,18 +57,18 @@ export class AuthEmailController {
   @UseGuards(RoleAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiAdminCreate()
-  createAdmin(@Body() dto: EmailRegisterDto): Promise<Done> {
+  createAdmin(@Body() dto: EmailRegisterDto): Promise<User> {
     return this.emailService.createAdmin(dto);
   }
 
-  @Post('/confirm')
+  @Post('/verify')
   @ApiEmailConfirm()
   @HttpCode(HttpStatus.OK)
   verify(@Query() { token }: EmailTokenDto): Promise<Done> {
     return this.emailService.verify(token);
   }
 
-  @Post('/verify')
+  @Post('/send/verification')
   @HttpCode(HttpStatus.OK)
   @ApiEmailSendConfirmation()
   async sendVerification(

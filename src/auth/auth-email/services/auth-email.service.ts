@@ -1,8 +1,10 @@
 import {
+  ClassSerializerInterceptor,
   Inject,
   Injectable,
   UnauthorizedException,
   UnprocessableEntityException,
+  UseInterceptors,
   forwardRef,
 } from '@nestjs/common';
 import { EmailRegisterDto } from '../dto/email-register.dto';
@@ -23,6 +25,7 @@ import { ApiConfigService } from '@config/api-config.service';
 import { AuthMailService } from './auth-mail.service';
 
 @Injectable()
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthEmailService {
   private readonly auth: IAuth;
 
@@ -154,17 +157,18 @@ export class AuthEmailService {
     return new Done();
   }
 
-  public async register(dto: EmailRegisterDto): Promise<Done> {
-    await this.userService.create(dto);
+  public async register(dto: EmailRegisterDto): Promise<User> {
+    const user = await this.userService.create(dto);
     await this.sendVerification(dto.email);
 
-    return new Done();
+    return user;
   }
-  public async createAdmin(dto: EmailRegisterDto): Promise<Done> {
+
+  public async createAdmin(dto: EmailRegisterDto): Promise<User> {
     const admin = await this.userService.createAdmin(dto);
 
     if (!admin.isEmailConfirmed) await this.sendVerification(dto.email);
 
-    return new Done();
+    return admin;
   }
 }

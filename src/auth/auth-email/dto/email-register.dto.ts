@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, Length, Matches } from 'class-validator';
+import { IsEmail, IsString, Length, Matches, MaxLength } from 'class-validator';
 
 export class EmailRegisterDto {
   @IsString()
-  @Length(4, 255)
-  @Matches(/^[A-Z][a-zA-Z]+$/, {
-    message: 'Invalid name. Format ^[A-Z][a-zA-Z]+$ required',
-  })
+  @MaxLength(255)
   @ApiProperty({ example: 'Mykhailo' })
   name: string;
 

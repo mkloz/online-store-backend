@@ -58,6 +58,7 @@ export class UserController {
   ): Promise<User> {
     return this.userService.updateById(user.id, dto);
   }
+
   @Patch(':id')
   @UseGuards(RoleAuthGuard)
   @Roles(Role.ADMIN)

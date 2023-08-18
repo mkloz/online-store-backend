@@ -22,6 +22,7 @@ import * as morgan from 'morgan';
 import { ApiConfigService } from '@config/api-config.service';
 import helmet from 'helmet';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AppController } from './app.controller';
 @Module({
   imports: [
     HealthModule,
@@ -57,6 +58,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
       useClass: ThrottlerGuard,
     },
   ],
+  controllers: [AppController],
 })
 export class AppModule implements NestModule {
   constructor(private readonly acs: ApiConfigService) {}
