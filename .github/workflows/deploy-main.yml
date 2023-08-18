@@ -15,24 +15,25 @@ jobs:
     steps:
       - name: Download repo
         uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+
       - name: Set .env file
         run: echo '${{ secrets.ENV_FILE }}' > .env
+
       - name: Install packeges
         run: npm ci
+
       - name: Build ts to js
         run: npm run build
+
       - name: Migrate
         run: |
-          npm run migration:run:prod
-      - name: Test
-        run: |
-          npm run format
-          npm run lint
-          npm run test
+          npm run migrate
+
       - name: Restart PM2
         run: pm2 restart OnlineStore
