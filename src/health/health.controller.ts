@@ -48,12 +48,10 @@ export class HealthController {
     ]);
   }
 
-  @Get()
+  @Get('frontend')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get state of frontend. [open for: everyone]' })
   @HealthCheck()
-  @Roles(Role.ADMIN)
-  @UseGuards(RoleAuthGuard)
   checkFrontend() {
     return this.health.check([
       () =>
