@@ -6,6 +6,8 @@ import {
   HttpCode,
   Query,
   UseGuards,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthEmailService } from './services/auth-email.service';
 import { EmailLoginDto } from './dto/email-login.dto';
@@ -33,6 +35,7 @@ import { User } from '@user/user.entity';
 
 @ApiEmail()
 @Controller(Prefix.AUTH_EMAIL)
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthEmailController {
   constructor(private readonly emailService: AuthEmailService) {}
 

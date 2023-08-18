@@ -25,7 +25,6 @@ import { ApiConfigService } from '@config/api-config.service';
 import { AuthMailService } from './auth-mail.service';
 
 @Injectable()
-@UseInterceptors(ClassSerializerInterceptor)
 export class AuthEmailService {
   private readonly auth: IAuth;
 
