@@ -4,6 +4,8 @@ services:
   mysql:
     container_name: mysql
     image: mysql:8.0
+    env_file:
+      - .docker/dev/.env
     ports:
       - ${DB_PORT}:${DB_PORT}
     restart: always
@@ -25,7 +27,9 @@ services:
   #   container_name: adminer
   #   image: adminer
   #   restart: always
-  #   env_file: .env
+  #   env_file:
+  #       - .docker/dev/.env
+  #       - .env
   #   environment:
   #     ADMINER_DEFAULT_SERVER: ${DB_HOST}:${DB_PORT}
   #     ADMINER_DESIGN: galkaev
@@ -42,27 +46,32 @@ services:
   store:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: .docker/dev/Dockerfile
     image: store
     container_name: store
-    command: sh -c "npm run migration:run && npm run seed:run && npm run start:prod"
+    command: sh -c "npm run migrate && npm run seed && npm run start"
+    env_file:
+      - .docker/dev/.env
+      - .env
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://store:${PORT}/api/health']
+      test: ['CMD', 'curl', '-f', 'http://store:${PORT:-3000}/api/health']
       interval: 10s
       retries: 10
       start_period: 10s
+    environment:
+      - PORT=${PORT:-3000}
+      - DB_HOST=mysql
+      - DATABASE_URL=mysql://${DB_USER}:${DB_PASS}@mysql:${DB_PORT}/${DB_NAME}
     depends_on:
       mysql:
         condition: service_healthy
-      # test_mysql:
-      #   condition: service_healthy
     restart: always
     networks:
       - store_network
     links:
       - mysql
     ports:
-      - ${PORT}:${PORT}
+      - ${PORT:-3000}:${PORT:-3000}
 
 volumes:
   store_volume:

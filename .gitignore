@@ -33,7 +33,10 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 #other
-.env
+/.env
 todo.txt
 prisma/generated
+prisma/backups
 .env.development
+.env.production
+codex_readme.py

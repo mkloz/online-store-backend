@@ -49,7 +49,6 @@ export class UserRepository {
           ? await UserService.hashPassword(dto.password)
           : undefined,
         role: Role.USER,
-        favorites: this.prisma.connectArrayIfDefined(dto.favorites),
       },
       include: { reviews: true, favorites: true, cart: true },
     });
@@ -69,7 +68,6 @@ export class UserRepository {
           ? await UserService.hashPassword(dto.password)
           : undefined,
         isEmailConfirmed: true,
-        favorites: this.prisma.connectArrayIfDefined(dto.favorites),
         role: Role.ADMIN,
       },
       include: { reviews: true, favorites: true, cart: true },

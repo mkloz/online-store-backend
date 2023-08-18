@@ -13,7 +13,6 @@ export interface IConfig {
 }
 
 export interface IMySql {
-  url: string;
   port: number;
   host: string;
   password: string;

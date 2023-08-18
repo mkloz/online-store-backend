@@ -1,4 +1,5 @@
 export enum Prefix {
+  ROOT = '',
   ARTICLES = 'articles',
   SALES = 'sales',
   CATEGORIES = 'categories',

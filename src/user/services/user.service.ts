@@ -50,7 +50,7 @@ export class UserService {
     const user = await this.repo.create(dto);
 
     if (!user) throw UserService.userNotExistException;
-    await this.cartService.create(user.id);
+    user.cart = await this.cartService.create(user.id);
 
     return new User(user);
   }
@@ -62,7 +62,7 @@ export class UserService {
 
     if (!user) throw UserService.userNotExistException;
 
-    if (!user.cart) await this.cartService.create(user.id);
+    if (!user.cart) user.cart = await this.cartService.create(user.id);
 
     return new User(user);
   }

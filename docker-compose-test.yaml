@@ -1,0 +1,53 @@
+version: '3.1'
+
+services:
+  test_mysql:
+    container_name: test_mysql
+    image: mysql:8.0
+    env_file:
+      - .docker/test/.env
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '0.0.0.0', '--silent']
+      interval: 10s
+      retries: 10
+      start_period: 10s
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      - MYSQL_TCP_PORT=${DB_PORT}
+      - MYSQL_DATABASE=${DB_NAME}
+    networks:
+      - store_test_network
+
+  test_store:
+    build:
+      context: .
+      dockerfile: .docker/test/Dockerfile
+    image: test_store
+    env_file:
+      - .docker/test/.env
+      - .env
+    container_name: test_store
+    command: sh -c "npm run migrate && npm run seed && npm run test"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://test_store:${PORT:-3001}/api/health']
+      interval: 10s
+      retries: 30
+      start_period: 30s
+    depends_on:
+      test_mysql:
+        condition: service_healthy
+    networks:
+      - store_test_network
+    links:
+      - test_mysql
+    environment:
+      - PORT=${PORT:-3001}
+      - DB_HOST=test_mysql
+      - DATABASE_URL=mysql://${DB_USER}:${DB_PASS}@test_mysql:${DB_PORT}/${DB_NAME}
+
+networks:
+  store_test_network:
+    name: store_test_network
+    driver: bridge

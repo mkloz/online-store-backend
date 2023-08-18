@@ -8,6 +8,7 @@ import {
 import { ApiResponseDataArray } from '@shared/docs';
 import { ArticlePhoto } from '../article-photo.entity';
 import { ArticlePhotosUploadExtDto } from '../dto/article-photos-upload.dto';
+import { ApiAdmin } from '@shared/docs/api-admin.decorator';
 
 export const ApiCreateFiles = () =>
   applyDecorators(
@@ -16,6 +17,7 @@ export const ApiCreateFiles = () =>
     ApiOperation({
       summary: 'Upload file to AWS and save info in db. [open for: ADMIN]',
     }),
+    ApiAdmin(),
     ApiResponseDataArray(ArticlePhoto, HttpStatus.CREATED),
     ApiBody({ type: ArticlePhotosUploadExtDto }),
   );

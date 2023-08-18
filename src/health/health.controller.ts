@@ -21,7 +21,7 @@ import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 
 @ApiBearerAuth()
 @ApiTags('Healthcheck')
-@Controller('health')
+@Controller(Prefix.HEALTH)
 export class HealthController {
   constructor(
     private health: HealthCheckService,
@@ -33,10 +33,8 @@ export class HealthController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get state of program. [open for: ADMIN]' })
+  @ApiOperation({ summary: 'Get state of api. [open for: everyone]' })
   @HealthCheck()
-  @Roles(Role.ADMIN)
-  @UseGuards(RoleAuthGuard)
   check() {
     return this.health.check([
       () =>
@@ -46,9 +44,20 @@ export class HealthController {
             Prefix.HEALTH
           }/ok`,
         ),
+      () => this.db.pingCheck('database', this.prisma),
+    ]);
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get state of frontend. [open for: everyone]' })
+  @HealthCheck()
+  @Roles(Role.ADMIN)
+  @UseGuards(RoleAuthGuard)
+  checkFrontend() {
+    return this.health.check([
       () =>
         this.http.pingCheck('frontend', this.cs.getOnlineStore().frontendUrl),
-      () => this.db.pingCheck('database', this.prisma),
     ]);
   }
 
