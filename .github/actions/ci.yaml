@@ -3,9 +3,6 @@ description: 'Cache Dependencies'
 runs:
   using: 'composite'
   steps:
-    - name: Download repo
-      uses: actions/checkout@v3
-
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v3
       with:
