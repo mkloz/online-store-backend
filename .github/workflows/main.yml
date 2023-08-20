@@ -66,12 +66,12 @@ jobs:
       - name: Build ts to js
         run: npm run build
 
+      - name: Set .env file
+        run: echo '${{ secrets.ENV_FILE }}' > .env
+
       - name: Migrate db
         run: |
           npm run migrate --no-seed
-
-      - name: Set .env file
-        run: echo '${{ secrets.ENV_FILE }}' > .env
 
       - name: Run Tests
         run: npm run test
