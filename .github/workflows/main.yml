@@ -63,11 +63,11 @@ jobs:
       - name: Setup Continuous integration
         uses: ./.github/actions/ci
 
-      - name: Build ts to js
-        run: npm run build
-
       - name: Set .env file
         run: echo '${{ secrets.ENV_FILE }}' > .env
+
+      - name: Build ts to js
+        run: npm run build
 
       - name: Migrate db
         run: |
