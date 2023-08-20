@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -36,5 +36,17 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
           })),
         }
       : undefined;
+  }
+  async clear() {
+    const tables = Prisma.dmmf.datamodel.models
+      .map((model) => model.dbName)
+      .filter((table) => table);
+    await this.$transaction([
+      this.$executeRaw`SET FOREIGN_KEY_CHECKS = 0;`,
+      ...tables.map((table) =>
+        this.$executeRawUnsafe(`TRUNCATE \`${table}\`;`),
+      ),
+      this.$executeRaw`SET FOREIGN_KEY_CHECKS = 1;`,
+    ]);
   }
 }

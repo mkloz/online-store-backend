@@ -12,14 +12,18 @@ import { ApiConfigService } from '@config/api-config.service';
 import { AbstractHttpAdapter, HttpAdapterHost } from '@nestjs/core';
 import { isObject } from '@nestjs/common/utils/shared.utils';
 
-const UNKNOWN_EXCEPTION_MESSAGE = 'Something went wrong';
-interface IHTTPException {
+export class ExceptionResponse {
   status: number;
-  message: string;
+  message?: unknown;
   timestamp: string;
   method: string;
   path?: string;
+  constructor(data: Partial<ExceptionResponse>) {
+    Object.assign(this, data);
+  }
 }
+const UNKNOWN_EXCEPTION_MESSAGE = 'Something went wrong';
+
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(
@@ -29,33 +33,30 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   catch(exception: Error, host: ArgumentsHost) {
     const req = host.switchToHttp().getRequest<Request>();
-
     const { httpAdapter } = this.httpAdapterHost;
-
-    if (!(exception instanceof HttpException)) {
-      return this.handleUnknownError(exception, host, httpAdapter);
-    }
-
-    const status = exception.getStatus();
-
-    const resp: IHTTPException = {
-      status,
-      message: this.cs.isProduction()
-        ? status === HttpStatus.NOT_FOUND
-          ? 'Not found'
-          : UNKNOWN_EXCEPTION_MESSAGE
-        : exception.message,
+    const resp: ExceptionResponse = new ExceptionResponse({
       timestamp: new Date().toISOString(),
       method: httpAdapter.getRequestMethod(req),
       path: !this.cs.isProduction()
         ? httpAdapter.getRequestUrl(req)
         : undefined,
-    };
+    });
+
+    if (!(exception instanceof HttpException)) {
+      return this.handleUnknownError(exception, host, httpAdapter, resp);
+    }
+
+    resp.status = exception.getStatus();
+    resp.message = this.cs.isProduction()
+      ? resp.status === HttpStatus.NOT_FOUND
+        ? 'Not found'
+        : UNKNOWN_EXCEPTION_MESSAGE
+      : exception.getResponse();
 
     httpAdapter.reply(
       host.switchToHttp().getResponse<Response>(),
       resp,
-      status,
+      resp.status,
     );
   }
 
@@ -63,28 +64,27 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     exception: Error,
     host: ArgumentsHost,
     applicationRef: AbstractHttpAdapter | HttpServer,
+    resp: ExceptionResponse,
   ) {
-    const body = {
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: UNKNOWN_EXCEPTION_MESSAGE,
-    };
+    resp.status = HttpStatus.INTERNAL_SERVER_ERROR;
+    resp.message = UNKNOWN_EXCEPTION_MESSAGE;
 
     const response = host.switchToHttp().getRequest();
 
     if (!applicationRef.isHeadersSent(response)) {
-      applicationRef.reply(response, body, body.statusCode);
+      applicationRef.reply(response, resp, resp.status);
     } else {
       applicationRef.end(response);
     }
 
     return Logger.error(
       exception.message,
-      this.isExceptionObject(exception) ? exception.stack : undefined,
+      this.isErrorObject(exception) ? exception.stack : undefined,
       'ExceptionFilter',
     );
   }
 
-  public isExceptionObject(err: unknown): err is Error {
+  public isErrorObject(err: unknown): err is Error {
     return !!(
       isObject(err) &&
       typeof err === 'object' &&

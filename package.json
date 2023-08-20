@@ -8,16 +8,19 @@
   "scripts": {
     "prepare": "npx husky install",
     "generate": "npx prisma generate",
-    "build": "nest build",
+    "build": "npm run generate && nest build",
     "migrate": "npx prisma migrate deploy",
     "seed": "npx prisma db seed",
     "start": "node dist/src/main ",
-    "test": "jest --passWithNoTests --config ./test/jest-e2e.json --detectOpenHandles",
+    "test": "npm run test:int && npm run test:e2e",
     "lint": "./node_modules/.bin/eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "build:dev": "nest build --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "migrate:dev": "npx prisma migrate dev"
+    "migrate:dev": "npx prisma migrate dev",
+    "test:e2e": "npx jest --passWithNoTests --config ./test/e2e/jest-e2e.json",
+    "test:int": "npx jest --passWithNoTests --config ./test/integration/jest-int.json"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.367.0",
@@ -85,19 +88,12 @@
   "jest": {
     "moduleFileExtensions": [
       "js",
-      "json",
-      "ts"
+      "json"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "rootDir": ".",
+    "testTimeout": 10000,
+    "testEnvironment": "node",
+    "testRegex": ".(e2e|int|unit)-spec.js$"
   },
   "prettier": {
     "singleQuote": true,

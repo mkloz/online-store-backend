@@ -1,26 +1,18 @@
 import { ApiConfigService } from '@config/api-config.service';
 import { PrismaService } from '@db/prisma.service';
-import {
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   HealthCheckService,
   HttpHealthIndicator,
-  HealthCheck,
   PrismaHealthIndicator,
+  DiskHealthIndicator,
 } from '@nestjs/terminus';
-import { Role } from '@prisma/client';
-import { Roles } from '@shared/decorators';
-import { RoleAuthGuard } from '@shared/guards';
 import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
+import { HealthCheck } from './health.decorator';
 
-@ApiBearerAuth()
 @ApiTags('Healthcheck')
+@ApiBearerAuth()
 @Controller(Prefix.HEALTH)
 export class HealthController {
   constructor(
@@ -29,6 +21,7 @@ export class HealthController {
     private db: PrismaHealthIndicator,
     private cs: ApiConfigService,
     private prisma: PrismaService,
+    private disk: DiskHealthIndicator,
   ) {}
 
   @Get()
@@ -45,6 +38,11 @@ export class HealthController {
           }/ok`,
         ),
       () => this.db.pingCheck('database', this.prisma),
+      () =>
+        this.disk.checkStorage('disk', {
+          path: '/',
+          thresholdPercent: 0.95,
+        }),
     ]);
   }
 

@@ -89,6 +89,7 @@ export class UserRepository {
     id: number,
     dto: UpdateUserDto,
   ): Promise<Nullable<User>> {
+    this.prisma;
     return this.prisma.user.update({
       where: { id },
       include: { reviews: true, favorites: true, cart: true },

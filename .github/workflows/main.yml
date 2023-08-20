@@ -1,0 +1,93 @@
+name: Node.js CI/CD
+
+on:
+  push:
+    branches: ['main']
+
+env:
+  NODE_VERSION: 18.16.1
+
+jobs:
+  lint:
+    name: Style check
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Setup Continuous integration
+        uses: ./.github/actions/ci
+
+      - name: Lint Application
+        run: npm run lint
+
+      - name: Format APP
+        run: npm run format
+
+  build:
+    name: Building
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Setup Continuous integration
+        uses: ./.github/actions/ci
+
+      - name: Build ts to js
+        run: npm run build
+  test:
+    name: Testing
+    runs-on: ubuntu-latest
+    environment: test
+
+    env:
+      DB_PORT: 3034
+      DB_HOST: 'localhost'
+      DB_PASS: 'pass'
+      DB_USER: 'root'
+      DB_NAME: 'online-store'
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{env.DB_PASS}}
+          MYSQL_DATABASE: ${{env.DB_NAME}}
+        ports:
+          - 3034:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - name: Setup Continuous integration
+        uses: ./.github/actions/ci
+
+      - name: Build ts to js
+        run: npm run build
+
+      - name: Migrate db
+        run: |
+          npm run migrate --no-seed
+
+      - name: Set .env file
+        run: echo '${{ secrets.ENV_FILE }}' > .env
+
+      - name: Run Tests
+        run: npm run test
+
+  deploy:
+    needs:
+      - build
+      - lint
+      - test
+    runs-on: citywheels-server
+    environment: prod
+
+    steps:
+      - name: Setup Continuous integration
+        uses: ./.github/actions/ci
+
+      - name: Set .env file
+        run: echo '${{ secrets.ENV_FILE }}' > .env
+
+      - name: Build ts to js
+        run: npm run build
+
+      - name: Migrate
+        run: |
+          npm run migrate
+
+      - name: Restart PM2
+        run: pm2 restart OnlineStore
