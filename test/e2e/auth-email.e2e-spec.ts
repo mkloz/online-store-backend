@@ -1,6 +1,5 @@
-import { HttpServer, HttpStatus, INestApplication } from '@nestjs/common';
+import { HttpServer, HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
-import { TestModule } from 'test/testmodule';
 import { PrismaService } from '@db/prisma.service';
 import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 import { UserService } from '@user/services/user.service';

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { GLOBAL_PREFIX, Prefix } from './utils';
-import { ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
 import { ApiResponseData } from '@shared/docs';
 import { GITHUB_REPO, Info } from '@shared/dto';
 import { ApiApp } from '@shared/docs/api-app.decorator';

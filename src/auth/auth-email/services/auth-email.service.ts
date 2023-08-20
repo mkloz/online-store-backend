@@ -1,10 +1,8 @@
 import {
-  ClassSerializerInterceptor,
   Inject,
   Injectable,
   UnauthorizedException,
   UnprocessableEntityException,
-  UseInterceptors,
   forwardRef,
 } from '@nestjs/common';
 import { EmailRegisterDto } from '../dto/email-register.dto';
