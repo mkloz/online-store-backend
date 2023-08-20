@@ -12,9 +12,6 @@ jobs:
     name: Style check
     runs-on: ubuntu-20.04
     steps:
-      - name: Download repo
-        uses: actions/checkout@v3
-
       - name: Setup Continuous integration
         uses: ./.github/actions/ci
 
@@ -28,9 +25,6 @@ jobs:
     name: Building
     runs-on: ubuntu-20.04
     steps:
-      - name: Download repo
-        uses: actions/checkout@v3
-
       - name: Setup Continuous integration
         uses: ./.github/actions/ci
 
@@ -57,9 +51,6 @@ jobs:
           - 3034:3306
         options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - name: Download repo
-        uses: actions/checkout@v3
-
       - name: Setup Continuous integration
         uses: ./.github/actions/ci
 
@@ -85,9 +76,6 @@ jobs:
     environment: prod
 
     steps:
-      - name: Download repo
-        uses: actions/checkout@v3
-
       - name: Setup Continuous integration
         uses: ./.github/actions/ci
 
