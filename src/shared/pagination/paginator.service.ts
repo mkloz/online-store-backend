@@ -12,7 +12,7 @@ export class Paginator {
     opt: PaginationOptionsDto,
     extraQuery?: string,
   ): Paginated<TData> {
-    const pageCount = (pag.count / opt.limit + 1) | 0;
+    const pageCount = Math.ceil(pag.count / opt.limit) | 0;
 
     extraQuery = `${
       extraQuery ? `&${extraQuery.trim().replace(/^(\?|\&)/, '')}` : ''

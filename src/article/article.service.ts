@@ -6,7 +6,7 @@ import { Article } from './entities/article.entity';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
 import { Paginated } from '@shared/pagination';
-import { FilterOptionsDto } from './dto/filter-options.dto';
+import { FilterOptionsDto, SaleFilter } from './dto/filter-options.dto';
 import { SearchArticleDto } from './dto/search-article.dto';
 import { Prisma } from '@prisma/client';
 import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
@@ -159,6 +159,13 @@ export class ArticleService {
             ? { some: { name: filters.category } }
             : undefined,
         },
+        {
+          sale: filters.sale
+            ? filters.sale == SaleFilter.INCLUDE
+              ? { isNot: null }
+              : { is: null }
+            : undefined,
+        },
         searchFilter,
       ],
     };
@@ -178,6 +185,7 @@ export class ArticleService {
           category: query.category,
           maxPrice: query.maxPrice,
           minPrice: query.minPrice,
+          sale: query.sale,
         },
         { search: query.search },
       ),
@@ -189,19 +197,13 @@ export class ArticleService {
   }
 
   async findMany(query: FindManyArticlesDto): Promise<Paginated<Article>> {
+    const q = this.getFindManyPrismaOpt(query);
     const pag: IPag<Article> = {
-      data: (
-        await this.prisma.article.findMany(this.getFindManyPrismaOpt(query))
-      ).map((el) => new Article(el)),
+      data: (await this.prisma.article.findMany(q)).map(
+        (el) => new Article(el),
+      ),
       count: await this.prisma.article.count({
-        where: this.getFindManyWhereQuery(
-          {
-            category: query.category,
-            maxPrice: query.maxPrice,
-            minPrice: query.minPrice,
-          },
-          { search: query.search },
-        ),
+        where: q.where,
       }),
       route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.ARTICLES}`,
     };
@@ -215,6 +217,7 @@ export class ArticleService {
         minPrice: query.minPrice,
         maxPrice: query.maxPrice,
         search: query.search,
+        sale: query.sale,
       }),
     );
   }

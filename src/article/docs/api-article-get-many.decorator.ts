@@ -7,6 +7,6 @@ export const ApiArticleGetMany = () =>
   applyDecorators(
     ApiPaginatedResponse(Article),
     ApiOperation({
-      summary: 'Get paginated list of article from db. [open for everyone]',
+      summary: 'Get paginated list of articles from db. [open for everyone]',
     }),
   );
