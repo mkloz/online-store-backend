@@ -1,8 +1,12 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CategoryExist } from '@shared/validators';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
+export enum SaleFilter {
+  INCLUDE = 'inc',
+  EXCLUDE = 'exc',
+}
 export class FilterOptionsDto {
   @IsString()
   @IsOptional()
@@ -21,5 +25,10 @@ export class FilterOptionsDto {
   @IsOptional()
   @Type(() => Number)
   @ApiPropertyOptional()
-  maxPrice?: number;
+  maxPrice: number;
+
+  @IsEnum(SaleFilter)
+  @IsOptional()
+  @ApiPropertyOptional({ enum: SaleFilter })
+  sale?: SaleFilter;
 }

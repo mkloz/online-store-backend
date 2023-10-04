@@ -231,7 +231,9 @@ Set up .env variables
 cp .env.example .env
 
 ```
+
 Execute migrations for database
+
 ```bash
 npm run migrate
 ```
@@ -249,7 +251,7 @@ Using docker compose
 Start database(if you already have one skip this step) and server
 
 ```bash
-sudo docker compose -f docker-comose-dev.yaml up mysql store
+sudo docker compose -f docker-compose-dev.yaml up mysql store
 ```
 
 ---
