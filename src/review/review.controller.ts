@@ -19,6 +19,7 @@ import {
   ApiReviewCreate,
   ApiReviewDelete,
   ApiReviewGetMany,
+  ApiReviewGetManyForArticle,
   ApiReviewGetOne,
   ApiReviewUpdate,
 } from './docs';
@@ -32,6 +33,7 @@ import { RoleAuthGuard } from '@shared/guards';
 import { OwnerOrRoleAuthGuard } from './pipes/owner-or-role-auth.guard';
 import { Prefix } from '@utils/prefix.enum';
 import { FindManyDto } from './dto/find-many.dto';
+import { ArticleExistPipe } from '@article/pipes/article-exist.pipe';
 
 @ApiReview()
 @Controller(Prefix.REVIEWS)
@@ -50,10 +52,13 @@ export class ReviewController {
     return this.reviewService.create(user.id, createReviewDto);
   }
 
-  @Get()
-  @ApiReviewGetMany()
-  public findAll(@Query() pag: FindManyDto): Promise<Paginated<Review>> {
-    return this.reviewService.findAll(pag);
+  @Get('article/:id')
+  @ApiReviewGetManyForArticle()
+  public findAllForArticle(
+    @Param(ArticleExistPipe) { id }: IDDto,
+    @Query() pag: FindManyDto,
+  ): Promise<Paginated<Review>> {
+    return this.reviewService.findAllForArticle(id, pag);
   }
 
   @Get(':id')

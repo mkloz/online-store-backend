@@ -59,8 +59,6 @@ export class ArticleRelation {
   images?: ArticlePhoto[];
   @ApiPropertyOptional({ type: () => SaleDiscription, nullable: true })
   sale?: Sale | null;
-  @ApiPropertyOptional({ type: () => ReviewDiscription, isArray: true })
-  reviews?: Review[];
   @ApiPropertyOptional({ type: () => CategoryDiscription, isArray: true })
   categories?: Category[];
 }
@@ -73,9 +71,6 @@ export class Article
     Object.assign(this, partial);
     if (this.images?.length) {
       this.images = this.images.map((el) => new ArticlePhoto(el));
-    }
-    if (this.reviews?.length) {
-      this.reviews = this.reviews.map((el) => new Review(el));
     }
     if (this.categories?.length) {
       this.categories = this.categories.map((el) => new Category(el));

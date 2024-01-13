@@ -39,13 +39,17 @@ export class ReviewService {
     return new Review(rew);
   }
 
-  public async findAll(opt: FindManyDto): Promise<Paginated<Review>> {
+  public async findAllForArticle(
+    articleId: number,
+    opt: FindManyDto,
+  ): Promise<Paginated<Review>> {
     const pag: IPag<Review> = {
       data: (
         await this.prisma.review.findMany({
+          where: { articleId },
           take: opt.limit,
           skip: opt.limit * (opt.page - 1),
-          include: { article: true, author: true },
+          include: { author: true },
           orderBy: { stars: opt.stars },
         })
       ).map((el) => new Review(el)),

@@ -47,7 +47,7 @@ export class ArticleService {
         isPreviouslyUsed: dto.isPreviouslyUsed,
         categories: this.prisma.connectArrayIfDefined(dto.categories),
       },
-      include: { images: true, sale: true, reviews: true, categories: true },
+      include: { images: true, sale: true, categories: true },
     });
     if (!article) throw ArticleService.articleNotExistException;
 
@@ -56,7 +56,7 @@ export class ArticleService {
   async findOne(id: number): Promise<Article> {
     const art = await this.prisma.article.findUnique({
       where: { id },
-      include: { images: true, sale: true, reviews: true, categories: true },
+      include: { images: true, sale: true, categories: true },
     });
     if (!art) throw ArticleService.articleNotExistException;
 
@@ -76,7 +76,7 @@ export class ArticleService {
         views: dto.views,
         categories: this.prisma.setArrayIfDefined(dto.categories),
       },
-      include: { images: true, sale: true, reviews: true, categories: true },
+      include: { images: true, sale: true, categories: true },
     });
     if (!updated) throw ArticleService.articleNotExistException;
 
@@ -86,7 +86,7 @@ export class ArticleService {
   async remove(id: number): Promise<Article> {
     const art = await this.prisma.article.delete({
       where: { id },
-      include: { images: true, sale: true, reviews: true, categories: true },
+      include: { images: true, sale: true, categories: true },
     });
 
     if (!art) throw ArticleService.articleNotExistException;
@@ -177,7 +177,6 @@ export class ArticleService {
       include: {
         images: true,
         sale: true,
-        reviews: true,
         categories: true,
       },
       where: this.getFindManyWhereQuery(
