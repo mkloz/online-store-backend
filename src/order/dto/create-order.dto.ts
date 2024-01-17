@@ -21,6 +21,6 @@ export class CreateOrderDto {
   @ApiProperty({ example: 'United Kingdom' })
   country: string;
   @IsPostalCode('GB')
-  @ApiProperty({ example: '223324' })
+  @ApiProperty({ example: 'DT2 9NJ' })
   postCode: string;
 }

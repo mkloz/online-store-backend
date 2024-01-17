@@ -158,7 +158,10 @@ export class CartItemService {
   }
 
   public async remove(id: number): Promise<CartItem> {
-    const item = await this.prisma.cartItem.delete({ where: { id } });
+    const item = await this.prisma.cartItem.delete({
+      where: { id },
+      include: { article: true },
+    });
 
     if (!item) throw CartItemService.cartItemNotExistException;
     const subtotalPrice =

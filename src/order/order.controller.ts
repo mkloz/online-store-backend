@@ -32,6 +32,10 @@ import { ApiOrdersGetAll } from './docs/api-orders-get-all.decorator';
 import { ApiOrderGetById } from './docs/api-order-get-by-id.decorator';
 import { ApiOrderUpdateStatus } from './docs/api-order-update-status.decorator';
 import { ApiOrderCancel } from './docs/api-order-cancel.decorator';
+import { FindManyOrdersDto } from './dto/find-orders.dto';
+import { OrdersDeleteItemDto } from './dto/delete-item.dto';
+import { Order } from './entities/order.entity';
+import { ApiOrderDeleteItem } from './docs/api-order-delete-item.decorator';
 
 @ApiOrder()
 @Controller(Prefix.ORDERS)
@@ -58,7 +62,7 @@ export class OrderController {
       throw new UnprocessableEntityException('Cart is empty');
     }
 
-    return this.orderService.create(createOrderDto, cart);
+    return await this.orderService.create(createOrderDto, cart);
   }
 
   @Get('/my')
@@ -73,7 +77,7 @@ export class OrderController {
   @Roles(Role.ADMIN)
   @ApiOrdersGetAll()
   @UseGuards(RoleAuthGuard)
-  findAll(@Query() pag: PaginationOptionsDto) {
+  findAll(@Query() pag: FindManyOrdersDto) {
     return this.orderService.findAll(pag);
   }
 
@@ -121,5 +125,20 @@ export class OrderController {
       canceled.id,
     );
     return canceled;
+  }
+  @Delete('/item/:itemId')
+  @ApiOrderDeleteItem()
+  @Roles(Role.ADMIN)
+  @UseGuards(RoleAuthGuard)
+  async deleteItem(@Param() dto: OrdersDeleteItemDto): Promise<Order> {
+    const order = await this.orderService.deleteItem(dto.itemId);
+    const customer = await this.userService.getById(order.userId ?? 0);
+
+    await this.orderMailService.sendOrderStatus(
+      customer.email,
+      OrderStatus.CREATED,
+      order.id,
+    );
+    return order;
   }
 }

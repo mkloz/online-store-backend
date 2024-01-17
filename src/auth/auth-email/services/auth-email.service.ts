@@ -21,6 +21,7 @@ import { EmailCreateVerificationTokenPayload } from '../jwt/email-verification-t
 import { EmailCreatePassResetTokenPayload } from '../jwt/email-pass-reset-token-payload.dto';
 import { ApiConfigService } from '@config/api-config.service';
 import { AuthMailService } from './auth-mail.service';
+import { EmailPasswordChangeDto } from '../dto/email-password-change.dto';
 
 @Injectable()
 export class AuthEmailService {
@@ -128,6 +129,28 @@ export class AuthEmailService {
     } catch (error) {
       throw AuthEmailService.invalidTokenException;
     }
+  }
+
+  async changePassword(
+    dto: EmailPasswordChangeDto,
+    email: string,
+  ): Promise<Done> {
+    const user: User = await this.userService.getByEmailVerified(
+      email,
+      Provider.EMAIL,
+    );
+
+    if (!user || !bcrypt.compareSync(dto.oldPassword, String(user.password))) {
+      throw new UnprocessableEntityException('Old password is incorrect');
+    }
+
+    await this.userService.changePassword(
+      user.id,
+      dto.newPassword,
+      Provider.EMAIL,
+    );
+
+    return new Done();
   }
 
   async forgotPass(email: string): Promise<Done> {

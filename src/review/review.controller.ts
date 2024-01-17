@@ -18,7 +18,6 @@ import {
   ApiReview,
   ApiReviewCreate,
   ApiReviewDelete,
-  ApiReviewGetMany,
   ApiReviewGetManyForArticle,
   ApiReviewGetOne,
   ApiReviewUpdate,

@@ -24,4 +24,7 @@ module.exports = {
     '@typescript-eslint/no-inferrable-types': 'off',
     // 'autofix/no-unused-vars': 'warn',
   },
+  parserOptions: {
+    tsconfigRootDir: __dirname,
+  },
 };

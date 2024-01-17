@@ -12,7 +12,9 @@ export const SALT_ROUNDS = 10;
 @Injectable()
 export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
-
+  public getCount(args: Prisma.UserCountArgs) {
+    return this.prisma.user.count(args);
+  }
   public async verifyByUniqueInput(
     value: Prisma.UserWhereUniqueInput,
   ): Promise<void> {
@@ -21,6 +23,9 @@ export class UserRepository {
       data: { isEmailConfirmed: true },
     });
     return;
+  }
+  public async getMany(args: Prisma.UserFindManyArgs): Promise<User[]> {
+    return await this.prisma.user.findMany(args);
   }
 
   public async changePassword(

@@ -3,14 +3,11 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  HttpServer,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { ApiConfigService } from '@config/api-config.service';
-import { AbstractHttpAdapter, HttpAdapterHost } from '@nestjs/core';
-import { isObject } from '@nestjs/common/utils/shared.utils';
+import { HttpAdapterHost } from '@nestjs/core';
 
 export class ExceptionResponse {
   status: number;
@@ -24,14 +21,14 @@ export class ExceptionResponse {
 }
 const UNKNOWN_EXCEPTION_MESSAGE = 'Something went wrong';
 
-@Catch()
+@Catch(HttpException)
 export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly cs: ApiConfigService,
     private readonly httpAdapterHost: HttpAdapterHost,
   ) {}
 
-  catch(exception: Error, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost) {
     const req = host.switchToHttp().getRequest<Request>();
     const { httpAdapter } = this.httpAdapterHost;
     const resp: ExceptionResponse = new ExceptionResponse({
@@ -41,10 +38,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         ? httpAdapter.getRequestUrl(req)
         : undefined,
     });
-
-    if (!(exception instanceof HttpException)) {
-      return this.handleUnknownError(exception, host, httpAdapter, resp);
-    }
 
     resp.status = exception.getStatus();
     resp.message = this.cs.isProduction()
@@ -58,44 +51,5 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       resp,
       resp.status,
     );
-  }
-
-  public handleUnknownError(
-    exception: Error,
-    host: ArgumentsHost,
-    applicationRef: AbstractHttpAdapter | HttpServer,
-    resp: ExceptionResponse,
-  ) {
-    resp.status = HttpStatus.INTERNAL_SERVER_ERROR;
-    resp.message = UNKNOWN_EXCEPTION_MESSAGE;
-
-    const response = host.switchToHttp().getRequest();
-
-    if (!applicationRef.isHeadersSent(response)) {
-      applicationRef.reply(response, resp, resp.status);
-    } else {
-      applicationRef.end(response);
-    }
-
-    return Logger.error(
-      exception.message,
-      this.isErrorObject(exception) ? exception.stack : undefined,
-      'ExceptionFilter',
-    );
-  }
-
-  public isErrorObject(err: unknown): err is Error {
-    return !!(
-      isObject(err) &&
-      typeof err === 'object' &&
-      'message' in err &&
-      err?.message
-    );
-  }
-
-  public isHttpError(
-    err: Error,
-  ): err is { statusCode: number; message: string; name: string } {
-    return !!(err && 'statusCode' in err && err?.statusCode && err?.message);
   }
 }

@@ -69,16 +69,18 @@ export class CartService {
     });
   }
 
-  async clearByUniqueInput(input: Prisma.CartWhereUniqueInput) {
-    const cart = await this.prisma.cart.update({
-      where: input,
-      data: { cartItems: { set: [] } },
+  async clearByUniqueInput(cartId: number) {
+    await this.prisma.cartItem.deleteMany({
+      where: { cartId },
     });
-    if (!cart) throw CartService.cartNotExistException;
+    const cart = await this.prisma.cart.findUnique({
+      where: { id: cartId },
+      include: { cartItems: true },
+    });
 
     return new Cart({
       ...cart,
-      totalPrice: await this.calculateTotalPrice(cart.id),
+      totalPrice: await this.calculateTotalPrice(cartId),
     });
   }
 }

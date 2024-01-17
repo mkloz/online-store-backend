@@ -21,17 +21,23 @@ import { ApiEmail } from './docs/api-email.decorator';
 import { Done } from '@shared/dto/done.dto';
 import { ApiEmailConfirm } from './docs/api-email-confirm.decorator';
 import { ApiEmailSendConfirmation } from './docs/api-email-send-confirmation.decorator';
-import { ApiEmailPasswortReset } from './docs/api-email-passwort-reset.decorator';
+import {
+  ApiEmailPasswordChange,
+  ApiEmailPasswordReset,
+} from './docs/api-email-passwort-reset.decorator';
 
 import { EmailPasswordResetDto } from './dto/email-password-reset.dto';
 import { EmailTokenDto } from './dto/email-token.dto';
 import { EmailDto } from './dto/email.dto';
-import { RoleAuthGuard } from '@shared/guards';
+import { AuthGuard, RoleAuthGuard } from '@shared/guards';
 import { Role } from '@prisma/client';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { ApiAdminCreate } from './docs/api-admin-create.decorator';
 import { Prefix } from '@utils/prefix.enum';
-import { User } from '@user/user.entity';
+import { User as UserEnt } from '@user/user.entity';
+import { EmailPasswordChangeDto } from './dto/email-password-change.dto';
+import { JwtPayloadDto } from '@shared/dto';
+import { User } from '@shared/decorators';
 
 @ApiEmail()
 @Controller(Prefix.AUTH_EMAIL)
@@ -51,7 +57,9 @@ export class AuthEmailController {
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
   @ApiEmailRegister()
-  async register(@Body(UserNotExistPipe) dto: EmailRegisterDto): Promise<User> {
+  async register(
+    @Body(UserNotExistPipe) dto: EmailRegisterDto,
+  ): Promise<UserEnt> {
     return this.emailService.register(dto);
   }
 
@@ -60,7 +68,7 @@ export class AuthEmailController {
   @UseGuards(RoleAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiAdminCreate()
-  createAdmin(@Body() dto: EmailRegisterDto): Promise<User> {
+  createAdmin(@Body() dto: EmailRegisterDto): Promise<UserEnt> {
     return this.emailService.createAdmin(dto);
   }
 
@@ -91,8 +99,19 @@ export class AuthEmailController {
 
   @Post('/reset/password')
   @HttpCode(HttpStatus.OK)
-  @ApiEmailPasswortReset()
+  @ApiEmailPasswordReset()
   resetPassword(@Body() dto: EmailPasswordResetDto): Promise<Done> {
     return this.emailService.resetPassword(dto.password, dto.token);
+  }
+
+  @Post('/change/password')
+  @HttpCode(HttpStatus.OK)
+  @ApiEmailPasswordChange()
+  @UseGuards(AuthGuard)
+  changePassword(
+    @User() user: JwtPayloadDto,
+    @Body() dto: EmailPasswordChangeDto,
+  ): Promise<Done> {
+    return this.emailService.changePassword(dto, user.email);
   }
 }

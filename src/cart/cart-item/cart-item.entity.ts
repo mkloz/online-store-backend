@@ -6,7 +6,7 @@ import {
 import { Exclude } from 'class-transformer';
 import { Article, ArticleDiscription } from '@article/entities/article.entity';
 import { CartItem as ICartItem } from '@prisma/client';
-import { Cart, CartDiscription } from '@cart/cart.entity';
+import { Cart } from '@cart/cart.entity';
 
 export class CartItemDiscription {
   @ApiProperty({ example: 1 })
@@ -31,7 +31,7 @@ export class CartItemRelation {
   @ApiPropertyOptional({ type: () => ArticleDiscription })
   article?: Article;
 
-  @ApiPropertyOptional({ type: () => CartDiscription })
+  // @ApiPropertyOptional({ type: () => CartDiscription })
   cart?: Cart;
 }
 export class CartItem

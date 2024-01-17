@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,7 +15,7 @@ import { User as UserPayload } from '../shared/decorators/user.decorator';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard, RoleAuthGuard } from '@shared/guards';
-import { IDDto, JwtPayloadDto } from '@shared/dto';
+import { IDDto, JwtPayloadDto, Paginated } from '@shared/dto';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import {
@@ -28,6 +29,8 @@ import {
 } from './docs';
 import { UserExistPipe } from './pipes/user-exist.pipe';
 import { Prefix } from '@utils/prefix.enum';
+import { GetClientsDto } from './dto/get-clients.dto';
+import { ApiUserGetMany } from './docs/api-user-get-many.decorator';
 
 @ApiUser()
 @Controller(Prefix.USERS)
@@ -83,5 +86,12 @@ export class UserController {
   @ApiUserByIdDelete()
   deleteById(@Param(UserExistPipe) { id }: IDDto): Promise<User> {
     return this.userService.deleteById(id);
+  }
+  @Get()
+  @UseGuards(RoleAuthGuard)
+  @Roles(Role.ADMIN)
+  @ApiUserGetMany()
+  getMany(@Query() dto: GetClientsDto): Promise<Paginated<User>> {
+    return this.userService.getMany(dto);
   }
 }

@@ -2,23 +2,65 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../user.entity';
 import * as bcrypt from 'bcryptjs';
-import { Provider } from '@prisma/client';
+import { Prisma, Provider } from '@prisma/client';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserRepository } from '../user.repository';
 import { Done } from '@shared/dto/done.dto';
 import { CartService } from '@cart/cart.service';
+import { GetClientsDto } from '@user/dto/get-clients.dto';
+import { Paginated } from '@shared/dto';
+import { IPag, Paginator } from '@shared/pagination';
+import { Helper } from '@utils/helpers';
+import { ApiConfigService } from '@config/api-config.service';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 export const SALT_ROUNDS = 10;
 
 @Injectable()
 export class UserService {
+  private readonly backendUrl: string;
   constructor(
     private readonly repo: UserRepository,
     private readonly cartService: CartService,
-  ) {}
+    private readonly cs: ApiConfigService,
+  ) {
+    this.backendUrl = this.cs.getOnlineStore().backendUrl;
+  }
   static userNotExistException = new UnprocessableEntityException(
     'User not exist',
   );
 
+  async getMany(dto: GetClientsDto): Promise<Paginated<User>> {
+    const where: Prisma.UserWhereInput = this.getSearchFilterCondition(
+      dto.search,
+    );
+    const pag: IPag<User> = {
+      data: await Promise.all(
+        (
+          await this.repo.getMany({
+            where,
+            take: dto.limit,
+            skip: dto.limit * (dto.page - 1),
+          })
+        ).map(async (el) => new User(el)),
+      ),
+      count: await this.repo.getCount({ where }),
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.USERS}`,
+    };
+
+    return Paginator.paginate(
+      pag,
+      { limit: dto.limit, page: dto.page },
+      Helper.queryDtoToQuery({ search: dto.search }),
+    );
+  }
+  private getSearchFilterCondition(search?: string): Prisma.UserWhereInput {
+    const keyword = search?.trim() ?? '';
+    if (!keyword) return {};
+
+    return {
+      OR: [{ name: { contains: keyword } }, { email: { contains: keyword } }],
+    };
+  }
   static async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, SALT_ROUNDS);
   }

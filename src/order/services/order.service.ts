@@ -1,6 +1,5 @@
 import {
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -19,6 +18,8 @@ import { Order } from '../entities/order.entity';
 import { ApiConfigService } from '@config/api-config.service';
 import { IPag, Paginator } from '@shared/pagination';
 import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
+import { FindManyOrdersDto } from '../dto/find-orders.dto';
+import { Helper } from '@utils/helpers';
 
 export const COST_FOR_FREE_DELIVERY = 1000;
 
@@ -50,6 +51,38 @@ export class OrderService {
       },
       include: this.responseIncludes,
     });
+  }
+  async deleteItem(itemId: number): Promise<Order> {
+    const item = await this.prisma.orderItem.findUnique({
+      where: { id: itemId },
+    });
+    if (!item) throw OrderService.badRequest;
+
+    const deleted = await this.prisma.order.update({
+      where: { id: item.orderId },
+      data: { orderItems: { delete: { id: itemId } } },
+      include: { delivery: true },
+    });
+
+    if (!deleted) throw OrderService.badRequest;
+
+    const newPrice =
+      deleted.totalPrice -
+      (deleted.delivery?.shippingCost || 0) -
+      item.subtotalPrice;
+    const shippingCost =
+      newPrice >= COST_FOR_FREE_DELIVERY ? 0 : DEFAULT_SHIPPING_COST;
+
+    const order = await this.prisma.order.update({
+      where: { id: deleted.id },
+      data: {
+        totalPrice: newPrice + shippingCost,
+        delivery: { update: { shippingCost: shippingCost } },
+      },
+      include: this.responseIncludes,
+    });
+
+    return new Order(order);
   }
 
   private async getAddressOrCreate(fields: {
@@ -91,7 +124,8 @@ export class OrderService {
   }
 
   async create(dto: CreateOrderDto, cart: Cart) {
-    if (!cart.totalPrice) throw OrderService.badRequest;
+    if (!cart.totalPrice)
+      throw new UnprocessableEntityException('Invalid request');
 
     const address = await this.getAddressOrCreate(dto);
     const delivery = new Delivery({
@@ -111,9 +145,7 @@ export class OrderService {
       },
       include: this.responseIncludes,
     });
-    await this.cartService.clearByUniqueInput({ id: cart.id });
-
-    if (!order) throw new InternalServerErrorException();
+    await this.cartService.clearByUniqueInput(cart.id);
 
     return new Order(order);
   }
@@ -146,8 +178,18 @@ export class OrderService {
     return Paginator.paginate(pag, opt);
   }
 
-  async findAll(opt: PaginationOptionsDto): Promise<Paginated<Order>> {
-    return this.findMany(opt);
+  async findAll(opt: FindManyOrdersDto): Promise<Paginated<Order>> {
+    const pag: IPag<Order> = {
+      data: await this.findManyOrders(opt, { status: opt.status }),
+      count: await this.prisma.order.count({ where: { status: opt.status } }),
+      route: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.ORDERS}`,
+    };
+
+    return Paginator.paginate(
+      pag,
+      opt,
+      Helper.queryDtoToQuery({ status: opt.status }),
+    );
   }
 
   async findOne(id: number): Promise<Order> {

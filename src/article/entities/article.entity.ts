@@ -11,7 +11,7 @@ import {
   ArticlePhoto,
   ArticlePhotoDiscription,
 } from '@article/article-photos/article-photo.entity';
-import { Review, ReviewDiscription } from '@review/entities/review.entity';
+
 import { Sale, SaleDiscription } from '@article/sale/entities/sale.entity';
 import { Article as IArticle, Role } from '@prisma/client';
 import { Exclude, Expose } from 'class-transformer';
