@@ -9,6 +9,7 @@ import { Review, ReviewDiscription } from '@review/entities/review.entity';
 import { User as IUser } from '@prisma/client';
 import { Article, ArticleDiscription } from '@article/entities/article.entity';
 import { Cart, CartDiscription } from '@cart/cart.entity';
+import { Address, AddressDicription } from '@app/order/entities/address.entity';
 export class UserDiscription {
   @ApiProperty({ example: 1 })
   id: number;
@@ -18,6 +19,9 @@ export class UserDiscription {
 
   @ApiProperty({ example: 'email@gmail.com' })
   email: string;
+
+  @ApiProperty({ example: '+44-2832-346-686' })
+  phoneNumber: string | null;
 
   @ApiProperty({
     enum: Role,
@@ -33,10 +37,13 @@ export class UserDiscription {
 
   @Exclude()
   password: string | null;
+  @Exclude()
+  addressId: number | null;
 }
 
 export class UserRelation {
-  @ApiPropertyOptional({ type: () => ReviewDiscription, isArray: true })
+  // @ApiPropertyOptional({ type: () => ReviewDiscription, isArray: true })
+
   reviews?: Review[];
 
   @ApiPropertyOptional({ type: () => ArticleDiscription, isArray: true })
@@ -44,6 +51,9 @@ export class UserRelation {
 
   @ApiPropertyOptional({ type: () => CartDiscription, nullable: true })
   cart?: Cart | null;
+
+  @ApiPropertyOptional({ type: () => AddressDicription, nullable: true })
+  address?: Address | null;
 }
 export class User
   extends IntersectionType(UserDiscription, UserRelation)
@@ -58,5 +68,6 @@ export class User
     if (partial.favorites?.length)
       this.favorites = partial.favorites.map((el) => new Article(el));
     if (partial.cart) this.cart = new Cart(partial.cart);
+    if (partial.address) this.address = new Address(partial.address);
   }
 }

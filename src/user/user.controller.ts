@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   UseGuards,
   UseInterceptors,
@@ -31,6 +32,8 @@ import { UserExistPipe } from './pipes/user-exist.pipe';
 import { Prefix } from '@utils/prefix.enum';
 import { GetClientsDto } from './dto/get-clients.dto';
 import { ApiUserGetMany } from './docs/api-user-get-many.decorator';
+import { ApiUserRemoveFav } from './docs/api-user-remove-from-fav.decorator';
+import { ApiUserAddFav } from './docs/api-user-add-to-fav.decorator';
 
 @ApiUser()
 @Controller(Prefix.USERS)
@@ -60,6 +63,26 @@ export class UserController {
     @Body() dto: UpdateUserDto,
   ): Promise<User> {
     return this.userService.updateById(user.id, dto);
+  }
+
+  @Post('me/favorites/:id')
+  @UseGuards(AuthGuard)
+  @ApiUserAddFav()
+  addToFavorites(
+    @UserPayload() user: JwtPayloadDto,
+    @Param() { id: articleId }: IDDto,
+  ): Promise<User> {
+    return this.userService.addToFavorites(user.id, articleId);
+  }
+
+  @Delete('me/favorites/:id')
+  @UseGuards(AuthGuard)
+  @ApiUserRemoveFav()
+  deleteFromFavorites(
+    @UserPayload() user: JwtPayloadDto,
+    @Param() { id: articleId }: IDDto,
+  ): Promise<User> {
+    return this.userService.removeFromFavorites(user.id, articleId);
   }
 
   @Patch(':id')

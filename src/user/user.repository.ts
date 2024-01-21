@@ -6,6 +6,7 @@ import { Prisma, Provider, Role } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './services/user.service';
 import { Nullable } from '@shared/types/nullable.type';
+import { Address } from '@app/order/entities/address.entity';
 
 export const SALT_ROUNDS = 10;
 
@@ -55,7 +56,7 @@ export class UserRepository {
           : undefined,
         role: Role.USER,
       },
-      include: { reviews: true, favorites: true, cart: true },
+      include: { favorites: true, cart: true, address: true },
     });
   }
 
@@ -75,7 +76,7 @@ export class UserRepository {
         isEmailConfirmed: true,
         role: Role.ADMIN,
       },
-      include: { reviews: true, favorites: true, cart: true },
+      include: { favorites: true, cart: true, address: true },
     });
   }
 
@@ -86,7 +87,7 @@ export class UserRepository {
   ): Promise<Nullable<User>> {
     return await this.prisma.user.findFirst({
       where: value,
-      include: { reviews: true, favorites: true, cart: true },
+      include: { favorites: true, cart: true, address: true },
     });
   }
 
@@ -94,21 +95,65 @@ export class UserRepository {
     id: number,
     dto: UpdateUserDto,
   ): Promise<Nullable<User>> {
-    this.prisma;
-    return this.prisma.user.update({
+    let address: Address | null | undefined;
+
+    if (dto.street && dto.city && dto.country && dto.postCode) {
+      address = await this.getAddressOrCreate({
+        street: dto.street,
+        city: dto.city,
+        postCode: dto.postCode,
+        country: dto.country,
+      });
+    }
+
+    return await this.prisma.user.update({
       where: { id },
-      include: { reviews: true, favorites: true, cart: true },
+      include: { favorites: true, cart: true, address: true },
       data: {
         name: dto.name,
-        favorites: this.prisma.setArrayIfDefined(dto.favorites),
+        phoneNumber: dto.phoneNumber,
+        addressId: address ? address.id : undefined,
       },
+    });
+  }
+  private async getAddressOrCreate(fields: {
+    street: string;
+    city: string;
+    country: string;
+    postCode: string;
+  }): Promise<Address> {
+    const address = await this.prisma.address.findFirst({
+      where: fields,
+    });
+
+    if (address) return address;
+
+    return await this.prisma.address.create({
+      data: fields,
+    });
+  }
+  public async addToFavorites(
+    userId: number,
+    articleId: number,
+  ): Promise<Nullable<User>> {
+    return await this.prisma.user.update({
+      where: { id: userId },
+      data: { favorites: { connect: { id: articleId } } },
+      include: { favorites: true, cart: true, address: true },
+    });
+  }
+  public async removeFromFavorites(userId: number, articleId: number) {
+    return await this.prisma.user.update({
+      where: { id: userId },
+      data: { favorites: { disconnect: { id: articleId } } },
+      include: { favorites: true, cart: true, address: true },
     });
   }
 
   public async deleteById(id: number): Promise<Nullable<User>> {
     return await this.prisma.user.delete({
       where: { id },
-      include: { reviews: true, favorites: true, cart: true },
+      include: { favorites: true, cart: true, address: true },
     });
   }
 }

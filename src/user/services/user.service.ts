@@ -53,6 +53,20 @@ export class UserService {
       Helper.queryDtoToQuery({ search: dto.search }),
     );
   }
+  public async addToFavorites(userId: number, articleId: number) {
+    const user = await this.repo.addToFavorites(userId, articleId);
+
+    if (!user) throw UserService.userNotExistException;
+
+    return new User(user);
+  }
+  public async removeFromFavorites(userId: number, articleId: number) {
+    const user = await this.repo.removeFromFavorites(userId, articleId);
+
+    if (!user) throw UserService.userNotExistException;
+
+    return new User(user);
+  }
   private getSearchFilterCondition(search?: string): Prisma.UserWhereInput {
     const keyword = search?.trim() ?? '';
     if (!keyword) return {};

@@ -91,13 +91,6 @@ export class OrderService {
     country: string;
     postCode: string;
   }): Promise<Address> {
-    fields = {
-      street: fields.street,
-      city: fields.city,
-      country: fields.country,
-      postCode: fields.postCode,
-    };
-
     const address = await this.prisma.address.findFirst({
       where: fields,
     });
@@ -127,7 +120,12 @@ export class OrderService {
     if (!cart.totalPrice)
       throw new UnprocessableEntityException('Invalid request');
 
-    const address = await this.getAddressOrCreate(dto);
+    const address = await this.getAddressOrCreate({
+      street: dto.street,
+      city: dto.city,
+      postCode: dto.postCode,
+      country: dto.country,
+    });
     const delivery = new Delivery({
       addition: dto.addition,
       shippingCost:

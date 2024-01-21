@@ -101,6 +101,7 @@ model User {
   id               Int       @id @default(autoincrement())
   name             String    @map("name") @db.Char(255)
   password         String?   @db.Char(255)
+  phoneNumber      String?   @map("phone_number") @db.Char(255)
   email            String    @unique @db.Char(255)
   isEmailConfirmed Boolean   @default(false) @map("is_email_confirmed")
   provider         Provider  @default(EMAIL)
@@ -109,6 +110,8 @@ model User {
   cart             Cart?
   favorites        Article[] @relation(name: "_user_favorites")
   orders           Order[]
+  address          Address?  @relation(fields: [addressId], references: [id])
+  addressId        Int?      @map("address_id")
 
   @@map("user")
 }
@@ -169,6 +172,7 @@ model Address {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   order     Order[]
+  users     User[]
 
   @@map("address")
 }

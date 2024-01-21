@@ -6,6 +6,7 @@ import {
 import { Address as IAddress } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 import { Order, OrderDiscription } from './order.entity';
+import { User, UserDiscription } from '@user/user.entity';
 
 export class AddressDicription {
   @ApiProperty({ example: 1 })
@@ -32,6 +33,8 @@ export class AddressDicription {
 export class AddressRelation {
   @ApiPropertyOptional({ type: () => OrderDiscription, isArray: true })
   orders?: Order[];
+  @ApiPropertyOptional({ type: () => UserDiscription })
+  user?: User | null;
 }
 
 export class Address
