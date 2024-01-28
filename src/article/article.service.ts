@@ -166,6 +166,9 @@ export class ArticleService {
               : { is: null }
             : undefined,
         },
+        {
+          rating: filters.starsCount ? { gte: filters.starsCount } : undefined,
+        },
         searchFilter,
       ],
     };
@@ -185,6 +188,7 @@ export class ArticleService {
           maxPrice: query.maxPrice,
           minPrice: query.minPrice,
           sale: query.sale,
+          starsCount: query.starsCount,
         },
         { search: query.search },
       ),
@@ -217,6 +221,7 @@ export class ArticleService {
         maxPrice: query.maxPrice,
         search: query.search,
         sale: query.sale,
+        starsCount: query.starsCount,
       }),
     );
   }
