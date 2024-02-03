@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import { SendMailOptions, Transporter, createTransport } from 'nodemailer';
 import Handlebars from 'handlebars';
 import { ApiConfigService } from '@config/api-config.service';
+import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
 
 @Injectable()
 export class MailerService {
@@ -39,7 +41,8 @@ export class MailerService {
   }): Promise<void> {
     let html: string | undefined;
     if (templatePath) {
-      const template = await fs.readFile(templatePath, 'utf-8');
+      const template = readFileSync(templatePath, 'utf-8');
+
       html = Handlebars.compile(template, {
         strict: true,
       })(context);

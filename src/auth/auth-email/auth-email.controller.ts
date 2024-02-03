@@ -75,7 +75,7 @@ export class AuthEmailController {
   @Post('/verify')
   @ApiEmailConfirm()
   @HttpCode(HttpStatus.OK)
-  verify(@Query() { token }: EmailTokenDto): Promise<Done> {
+  async verify(@Query() { token }: EmailTokenDto): Promise<Done> {
     return this.emailService.verify(token);
   }
 

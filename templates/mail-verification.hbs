@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirmation Letter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/1.1.0/modern-normalize.min.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <style>
+        button {
+            font: inherit;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        /* No bullets */
+        ul {
+            list-style: none;
+        }
+
+        h1,
+        h2,
+        h3,
+        ul,
+        p {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Links*/
+        a {
+            text-decoration: none;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #FBFBFB;
+            color: #212121;
+            font-size: 14px;
+            line-height: calc(20 /14);
+            font-weight: 400;
+            letter-spacing: 0px;
+
+        }
+
+        .letter-container {
+            width: 612px;
+            margin: 0 auto;
+            padding: 0 48px;
+
+        }
+
+        header {
+            box-shadow: 0px 4px 16px 0px rgba(128, 131, 255, 0.16);
+        }
+
+        .header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 0px;
+        }
+
+        .logo {
+            width: 111px;
+        }
+
+        .motto {
+            font-size: 20px;
+            line-height: calc(24 /20);
+            font-weight: 900;
+        }
+
+        main {
+            padding-top: 48px;
+            padding-bottom: 75px;
+        }
+
+        h1 {
+            font-size: 20px;
+            line-height: calc(24 /20);
+            font-weight: 900;
+            margin-bottom: 16px;
+        }
+
+        .letter-text {
+            margin-bottom: 33px;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        h2 {
+            font-size: 20px;
+            line-height: calc(24 /20);
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 36px;
+        }
+
+        .letter-info-list {
+            margin-bottom: 24px;
+        }
+
+        .letter-info-item:not(:last-child) {
+            margin-bottom: 6px;
+        }
+
+        .btn {
+            border-radius: 12px;
+            background-color: #212121;
+            align-items: center;
+            padding: 4px 16px 4px 16px;
+            color: #FBFBFB;
+            font-weight: 700px;
+            font-size: 16px;
+            line-height: 32px;
+            transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn:hover {
+            background-color: #D25;
+        }
+
+        .support-title {
+            margin-bottom: 16px;
+        }
+
+        .letter-socials {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="letter-container">
+            <div class="header-wrapper">
+                <div class="logo"><a href="#" target="_blank"><img
+                            src="https://www.citywheels.website/api/assets/logo.svg" alt="logo" /></a>
+                </div>
+                <span class="motto">Be faster on wheels</span>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="letter-container">
+            <h1 class="letter-title">Congratulations, {{{name}}}</h1>
+            <p class="letter-text">
+                You have successfully registered on our website. We are glad to see you
+                among our friends and hope that you will find something for yourself that
+                will make your heart beat faster.
+            </p>
+            <div class="wrapper">
+                <div class="info-wrapper">
+                    <h2>Your Site Login Data:</h2>
+                    <ul class="letter-info-list">
+                        <li class="letter-info-item">Login: {{{email}}}</li>
+                    </ul>
+                    <button type="submit" class="btn" id="confirm">Complete registration</button>
+                    <img id="trackingPixel" src="" style="display:none;" />
+                    <script>
+                        document.getElementById('confirm').addEventListener('click', function () {
+                            var pixel = new Image();
+                            pixel.src = '{{{ link }}}';
+                        });
+                    </script>
+                </div>
+                <img src="https://www.citywheels.website/api/assets/scooter_guy.png" alt="a man on the scooter"
+                    class="letter-image" />
+            </div>
+            <h2 class="support-title">We're here to support you</h2>
+            <p class="letter-text">
+                In case you run into any issues, have any questions, or have feedback and
+                suggestions, please don't hesitate to reach out: we're ready to help.<br /> You
+                can reach us at support@citywheels.com or on social media
+            </p>
+            <ul class="letter-socials">
+                <li><a href="https://www.facebook.com/" target="_blank"><img
+                            src="https://www.citywheels.website/api/assets/facebook.svg" alt="facebook"
+                            class="letter-image" /></a>
+                </li>
+                <li><a href="https://www.instagram.com/" target="_blank"><img
+                            src="https://www.citywheels.website/api/assets/instagram.svg" alt="instagram"
+                            class="letter-image" /></a>
+                </li>
+                <li><a href="https://www.linkedin.com/" target="_blank"><img
+                            src="https://www.citywheels.website/api/assets/linkedin.svg" alt="linkedin"
+                            class="letter-image" /></a>
+                </li>
+                <li><a href="https://www.youtube.com/" target="_blank"><img
+                            src="https://www.citywheels.website/api/assets/youtube.svg" alt="youtube"
+                            class="letter-image" /></a>
+                </li>
+            </ul>
+        </div>
+    </main>
+</body>
+
+</html>
