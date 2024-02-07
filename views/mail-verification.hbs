@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
     <title>Confirmation Letter</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,7 +63,7 @@
         }
 
         .header-wrapper {
-            display: flex;
+            display: -webkit-flex;
             justify-content: space-between;
             align-items: center;
             padding: 22px 0px;
@@ -145,6 +144,7 @@
 
         .letter-socials {
             margin: auto;
+            display: -webkit-flex;
             justify-content: center;
             gap: 14px;
         }
@@ -177,7 +177,7 @@
                         <li class="letter-info-item">Login: {{{email}}}</li>
                     </ul>
                     <button type="submit" class="btn" id="confirm">
-                        <a href="{{{link}}}">
+                        <a href="{{{link}}}" style="color: white;">
                             Complete registration
                         </a>
                     </button>
