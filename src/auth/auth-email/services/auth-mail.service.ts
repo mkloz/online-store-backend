@@ -22,7 +22,7 @@ export class AuthMailService {
     await this.mailer.sendMail({
       to: email,
       subject: 'Verification of email',
-      templatePath: join(process.cwd(), 'templates', 'mail-verification.hbs'),
+      templatePath: join(process.cwd(), 'views', 'mail-verification.hbs'),
       context: {
         email,
         link: `${this.backendUrl}/${GLOBAL_PREFIX}/${Prefix.AUTH_EMAIL}/verify?token=${token}`,

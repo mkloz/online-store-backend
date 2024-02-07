@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
     <title>Confirmation Letter</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -143,7 +144,7 @@
         }
 
         .letter-socials {
-            display: flex;
+            margin: auto;
             justify-content: center;
             gap: 14px;
         }
@@ -154,8 +155,8 @@
     <header>
         <div class="letter-container">
             <div class="header-wrapper">
-                <div class="logo"><a href="#" target="_blank"><img
-                            src="https://www.citywheels.website/api/assets/logo.svg" alt="logo" /></a>
+                <div class="logo"><a href="https://www.citywheels.website" target="_blank"><img
+                            src="https://www.citywheels.website/api/assets/logo.png" alt="logo" /></a>
                 </div>
                 <span class="motto">Be faster on wheels</span>
             </div>
@@ -175,14 +176,11 @@
                     <ul class="letter-info-list">
                         <li class="letter-info-item">Login: {{{email}}}</li>
                     </ul>
-                    <button type="submit" class="btn" id="confirm">Complete registration</button>
-                    <img id="trackingPixel" src="" style="display:none;" />
-                    <script>
-                        document.getElementById('confirm').addEventListener('click', function () {
-                            var pixel = new Image();
-                            pixel.src = '{{{ link }}}';
-                        });
-                    </script>
+                    <button type="submit" class="btn" id="confirm">
+                        <a href="{{{link}}}">
+                            Complete registration
+                        </a>
+                    </button>
                 </div>
                 <img src="https://www.citywheels.website/api/assets/scooter_guy.png" alt="a man on the scooter"
                     class="letter-image" />
@@ -195,19 +193,19 @@
             </p>
             <ul class="letter-socials">
                 <li><a href="https://www.facebook.com/" target="_blank"><img
-                            src="https://www.citywheels.website/api/assets/facebook.svg" alt="facebook"
+                            src="https://www.citywheels.website/api/assets/facebook.png" alt="facebook"
                             class="letter-image" /></a>
                 </li>
                 <li><a href="https://www.instagram.com/" target="_blank"><img
-                            src="https://www.citywheels.website/api/assets/instagram.svg" alt="instagram"
+                            src="https://www.citywheels.website/api/assets/instagram.png" alt="instagram"
                             class="letter-image" /></a>
                 </li>
                 <li><a href="https://www.linkedin.com/" target="_blank"><img
-                            src="https://www.citywheels.website/api/assets/linkedin.svg" alt="linkedin"
+                            src="https://www.citywheels.website/api/assets/linkedin.png" alt="linkedin"
                             class="letter-image" /></a>
                 </li>
                 <li><a href="https://www.youtube.com/" target="_blank"><img
-                            src="https://www.citywheels.website/api/assets/youtube.svg" alt="youtube"
+                            src="https://www.citywheels.website/api/assets/youtube.png" alt="youtube"
                             class="letter-image" /></a>
                 </li>
             </ul>

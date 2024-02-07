@@ -1,12 +1,9 @@
-import { applyDecorators } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { ApiResponseData } from '@shared/docs';
-import { TokensDto } from '@auth/dto/tokens.dto';
+import { HttpStatus, applyDecorators } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 export const ApiEmailConfirm = () =>
   applyDecorators(
-    ApiResponseData(TokensDto),
-    ApiOkResponse(),
+    ApiResponse({ status: HttpStatus.PERMANENT_REDIRECT }),
     ApiOperation({
       summary:
         'Confirm email token and set status of user email as vefificated',

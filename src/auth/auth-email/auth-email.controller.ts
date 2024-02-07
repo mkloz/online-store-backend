@@ -8,6 +8,8 @@ import {
   UseGuards,
   ClassSerializerInterceptor,
   UseInterceptors,
+  Res,
+  Get,
 } from '@nestjs/common';
 import { AuthEmailService } from './services/auth-email.service';
 import { EmailLoginDto } from './dto/email-login.dto';
@@ -33,11 +35,12 @@ import { AuthGuard, RoleAuthGuard } from '@shared/guards';
 import { Role } from '@prisma/client';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { ApiAdminCreate } from './docs/api-admin-create.decorator';
-import { Prefix } from '@utils/prefix.enum';
+import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
 import { User as UserEnt } from '@user/user.entity';
 import { EmailPasswordChangeDto } from './dto/email-password-change.dto';
 import { JwtPayloadDto } from '@shared/dto';
 import { User } from '@shared/decorators';
+import { Response } from 'express';
 
 @ApiEmail()
 @Controller(Prefix.AUTH_EMAIL)
@@ -72,11 +75,16 @@ export class AuthEmailController {
     return this.emailService.createAdmin(dto);
   }
 
-  @Post('/verify')
+  @Get('/verify')
   @ApiEmailConfirm()
-  @HttpCode(HttpStatus.OK)
-  async verify(@Query() { token }: EmailTokenDto): Promise<Done> {
-    return this.emailService.verify(token);
+  @HttpCode(HttpStatus.PERMANENT_REDIRECT)
+  async verify(
+    @Query() { token }: EmailTokenDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.emailService.verify(token);
+
+    res.redirect(`/${GLOBAL_PREFIX}/assets/done.html`);
   }
 
   @Post('/send/verification')
