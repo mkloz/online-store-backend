@@ -40,7 +40,7 @@ export class CreateArticleDto {
     default: 1,
     description: 'excluded for regular users',
   })
-  count?: number;
+  count: number = 1;
 
   @IsBoolean()
   @IsOptional()

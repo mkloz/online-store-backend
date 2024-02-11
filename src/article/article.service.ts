@@ -6,7 +6,11 @@ import { Article } from './entities/article.entity';
 import { IPag, Paginator } from '@shared/pagination';
 import { ApiConfigService } from '@config/api-config.service';
 import { Paginated } from '@shared/pagination';
-import { FilterOptionsDto, SaleFilter } from './dto/filter-options.dto';
+import {
+  FilterOptionsDto,
+  SaleFilter,
+  StockFilter,
+} from './dto/filter-options.dto';
 import { SearchArticleDto } from './dto/search-article.dto';
 import { Prisma } from '@prisma/client';
 import { GLOBAL_PREFIX, Prefix } from '@utils/prefix.enum';
@@ -44,6 +48,7 @@ export class ArticleService {
         discription: dto.discription,
         name: dto.name,
         count: dto.count,
+        inStock: dto.count > 0,
         isPreviouslyUsed: dto.isPreviouslyUsed,
         categories: this.prisma.connectArrayIfDefined(dto.categories),
       },
@@ -72,6 +77,7 @@ export class ArticleService {
         discription: dto.discription,
         name: dto.name,
         count: dto.count,
+        inStock: dto.count ? dto.count > 0 : undefined,
         isPreviouslyUsed: dto.isPreviouslyUsed,
         views: dto.views,
         categories: this.prisma.setArrayIfDefined(dto.categories),
@@ -167,6 +173,13 @@ export class ArticleService {
             : undefined,
         },
         {
+          inStock: filters.stock
+            ? filters.stock == StockFilter.INCLUDE
+              ? true
+              : false
+            : undefined,
+        },
+        {
           rating: filters.starsCount ? { gte: filters.starsCount } : undefined,
         },
         searchFilter,
@@ -188,6 +201,7 @@ export class ArticleService {
           maxPrice: query.maxPrice,
           minPrice: query.minPrice,
           sale: query.sale,
+          stock: query.stock,
           starsCount: query.starsCount,
         },
         { search: query.search },
@@ -221,6 +235,7 @@ export class ArticleService {
         maxPrice: query.maxPrice,
         search: query.search,
         sale: query.sale,
+        stock: query.stock,
         starsCount: query.starsCount,
       }),
     );

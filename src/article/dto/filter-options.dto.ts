@@ -7,6 +7,10 @@ export enum SaleFilter {
   INCLUDE = 'inc',
   EXCLUDE = 'exc',
 }
+export enum StockFilter {
+  INCLUDE = 'inc',
+  EXCLUDE = 'exc',
+}
 export enum StarsCount {
   ZERO,
   ONE,
@@ -39,6 +43,11 @@ export class FilterOptionsDto {
   @IsOptional()
   @ApiPropertyOptional({ enum: SaleFilter })
   sale?: SaleFilter;
+
+  @IsEnum(StockFilter)
+  @IsOptional()
+  @ApiPropertyOptional({ enum: StockFilter })
+  stock?: StockFilter;
 
   @IsEnum(StarsCount)
   @IsOptional()

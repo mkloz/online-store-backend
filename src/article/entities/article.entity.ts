@@ -27,7 +27,7 @@ export class ArticleDiscription {
   rating: number | null;
 
   @ApiProperty({ example: true })
-  inStock: boolean | null;
+  inStock: boolean;
 
   @ApiProperty({ example: 199 })
   price: number;

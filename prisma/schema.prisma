@@ -20,7 +20,7 @@ datasource db {
 model Article {
   id               Int            @id @default(autoincrement())
   price            Float          @db.Float
-  inStock          Boolean?       @map("in_stock")
+  inStock          Boolean        @default(false) @map("in_stock")
   discription      String         @db.VarChar(3000)
   characteristic   String         @db.VarChar(3000)
   rating           Float?         @db.Float
