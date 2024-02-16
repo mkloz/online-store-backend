@@ -39,4 +39,5 @@ prisma/generated
 prisma/backups
 .env.development
 .env.production
+.env.test
 codex_readme.py

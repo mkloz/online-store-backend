@@ -28,7 +28,7 @@ export class CartItemDiscription {
   updatedAt: Date;
 }
 export class CartItemRelation {
-  @ApiPropertyOptional({ type: () => ArticleDiscription })
+  @ApiPropertyOptional({ type: () => Article })
   article?: Article;
 
   // @ApiPropertyOptional({ type: () => CartDiscription })

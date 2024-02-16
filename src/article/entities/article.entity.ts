@@ -62,6 +62,7 @@ export class ArticleRelation {
   @ApiPropertyOptional({ type: () => CategoryDiscription, isArray: true })
   categories?: Category[];
 }
+
 export class Article
   extends IntersectionType(ArticleDiscription, ArticleRelation)
   implements IArticle

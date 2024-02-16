@@ -46,7 +46,7 @@ export class UserRelation {
 
   reviews?: Review[];
 
-  @ApiPropertyOptional({ type: () => ArticleDiscription, isArray: true })
+  @ApiPropertyOptional({ type: () => Article, isArray: true })
   favorites?: Article[];
 
   @ApiPropertyOptional({ type: () => CartDiscription, nullable: true })

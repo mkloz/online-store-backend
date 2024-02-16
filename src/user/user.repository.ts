@@ -56,7 +56,11 @@ export class UserRepository {
           : undefined,
         role: Role.USER,
       },
-      include: { favorites: true, cart: true, address: true },
+      include: {
+        favorites: { include: { images: true, sale: true, categories: true } },
+        cart: true,
+        address: true,
+      },
     });
   }
 
@@ -76,7 +80,11 @@ export class UserRepository {
         isEmailConfirmed: true,
         role: Role.ADMIN,
       },
-      include: { favorites: true, cart: true, address: true },
+      include: {
+        favorites: { include: { images: true, sale: true, categories: true } },
+        cart: true,
+        address: true,
+      },
     });
   }
 
@@ -87,7 +95,11 @@ export class UserRepository {
   ): Promise<Nullable<User>> {
     return await this.prisma.user.findFirst({
       where: value,
-      include: { favorites: true, cart: true, address: true },
+      include: {
+        favorites: { include: { images: true, sale: true, categories: true } },
+        cart: true,
+        address: true,
+      },
     });
   }
 
@@ -108,7 +120,11 @@ export class UserRepository {
 
     return await this.prisma.user.update({
       where: { id },
-      include: { favorites: true, cart: true, address: true },
+      include: {
+        favorites: { include: { images: true, sale: true, categories: true } },
+        cart: true,
+        address: true,
+      },
       data: {
         name: dto.name,
         phoneNumber: dto.phoneNumber,
@@ -139,21 +155,33 @@ export class UserRepository {
     return await this.prisma.user.update({
       where: { id: userId },
       data: { favorites: { connect: { id: articleId } } },
-      include: { favorites: true, cart: true, address: true },
+      include: {
+        favorites: { include: { images: true, sale: true, categories: true } },
+        cart: true,
+        address: true,
+      },
     });
   }
   public async removeFromFavorites(userId: number, articleId: number) {
     return await this.prisma.user.update({
       where: { id: userId },
       data: { favorites: { disconnect: { id: articleId } } },
-      include: { favorites: true, cart: true, address: true },
+      include: {
+        favorites: { include: { images: true, sale: true, categories: true } },
+        cart: true,
+        address: true,
+      },
     });
   }
 
   public async deleteById(id: number): Promise<Nullable<User>> {
     return await this.prisma.user.delete({
       where: { id },
-      include: { favorites: true, cart: true, address: true },
+      include: {
+        favorites: { include: { images: true, sale: true, categories: true } },
+        cart: true,
+        address: true,
+      },
     });
   }
 }

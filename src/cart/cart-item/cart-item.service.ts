@@ -67,7 +67,11 @@ export class CartItemService {
         articleId: dto.article,
         cartId: id,
       },
-      include: { article: true },
+      include: {
+        article: {
+          include: { sale: true, images: true, categories: true },
+        },
+      },
     });
     if (!item) throw CartItemService.cartItemNotExistException;
 
@@ -111,7 +115,11 @@ export class CartItemService {
             where: { cartId: cart.id },
             take: opt.limit,
             skip: opt.limit * (opt.page - 1),
-            include: { article: true },
+            include: {
+              article: {
+                include: { sale: true, images: true, categories: true },
+              },
+            },
           })
         ).map(async (el) => {
           const subtotalPrice =
@@ -131,7 +139,11 @@ export class CartItemService {
   public async findOne(id: number): Promise<CartItem> {
     const item = await this.prisma.cartItem.findUnique({
       where: { id },
-      include: { article: true },
+      include: {
+        article: {
+          include: { sale: true, images: true, categories: true },
+        },
+      },
     });
 
     if (!item) throw CartItemService.cartItemNotExistException;
@@ -146,7 +158,11 @@ export class CartItemService {
     const item = await this.prisma.cartItem.update({
       where: { id },
       data: dto,
-      include: { article: true },
+      include: {
+        article: {
+          include: { sale: true, images: true, categories: true },
+        },
+      },
     });
 
     if (!item) throw CartItemService.cartItemNotExistException;
@@ -160,7 +176,11 @@ export class CartItemService {
   public async remove(id: number): Promise<CartItem> {
     const item = await this.prisma.cartItem.delete({
       where: { id },
-      include: { article: true },
+      include: {
+        article: {
+          include: { sale: true, images: true, categories: true },
+        },
+      },
     });
 
     if (!item) throw CartItemService.cartItemNotExistException;
