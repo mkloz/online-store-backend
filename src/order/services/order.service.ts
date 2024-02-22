@@ -26,11 +26,15 @@ export const COST_FOR_FREE_DELIVERY = 1000;
 @Injectable()
 export class OrderService {
   private readonly backendUrl: string;
-  private readonly responseIncludes = {
+  private readonly responseIncludes: Prisma.OrderInclude = {
     address: true,
     cancel: true,
     delivery: true,
-    orderItems: { include: { article: true } },
+    orderItems: {
+      include: {
+        article: { include: { images: true, sale: true, categories: true } },
+      },
+    },
   };
 
   constructor(

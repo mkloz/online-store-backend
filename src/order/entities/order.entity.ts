@@ -18,10 +18,10 @@ export class OrderDiscription {
   @ApiProperty({ enum: OrderStatus })
   status: OrderStatus;
 
-  @Exclude()
+  @ApiProperty()
   createdAt: Date;
 
-  @Exclude()
+  @ApiProperty()
   updatedAt: Date;
 
   @Exclude()

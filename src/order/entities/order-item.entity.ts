@@ -4,7 +4,7 @@ import {
   IntersectionType,
 } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { Article, ArticleDiscription } from '@article/entities/article.entity';
+import { Article } from '@article/entities/article.entity';
 import { OrderItem as IOrderItem } from '@prisma/client';
 import { Order } from '@app/order/entities/order.entity';
 
@@ -29,7 +29,7 @@ export class OrderItemDiscription {
 }
 
 export class OrderItemRelation {
-  @ApiPropertyOptional({ type: () => ArticleDiscription, nullable: true })
+  @ApiPropertyOptional({ type: () => Article, nullable: true })
   article?: Article | null;
 
   // @ApiPropertyOptional({ type: () => OrderDiscription })
