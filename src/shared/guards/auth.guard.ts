@@ -3,7 +3,6 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadValidator } from '../validators';
@@ -21,10 +20,6 @@ export class AuthGuard implements CanActivate {
   ) {
     this.storeJWT = this.cs.getOnlineStore().jwt;
   }
-
-  static invalidTokenException = new UnprocessableEntityException(
-    'Invalid token',
-  );
 
   static unauthorizedException = new UnauthorizedException();
 
@@ -44,11 +39,11 @@ export class AuthGuard implements CanActivate {
       if (JwtPayloadValidator.validate(payload)) {
         request['user'] = payload;
         return true;
-      } else {
-        throw AuthGuard.invalidTokenException;
       }
+
+      throw AuthGuard.unauthorizedException;
     } catch {
-      throw AuthGuard.invalidTokenException;
+      throw AuthGuard.unauthorizedException;
     }
   }
 }

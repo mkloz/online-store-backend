@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import fs from 'node:fs/promises';
 import { SendMailOptions, Transporter, createTransport } from 'nodemailer';
 import Handlebars from 'handlebars';
 import { ApiConfigService } from '@config/api-config.service';
-import { join } from 'node:path';
 import { readFileSync } from 'node:fs';
 
 @Injectable()

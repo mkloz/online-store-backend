@@ -5,9 +5,9 @@ import {
 } from '@nestjs/swagger';
 import { Provider, Role } from '@prisma/client';
 import { Exclude } from 'class-transformer';
-import { Review, ReviewDiscription } from '@review/entities/review.entity';
+import { Review } from '@review/entities/review.entity';
 import { User as IUser } from '@prisma/client';
-import { Article, ArticleDiscription } from '@article/entities/article.entity';
+import { Article } from '@article/entities/article.entity';
 import { Cart, CartDiscription } from '@cart/cart.entity';
 import { Address, AddressDicription } from '@app/order/entities/address.entity';
 export class UserDiscription {

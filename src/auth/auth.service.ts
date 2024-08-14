@@ -1,6 +1,6 @@
 import {
-  BadRequestException,
   Injectable,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -56,7 +56,7 @@ export class AuthService {
       });
     }
 
-    throw new BadRequestException('Invalid JWT token');
+    throw new UnauthorizedException('Invalid JWT token');
   }
 
   private async generateAccessToken(

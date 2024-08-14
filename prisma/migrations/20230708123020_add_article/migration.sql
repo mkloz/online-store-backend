@@ -5,7 +5,7 @@ CREATE TABLE `article` (
     `discription` VARCHAR(3000) NOT NULL,
     `name` CHAR(255)  NOT NULL UNIQUE,
     `rating` FLOAT NULL,
-    `in_stock` BOOLEAN NULL,
+    `in_stock` BOOLEAN NOT NULL DEFAULT false,
     `count` INTEGER NOT NULL DEFAULT 1,
     `views` INTEGER NOT NULL DEFAULT 0,
     `characteristic` VARCHAR(3000) NOT NULL,

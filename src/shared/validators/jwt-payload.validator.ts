@@ -14,7 +14,7 @@ export class JwtPayloadValidator {
         skipMissingProperties: false,
       });
     } catch (errors) {
-      if (errors) throw new UnauthorizedException(errors.toString());
+      throw new UnauthorizedException(errors?.toString());
     }
 
     return true;

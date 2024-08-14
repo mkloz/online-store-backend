@@ -4,7 +4,7 @@ import {
   IntersectionType,
 } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { Article, ArticleDiscription } from '@article/entities/article.entity';
+import { Article } from '@article/entities/article.entity';
 import { CartItem as ICartItem } from '@prisma/client';
 import { Cart } from '@cart/cart.entity';
 
