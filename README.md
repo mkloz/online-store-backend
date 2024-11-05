@@ -1,6 +1,6 @@
 <div align="center">
    <h1 align="center">
-      <a href="http://www.citywheels.website" target="blank">
+      <a href="http://online-store.mkloz.online" target="blank">
       <img src="./assets/logo.svg" width="100" />
       <br> Citywheels</a><br> 
    </h1>
@@ -23,8 +23,8 @@
 </div>
 <br>
 <div align="center">
-   <p><a href="https://github.com/k-oleksii/online-store"><img src="https://img.shields.io/badge/Frontend-Online--Store-blue.svg" alt="Citywheels Frontend"></a>
-      <a href="https://www.citywheels.website"><img src="https://img.shields.io/badge/Website-Citywheels.website-green.svg" alt="Citywheels Website"></a>
+   <p><a href="https://online-store.mkloz.online"><img src="https://img.shields.io/badge/Frontend-Online--Store-blue.svg" alt="Citywheels Frontend"></a>
+      <a href="https://api.mkloz.online/store/api/docs"><img src="https://img.shields.io/badge/Api-Citywheels.api-green.svg" alt="Citywheels Api"></a>
    </p>
 </div>
 
@@ -63,117 +63,6 @@ Welcome to the backend documentation for Citywheels, the online store that allow
 
 ---
 
-## 📂 Project Structure
-
-<details closed><summary>root</summary>
-
-```bash
-├── assets
-├── prisma
-│ ├── backups
-│ ├── dbml
-│ ├── generated
-│ ├── migrations
-│ │ ├── 20230708123020_add_article
-│ │ ├── 20230709185129_add_article_uploads
-│ │ ├── 20230710103135_add_sale
-│ │ ├── 20230710120946_sale_rel_update
-│ │ ├── 20230710130427_add_review
-│ │ ├── 20230711075828_add_category
-│ │ ├── 20230712083358_add_user
-│ │ ├── 20230712180405_add_user_reviews
-│ │ ├── 20230713073532_add_cart_items
-│ │ ├── 20230714163200_user_email_confirmation
-│ │ ├── 20230714170021_user_add_provider
-│ │ ├── 20230719160443_add_user_favorites
-│ │ ├── 20230721160843_add_cart
-│ │ └── 20230729100321_add_order
-│ └── seeds
-├── src
-│ ├── article
-│ │ ├── article-photos
-│ │ │ ├── docs
-│ │ │ ├── dto
-│ │ │ └── validators
-│ │ ├── category
-│ │ │ ├── docs
-│ │ │ ├── entities
-│ │ │ └── pipes
-│ │ ├── docs
-│ │ ├── dto
-│ │ ├── entities
-│ │ ├── pipes
-│ │ └── sale
-│ │ ├── docs
-│ │ ├── dto
-│ │ ├── entities
-│ │ ├── pipes
-│ │ └── services
-│ ├── auth
-│ │ ├── auth-email
-│ │ │ ├── docs
-│ │ │ ├── dto
-│ │ │ ├── jwt
-│ │ │ └── services
-│ │ ├── auth-google
-│ │ │ └── dto
-│ │ ├── docs
-│ │ ├── dto
-│ │ └── interfaces
-│ ├── aws
-│ │ └── s3
-│ ├── cart
-│ │ ├── cart-item
-│ │ │ ├── docs
-│ │ │ ├── dto
-│ │ │ └── pipes
-│ │ ├── docs
-│ │ └── dto
-│ ├── config
-│ │ └── configs
-│ ├── db
-│ │ └── dump
-│ ├── health
-│ ├── mailer
-│ ├── order
-│ │ ├── docs
-│ │ ├── dto
-│ │ ├── entities
-│ │ └── services
-│ ├── review
-│ │ ├── docs
-│ │ ├── dto
-│ │ ├── entities
-│ │ ├── pipes
-│ │ └── validators
-│ ├── shared
-│ │ ├── decorators
-│ │ ├── docs
-│ │ ├── dto
-│ │ ├── global
-│ │ ├── guards
-│ │ ├── pagination
-│ │ ├── templates
-│ │ ├── types
-│ │ └── validators
-│ ├── user
-│ │ ├── docs
-│ │ ├── dto
-│ │ ├── pipes
-│ │ └── services
-│ └── utils
-│ ├── extractors
-│ └── helpers
-└── test
-
-97 directories
-
-```
-
-</details>
-
----
-
 ## 🐬 Database Structure
 
 <p>
@@ -203,13 +92,13 @@ Before you begin, ensure that you have the following prerequisites installed:
 1. Clone the online-store repository:
 
 ```sh
-git clone https://github.com/mkloz/online-store
+git clone https://github.com/mkloz/online-store-backend
 ```
 
 2. Change to the project directory:
 
 ```sh
-cd online-store
+cd online-store-backend
 ```
 
 3. Install the dependencies:
