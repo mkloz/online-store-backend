@@ -1,6 +1,6 @@
 <div align="center">
    <h1 align="center">
-      <a href="http://online-store.mkloz.online" target="blank">
+      <a href="http://online-store.mkloz.com" target="blank">
       <img src="./assets/logo.svg" width="100" />
       <br> Citywheels</a><br> 
    </h1>
